@@ -458,4 +458,1380 @@ body {
 <div id="setup-screen" style="display:none">
   <div class="setup-card">
     <h1>Boyle Family Hub</h1>
-    <p>
+    <p>The Boyle family's command center.</p>
+
+    <div class="step-label">Family Members (up to 9)</div>
+    <div id="member-list-setup" style="display:flex;flex-wrap:wrap;gap:8px;min-height:20px;margin:10px 0"></div>
+
+    <div style="display:flex;gap:8px;margin-bottom:16px">
+      <input id="new-member-name" type="text" maxlength="24"
+        placeholder="Name (e.g. Mom, Dad, Emma…)"
+        style="flex:1;padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.95rem;font-family:inherit;outline:none">
+      <button id="add-member-btn" type="button" onclick="setupDoAdd()"
+        style="padding:11px 18px;background:var(--surface3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.88rem;font-family:inherit;font-weight:600;cursor:pointer;white-space:nowrap">
+        + Add
+      </button>
+    </div>
+
+    <div id="gcal-section" style="display:block">
+      <div class="divider"></div>
+      <div class="step-label">Google Calendar (Optional)</div>
+      <div class="form-group">
+        <input type="text" id="setup-gcal-key" placeholder="Google Calendar API Key">
+      </div>
+      <div class="form-group">
+        <input type="text" id="setup-gcal-id" placeholder="Calendar ID">
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <button id="launch-btn" type="button" onclick="setupDoLaunch()"
+      style="display:block;width:100%;padding:14px;background:#6c63ff;color:#fff;border:none;border-radius:10px;font-size:1rem;font-family:inherit;font-weight:700;cursor:pointer;text-align:center">
+      Launch Boyle Family Hub →
+    </button>
+    <div id="setup-msg" style="margin-top:10px;min-height:20px;text-align:center;font-size:.82rem"></div>
+  </div>
+</div>
+
+<div id="app" style="display:block">
+  <button class="sidebar-toggle" onclick="toggleSidebar()">
+    <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div>
+        <div class="app-name">Boyle Family Hub</div>
+        <div class="app-sub">To-Do &amp; Calendar</div>
+      </div>
+      <button class="theme-toggle-btn" onclick="toggleTheme()" id="theme-btn" title="Toggle dark/light mode">🌙</button>
+    </div>
+
+    <div class="family-list">
+      <div class="family-list-label">Members</div>
+      <button class="member-btn active" data-member="family" onclick="selectMember('family',this)">
+        <span class="m-avatar" style="background:rgba(108,99,255,.18);color:#a78bfa;font-size:1rem">🏠</span>
+        <span>All Family</span>
+        <span class="m-count" id="count-family">0</span>
+      </button>
+      <div id="sidebar-members"></div>
+    </div>
+
+    <div class="lists-section">
+      <div class="lists-section-header">
+        <span class="lists-section-label">My Lists</span>
+        <button class="add-list-btn" onclick="openAddList()" title="Create new list">+</button>
+      </div>
+      <div id="sidebar-lists"></div>
+    </div>
+
+    <div class="sidebar-section">
+      <button class="nav-btn" id="nav-overview" onclick="setView('overview')">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Family Overview
+      </button>
+      <button class="nav-btn" id="nav-calendar" onclick="setView('calendar')">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Family Calendar
+      </button>
+      <button class="nav-btn" id="nav-settings" onclick="setView('settings')">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        Settings
+      </button>
+    </div>
+
+    <div class="sync-status">
+      <div class="sync-dot" id="sync-dot"></div>
+      <span id="sync-text">Connecting...</span>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="member-color-bar" id="topbar-color" style="background:var(--accent)"></div>
+      <h2 id="topbar-title">All Family</h2>
+      <div class="topbar-actions">
+        <button class="btn btn-primary btn-sm" onclick="openAddTask()">+ Add Task</button>
+      </div>
+    </div>
+
+    <div class="view-tabs" id="view-tabs" style="display:none">
+      <button class="view-tab active" onclick="setMemberView('myday',this)">My Day</button>
+      <button class="view-tab" onclick="setMemberView('late',this)" id="tab-late">Late Tasks</button>
+      <button class="view-tab" onclick="setMemberView('important',this)">Important</button>
+      <button class="view-tab" onclick="setMemberView('planned',this)">Planned</button>
+      <button class="view-tab" onclick="setMemberView('all',this)">All Tasks</button>
+      <button class="view-tab" onclick="setMemberView('completed',this)">Completed</button>
+    </div>
+
+    <div class="content" id="main-content"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="task-modal">
+  <div class="modal">
+    <h3 id="task-modal-title">Add Task</h3>
+    <div class="form-group">
+      <label>Task Title</label>
+      <input type="text" id="t-title" placeholder="What needs to be done?">
+    </div>
+    <div class="form-group">
+      <label>Notes</label>
+      <textarea id="t-notes" rows="2" placeholder="Add a note…"></textarea>
+    </div>
+    <div class="row-2">
+      <div class="form-group">
+        <label>Assigned To</label>
+        <select id="t-member"></select>
+      </div>
+      <div class="form-group">
+        <label>Priority</label>
+        <select id="t-priority">
+          <option value="none">None</option>
+          <option value="low">🟢 Low</option>
+          <option value="medium">🟡 Medium</option>
+          <option value="high">🔴 High</option>
+        </select>
+      </div>
+    </div>
+    <div class="row-2">
+      <div class="form-group">
+        <label>Due Date</label>
+        <input type="date" id="t-due">
+      </div>
+      <div class="form-group">
+        <label>Due Time (optional)</label>
+        <input type="time" id="t-time" placeholder="HH:MM">
+      </div>
+    </div>
+    <div class="row-2">
+      <div class="form-group">
+        <label>List</label>
+        <select id="t-list-sel">
+          <option value="">No list</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Repeats</label>
+        <select id="t-recur">
+          <option value="">Does not repeat</option>
+          <option value="daily">Every day</option>
+          <option value="weekdays">Weekdays (Mon–Fri)</option>
+          <option value="weekly">Every week</option>
+          <option value="biweekly">Every 2 weeks</option>
+          <option value="monthly">Every month</option>
+          <option value="yearly">Every year</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;text-transform:none;font-size:.88rem;font-weight:500">
+        <input type="checkbox" id="t-add-to-cal" style="width:auto"> Add to Google Calendar
+      </label>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('task-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveTask()">Save Task</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="list-modal">
+  <div class="modal" style="max-width:400px">
+    <h3 id="list-modal-title">Create List</h3>
+    <div class="form-group">
+      <label>List Name</label>
+      <input type="text" id="l-name" placeholder="e.g. Grocery List, Tech Checklist…" maxlength="40">
+    </div>
+    <div class="form-group">
+      <label>Icon / Emoji</label>
+      <div class="avatar-emoji-grid" id="list-emoji-grid"></div>
+    </div>
+    <div class="form-group">
+      <label>Color</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap" id="list-color-grid"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('list-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveList()">Save List</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="member-modal">
+  <div class="modal" style="max-width:420px">
+    <h3 id="member-modal-title">Edit Member</h3>
+    <div class="avatar-picker">
+      <div class="avatar-preview" id="av-preview" onclick="document.getElementById('av-upload').click()">😊</div>
+      <div style="flex:1">
+        <label class="avatar-upload-label" for="av-upload" style="display:block;font-size:.82rem;font-weight:600;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">Profile Photo</label>
+        <input type="file" id="av-upload" class="avatar-upload-input" accept="image/*" onchange="handleAvatarUpload(event)">
+        <div style="font-size:.78rem;color:var(--text3);margin-bottom:10px">Upload a photo or pick an emoji below</div>
+        <div class="avatar-emoji-grid" id="member-emoji-grid"></div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Name</label>
+      <input type="text" id="av-name" placeholder="Member name" maxlength="24">
+    </div>
+    <div class="form-group">
+      <label>Color</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap" id="member-color-grid"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('member-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveMember()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toasts"></div>
+
+<script>
+// ══════════════════════════════════════
+// FIREBASE REALTIME DATABASE CONFIG
+// ══════════════════════════════════════
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDJ6p8LxMFhFn31SEyF_NeqyVetxlv3gb0",
+  authDomain: "boyle-family-hub-2533b.firebaseapp.com",
+  databaseURL: "https://boyle-family-hub-2533b-default-rtdb.firebaseio.com",
+  projectId: "boyle-family-hub-2533b",
+  storageBucket: "boyle-family-hub-2533b.firebasestorage.app",
+  messagingSenderId: "603208983666",
+  appId: "1:603208983666:web:7573f19352c8466d6d0eeb",
+  measurementId: "G-VWCN0V57K8"
+};
+
+var _fbApp = null;
+var _fbDb = null;
+var _fbListening = false;
+
+function getDb() {
+  if (_fbDb) return _fbDb;
+  try {
+    if (!firebase.apps.length) {
+      _fbApp = firebase.initializeApp(FIREBASE_CONFIG);
+    } else {
+      _fbApp = firebase.apps[0];
+    }
+    _fbDb = firebase.database();
+    return _fbDb;
+  } catch(e) {
+    console.error('Firebase init error:', e);
+    return null;
+  }
+}
+
+// ── SETUP SCREEN FUNCTIONS ──
+var setupMembersList = [];
+var SETUP_COLORS = ['#6c63ff','#ff6584','#43e97b','#f7971e','#38b2ac','#ed64a6','#667eea','#f6ad55','#fc8181'];
+
+function setupShowMsg(txt, isErr) {
+  var el = document.getElementById('setup-msg');
+  if (!el) return;
+  el.textContent = txt;
+  el.style.color = isErr ? '#ff6584' : '#43e97b';
+}
+
+function setupRenderMembers() {
+  var el = document.getElementById('member-list-setup');
+  if (!el) return;
+  if (setupMembersList.length === 0) {
+    el.innerHTML = '<span style="font-size:.78rem;color:#9090a8">No members added yet</span>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < setupMembersList.length; i++) {
+    var m = setupMembersList[i];
+    html += '<div style="display:inline-flex;align-items:center;gap:6px;background:' + m.color + '22;border:1px solid ' + m.color + '55;border-radius:20px;padding:5px 10px 5px 8px;font-size:.85rem;margin:3px">'
+      + '<span style="width:20px;height:20px;border-radius:50%;background:' + m.color + ';display:inline-flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:#fff">' + m.name[0].toUpperCase() + '</span>'
+      + '<span style="color:var(--text)">' + m.name + '</span>'
+      + '<span onclick="setupRemoveMember(' + i + ')" style="cursor:pointer;color:#9090a8;font-size:1.1rem;line-height:1;padding:0 2px">&times;</span>'
+      + '</div>';
+  }
+  el.innerHTML = html;
+}
+
+function setupRemoveMember(i) {
+  setupMembersList.splice(i, 1);
+  setupRenderMembers();
+}
+
+function setupDoAdd() {
+  var inp = document.getElementById('new-member-name');
+  if (!inp) return;
+  var name = inp.value.trim();
+  if (!name) { setupShowMsg('Type a name first', true); return; }
+  if (setupMembersList.length >= 9) { setupShowMsg('Maximum 9 members', true); return; }
+  setupMembersList.push({
+    name: name,
+    color: SETUP_COLORS[setupMembersList.length % SETUP_COLORS.length],
+    id: String(Date.now() + Math.random()),
+    avatar: null
+  });
+  inp.value = '';
+  inp.focus();
+  setupShowMsg('');
+  setupRenderMembers();
+}
+
+function setupDoLaunch() {
+  setupShowMsg('Launching...');
+  if (setupMembersList.length === 0) {
+    setupMembersList = [
+      { name: 'Dad',     color: '#6c63ff', id: String(Date.now()+1), avatar: null },
+      { name: 'Mom',     color: '#ff6584', id: String(Date.now()+2), avatar: null },
+      { name: 'Child 1', color: '#43e97b', id: String(Date.now()+3), avatar: null }
+    ];
+  }
+  
+  state.members = setupMembersList;
+  state.lists = [
+    { id: 'l1', name: 'Grocery List', emoji: '🛒', color: '#43e97b' },
+    { id: 'l2', name: 'Tech Checklist', emoji: '🔧', color: '#6c63ff' },
+    { id: 'l3', name: 'Home Tasks', emoji: '🏠', color: '#f7971e' }
+  ];
+  state.gcalKey = document.getElementById('setup-gcal-key').value.trim();
+  state.gcalId = document.getElementById('setup-gcal-id').value.trim();
+  
+  saveConfigToFirebase();
+  document.getElementById('setup-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  startApp();
+}
+
+// ══════════════════════════════════════
+// GLOBAL ERROR HANDLER
+// ══════════════════════════════════════
+window.onerror = function(msg, src, line, col, err) {
+  var body = document.body;
+  if (body && document.getElementById('app') && 
+      document.getElementById('app').style.display === 'block') {
+    var existing = document.getElementById('app-error-banner');
+    if (!existing) {
+      var banner = document.createElement('div');
+      banner.id = 'app-error-banner';
+      banner.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#ff6584;color:#fff;padding:10px 16px;font-size:.82rem;z-index:99999;display:flex;justify-content:space-between;align-items:center';
+      banner.innerHTML = '<span>⚠️ Error: ' + msg + ' (line ' + line + ')</span><button onclick="this.parentElement.remove()" style="background:none;border:none;color:#fff;cursor:pointer;font-size:1.1rem">×</button>';
+      document.body.prepend(banner);
+    }
+  }
+  return false;
+};
+
+// ══════════════════════════════════════
+// CONSTANTS & STATE
+// ══════════════════════════════════════
+const COLORS = ['#6c63ff','#ff6584','#43e97b','#f7971e','#38b2ac','#ed64a6','#667eea','#f6ad55','#fc8181'];
+const LIST_EMOJIS = ['📋','🛒','🏠','💼','📚','🎯','💡','🔧','✈️','🎮','🏋️','🍕','💊','🎓','🔑','🌿','🎨','🎵'];
+const MEMBER_EMOJIS = ['😊','👨','👩','👦','👧','🧒','👴','👵','🧑','👶','🧔','👱','🧕','👮','👷','🧑‍🍳','🧑‍🎓','🦸'];
+const LIST_COLORS = ['#6c63ff','#ff6584','#43e97b','#f7971e','#38b2ac','#ed64a6','#4285f4','#f6ad55','#a78bfa'];
+
+let state = {
+  members: [], tasks: [], lists: [],
+  gcalKey: '', gcalId: '', theme: 'dark',
+  currentMember: 'family', currentView: 'myday', mainView: 'tasks', currentListId: null,
+  calMonth: new Date().getMonth(), calYear: new Date().getFullYear(),
+  editingTaskId: null, editingMemberId: null, editingListId: null,
+  syncing: false, lastSync: null,
+  pendingAvatar: null, pendingColor: null, pendingListEmoji: null, pendingListColor: null,
+};
+
+// ══════════════════════════════════════
+// THEME
+// ══════════════════════════════════════
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  const btn = document.getElementById('theme-btn');
+  if (btn) btn.textContent = t === 'dark' ? '🌙' : '☀️';
+}
+function toggleTheme() {
+  state.theme = state.theme === 'dark' ? 'light' : 'dark';
+  applyTheme(state.theme);
+  saveConfigToFirebase();
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ══════════════════════════════════════
+// APP START
+// ══════════════════════════════════════
+function startApp() {
+  try {
+    applyTheme(state.theme);
+    document.getElementById('setup-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    renderSidebar();
+    renderSidebarLists();
+    setView('tasks');
+    startFirebaseListener();
+  } catch(err) {
+    console.error('startApp error:', err);
+  }
+}
+
+function renderSidebar() {
+  document.getElementById('sidebar-members').innerHTML = state.members.map(m => `
+    <button class="member-btn" data-member="${m.id}" onclick="selectMember('${m.id}',this)">
+      <span class="m-avatar" style="background:${m.color}22;color:${m.color}">${memberAvatarHtml(m, 30)}</span>
+      <span>${escHtml(m.name)}</span>
+      <span class="m-count" id="count-${m.id}">0</span>
+    </button>`).join('');
+  updateCounts();
+  const sel = document.getElementById('t-member');
+  if (sel) sel.innerHTML = '<option value="family">All Family</option>' +
+    state.members.map(m => `<option value="${m.id}">${escHtml(m.name)}</option>`).join('');
+  renderTaskListSelect();
+}
+
+function memberAvatarHtml(m, size) {
+  if (m.avatar && m.avatar.startsWith('data:')) {
+    return `<img src="${m.avatar}" style="width:${size}px;height:${size}px;object-fit:cover;border-radius:50%">`;
+  }
+  if (m.avatar && m.avatar.length <= 4) return m.avatar;
+  return m.name[0].toUpperCase();
+}
+
+function renderSidebarLists() {
+  document.getElementById('sidebar-lists').innerHTML = state.lists.map(l => {
+    const count = state.tasks.filter(t => t.listId === l.id && !t.completed).length;
+    return `<button class="list-btn ${state.currentListId === l.id && state.mainView === 'list' ? 'active' : ''}" onclick="openList('${l.id}')">
+      <span class="list-icon" style="background:${l.color}22;color:${l.color}">${l.emoji}</span>
+      <span>${escHtml(l.name)}</span>
+      ${count > 0 ? `<span class="list-count">${count}</span>` : ''}
+      <button class="list-del" onclick="deleteList('${l.id}',event)" title="Delete list">×</button>
+    </button>`;
+  }).join('');
+  renderTaskListSelect();
+}
+
+function renderTaskListSelect() {
+  const sel = document.getElementById('t-list-sel');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">No list</option>' +
+    state.lists.map(l => `<option value="${l.id}">${l.emoji} ${escHtml(l.name)}</option>`).join('');
+}
+
+function updateCounts() {
+  const active = state.tasks.filter(t => !t.completed);
+  const famEl = document.getElementById('count-family');
+  if (famEl) famEl.textContent = active.length;
+  state.members.forEach(m => {
+    const el = document.getElementById('count-' + m.id);
+    if (el) el.textContent = active.filter(t => t.member === String(m.id)).length;
+  });
+}
+
+function selectMember(id, btn) {
+  state.currentMember = id;
+  state.currentView = 'myday';
+  state.mainView = 'tasks';
+  state.currentListId = null;
+  document.querySelectorAll('.member-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  const m = state.members.find(m => String(m.id) === String(id));
+  document.getElementById('topbar-title').textContent = m ? m.name : 'All Family';
+  document.getElementById('topbar-color').style.background = m ? m.color : 'var(--accent)';
+  document.getElementById('view-tabs').style.display = id === 'family' ? 'none' : 'flex';
+  document.querySelectorAll('.view-tab').forEach((t,i) => t.classList.toggle('active', i===0));
+  
+  setTimeout(() => {
+    const lateTab = document.getElementById('tab-late');
+    if (lateTab && id !== 'family') {
+      const today = todayStr();
+      const lateCount = state.tasks.filter(t => String(t.member) === String(id) && !t.completed && t.dueDate && t.dueDate < today).length;
+      lateTab.textContent = lateCount > 0 ? 'Late Tasks (' + lateCount + ')' : 'Late Tasks';
+      lateTab.style.color = lateCount > 0 ? 'var(--accent2)' : '';
+    }
+  }, 0);
+  
+  document.querySelectorAll('.list-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  renderTasksView();
+  if (window.innerWidth <= 768) toggleSidebar(false);
+}
+
+function setView(v) {
+  state.mainView = v;
+  state.currentListId = null;
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.list-btn').forEach(b => b.classList.remove('active'));
+  const nb = document.getElementById('nav-' + v);
+  if (nb) nb.classList.add('active');
+  document.getElementById('view-tabs').style.display =
+    (v === 'tasks' && state.currentMember !== 'family') ? 'flex' : 'none';
+  if (v === 'overview') renderOverview();
+  else if (v === 'calendar') renderCalendar();
+  else if (v === 'settings') renderSettings();
+  else renderTasksView();
+}
+
+function setMemberView(v, btn) {
+  state.currentView = v;
+  document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderTasksView();
+}
+
+function openList(listId) {
+  state.mainView = 'list';
+  state.currentListId = listId;
+  state.currentMember = 'family';
+  document.querySelectorAll('.member-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.list-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`[onclick="openList('${listId}')"]`)?.classList.add('active');
+  document.getElementById('view-tabs').style.display = 'none';
+  const list = state.lists.find(l => l.id === listId);
+  document.getElementById('topbar-title').textContent = list ? list.name : 'List';
+  document.getElementById('topbar-color').style.background = list ? list.color : 'var(--accent)';
+  renderListView();
+  if (window.innerWidth <= 768) toggleSidebar(false);
+}
+
+function toggleSidebar(force) {
+  const s = document.getElementById('sidebar');
+  if (typeof force === 'boolean') s.classList.toggle('open', force);
+  else s.classList.toggle('open');
+}
+
+// ══════════════════════════════════════
+// TASKS VIEW
+// ══════════════════════════════════════
+function getFilteredTasks() {
+  let tasks = [...state.tasks];
+  const mid = state.currentMember;
+  if (mid !== 'family') tasks = tasks.filter(t => String(t.member) === String(mid));
+  const today = todayStr();
+  switch (state.currentView) {
+    case 'myday': tasks = tasks.filter(t => !t.completed && (t.dueDate === today || !t.dueDate)); break;
+    case 'late': tasks = tasks.filter(t => !t.completed && t.dueDate && t.dueDate < today); break;
+    case 'important': tasks = tasks.filter(t => !t.completed && t.priority === 'high'); break;
+    case 'planned': tasks = tasks.filter(t => !t.completed && t.dueDate); break;
+    case 'completed': tasks = tasks.filter(t => t.completed); break;
+  }
+  return tasks;
+}
+
+function renderTasksView() {
+  const tasks = getFilteredTasks();
+  const incomplete = tasks.filter(t => !t.completed);
+  const complete = tasks.filter(t => t.completed);
+  const today = todayStr();
+  let html = '';
+  
+  if (state.currentView === 'myday' && state.currentMember !== 'family') {
+    html += `<div style="margin-bottom:18px">
+      <div style="font-family:'DM Serif Display',serif;font-size:1.45rem;margin-bottom:2px">My Day</div>
+      <div style="font-size:.8rem;color:var(--text3)">${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</div>
+    </div>`;
+  }
+  if (state.currentView === 'late' && state.currentMember !== 'family') {
+    html += `<div style="margin-bottom:18px;display:flex;align-items:center;gap:10px">
+      <div>
+        <div style="font-family:'DM Serif Display',serif;font-size:1.45rem;margin-bottom:2px;color:var(--accent2)">Late Tasks</div>
+        <div style="font-size:.8rem;color:var(--text3)">Tasks past their due date</div>
+      </div>
+    </div>`;
+  }
+  if (state.currentMember !== 'family') {
+    const total = incomplete.length + complete.length;
+    const pct = total ? Math.round(complete.length / total * 100) : 0;
+    html += `<div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>`;
+  }
+  html += `<div class="add-task-bar">
+    <svg width="15" height="15" fill="none" stroke="var(--text3)" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+    <input type="text" placeholder="Add a task… press Enter" id="quick-add-input" onkeydown="if(event.key==='Enter')quickAddTask()">
+    <button class="btn btn-primary btn-sm" onclick="openAddTask()">Details</button>
+  </div>
+  <div class="filters">
+    <button class="filter-chip active" onclick="filterTasks('all',this)">All</button>
+    <button class="filter-chip" onclick="filterTasks('high',this)">🔴 High</button>
+    <button class="filter-chip" onclick="filterTasks('medium',this)">🟡 Medium</button>
+    <button class="filter-chip" onclick="filterTasks('today',this)">📅 Today</button>
+    <button class="filter-chip" onclick="filterTasks('overdue',this)">⚠️ Overdue</button>
+  </div>`;
+  
+  if (!incomplete.length && !complete.length) {
+    html += `<div class="tasks-empty"><span class="emoji">✅</span><div style="font-weight:600">Nothing here yet</div><div style="font-size:.8rem;margin-top:5px">Add a task above</div></div>`;
+  }
+  if (incomplete.length) html += `<div class="section-title">Active (${incomplete.length})</div>` + incomplete.map(t => renderTaskItem(t,today)).join('');
+  if (complete.length) html += `<div class="section-title" style="margin-top:22px">Completed (${complete.length})</div>` + complete.map(t => renderTaskItem(t,today)).join('');
+  
+  document.getElementById('main-content').innerHTML = html;
+}
+
+function renderListView() {
+  const list = state.lists.find(l => l.id === state.currentListId);
+  if (!list) { renderTasksView(); return; }
+  const tasks = state.tasks.filter(t => t.listId === list.id);
+  const incomplete = tasks.filter(t => !t.completed);
+  const complete = tasks.filter(t => t.completed);
+  const today = todayStr();
+  
+  let html = `<div class="list-view-header">
+    <div class="list-view-icon" style="background:${list.color}22;color:${list.color}">${list.emoji}</div>
+    <div>
+      <div class="list-view-name">${escHtml(list.name)}</div>
+      <div class="list-view-count">${incomplete.length} active · ${complete.length} completed</div>
+    </div>
+  </div>
+  <div class="add-task-bar">
+    <svg width="15" height="15" fill="none" stroke="var(--text3)" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+    <input type="text" placeholder="Add item to ${escHtml(list.name)}…" id="quick-add-input" onkeydown="if(event.key==='Enter')quickAddToList('${list.id}')">
+    <button class="btn btn-primary btn-sm" onclick="openAddTaskToList('${list.id}')">Details</button>
+  </div>`;
+  
+  if (!incomplete.length && !complete.length) {
+    html += `<div class="tasks-empty"><span class="emoji">${list.emoji}</span><div style="font-weight:600">List is empty</div><div style="font-size:.8rem;margin-top:5px">Add items above</div></div>`;
+  }
+  if (incomplete.length) html += `<div class="section-title">Items (${incomplete.length})</div>` + incomplete.map(t => renderTaskItem(t,today)).join('');
+  if (complete.length) html += `<div class="section-title" style="margin-top:20px">Completed</div>` + complete.map(t => renderTaskItem(t,today)).join('');
+  
+  document.getElementById('main-content').innerHTML = html;
+}
+
+function renderTaskItem(t, today) {
+  const member = state.members.find(m => String(m.id) === String(t.member));
+  const color = member ? member.color : 'var(--accent)';
+  const list = t.listId ? state.lists.find(l => l.id === t.listId) : null;
+  const dueClass = t.dueDate ? (t.dueDate < today ? 'overdue' : t.dueDate === today ? 'today' : '') : '';
+  const dueLabel = t.dueDate ? (t.dueDate < today ? '⚠ Overdue' : t.dueDate === today ? '📅 Today' : '📅 ' + formatDate(t.dueDate)) : '';
+  const prioMap = { high:'🔴 High', medium:'🟡 Med', low:'🟢 Low' };
+  
+  return `<div class="task-item ${t.completed?'completed':''}" id="task-${t.id}">
+    <button class="task-check ${t.completed?'done':''}" onclick="toggleTask('${t.id}',event)" style="${t.completed?'':'border-color:'+color}"></button>
+    <div class="task-body">
+      <div class="task-title">${escHtml(t.title)}</div>
+      <div class="task-meta">
+        ${t.dueDate ? `<span class="task-due ${dueClass}">${dueLabel}</span>` : ''}
+        ${t.priority && t.priority !== 'none' ? `<span class="${t.priority==='high'?'prio-high':t.priority==='medium'?'prio-med':'prio-low'}">${prioMap[t.priority]||''}</span>` : ''}
+        ${list ? `<span class="task-tag" style="background:${list.color}22;color:${list.color}">${list.emoji} ${escHtml(list.name)}</span>` : ''}
+        ${state.currentMember==='family' && member ? `<span class="assigned-tag"><span class="mini-av" style="background:${color}33;color:${color}">${memberAvatarHtml(member,15)}</span>${escHtml(member.name)}</span>` : ''}
+        ${t.addedToCal===true||t.addedToCal==='true' ? `<span class="task-tag" style="background:#4285f422;color:#4285f4">📅 Cal</span>` : ''}
+      </div>
+      ${t.dueTime ? `<span class="task-due" style="color:var(--accent4)">⏰ ${formatTime(t.dueTime)}</span>` : ''}
+      ${t.recurrence ? `<span class="task-tag" style="background:rgba(108,99,255,.15);color:var(--accent)">↻ ${recurLabel(t.recurrence)}</span>` : ''}
+      ${t.notes ? `<div style="font-size:.76rem;color:var(--text3);margin-top:4px">${escHtml(t.notes)}</div>` : ''}
+    </div>
+    <div class="task-actions">
+      <button class="task-action-btn" onclick="editTask('${t.id}',event)">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      </button>
+      <button class="task-action-btn del" onclick="deleteTask('${t.id}',event)">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+      </button>
+    </div>
+  </div>`;
+}
+
+function filterTasks(type, btn) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  const today = todayStr();
+  document.querySelectorAll('.task-item').forEach(el => {
+    const id = el.id.replace('task-','');
+    const t = state.tasks.find(x => String(x.id) === id);
+    if (!t) return;
+    let show = true;
+    if (type==='high') show = t.priority==='high' && !t.completed;
+    else if (type==='medium') show = t.priority==='medium' && !t.completed;
+    else if (type==='today') show = t.dueDate===today && !t.completed;
+    else if (type==='overdue') show = t.dueDate && t.dueDate < today && !t.completed;
+    el.style.display = show ? '' : 'none';
+  });
+}
+
+// ══════════════════════════════════════
+// TASK CRUD (Synced to Firebase)
+// ══════════════════════════════════════
+function quickAddTask() {
+  const inp = document.getElementById('quick-add-input');
+  const title = inp.value.trim(); if (!title) return;
+  const task = makeTask(title, { member: state.currentMember==='family' ? 'family' : state.currentMember });
+  pushTask(task, 'add');
+  toast('Task added!','success'); inp.value = '';
+}
+function quickAddToList(listId) {
+  const inp = document.getElementById('quick-add-input');
+  const title = inp.value.trim(); if (!title) return;
+  const task = makeTask(title, { member: 'family', listId });
+  pushTask(task, 'add');
+  toast('Added!','success'); inp.value = '';
+}
+function makeTask(title, overrides={}) {
+  return { id:genId(), title, notes:'', member:'family', priority:'none', dueDate:'', dueTime:'', recurrence:'', listId:'', completed:false, completedAt:'', createdAt:new Date().toISOString(), addedToCal:false, ...overrides };
+}
+function nextRecurDate(task) {
+  if (!task.dueDate || !task.recurrence) return null;
+  const d = new Date(task.dueDate + 'T12:00:00');
+  switch(task.recurrence) {
+    case 'daily': d.setDate(d.getDate()+1); break;
+    case 'weekdays':
+      d.setDate(d.getDate()+1);
+      while(d.getDay()===0||d.getDay()===6) d.setDate(d.getDate()+1);
+      break;
+    case 'weekly': d.setDate(d.getDate()+7); break;
+    case 'biweekly': d.setDate(d.getDate()+14); break;
+    case 'monthly': d.setMonth(d.getMonth()+1); break;
+    case 'yearly': d.setFullYear(d.getFullYear()+1); break;
+    default: return null;
+  }
+  return d.toISOString().split('T')[0];
+}
+function spawnRecurringTask(completedTask) {
+  if (!completedTask.recurrence) return;
+  const next = nextRecurDate(completedTask);
+  if (!next) return;
+  const newTask = makeTask(completedTask.title, {
+    notes: completedTask.notes, member: completedTask.member, priority: completedTask.priority,
+    dueDate: next, dueTime: completedTask.dueTime, recurrence: completedTask.recurrence,
+    listId: completedTask.listId, addedToCal: completedTask.addedToCal
+  });
+  pushTask(newTask, 'add');
+  toast('Recurring task scheduled for ' + formatDate(next), 'info');
+}
+
+function openAddTask() {
+  state.editingTaskId = null;
+  document.getElementById('task-modal-title').textContent = 'Add Task';
+  document.getElementById('t-title').value = '';
+  document.getElementById('t-notes').value = '';
+  document.getElementById('t-due').value = '';
+  document.getElementById('t-priority').value = 'none';
+  document.getElementById('t-add-to-cal').checked = false;
+  document.getElementById('t-list-sel').value = '';
+  document.getElementById('t-time').value = '';
+  document.getElementById('t-recur').value = '';
+  const sel = document.getElementById('t-member');
+  if (sel) sel.value = state.currentMember !== 'family' ? state.currentMember : (state.members[0]?.id || 'family');
+  document.getElementById('task-modal').classList.add('open');
+}
+
+function openAddTaskToList(listId) {
+  openAddTask();
+  document.getElementById('t-list-sel').value = listId;
+}
+
+function editTask(id, e) {
+  if (e) e.stopPropagation();
+  const t = state.tasks.find(x => String(x.id)===String(id)); if (!t) return;
+  state.editingTaskId = id;
+  document.getElementById('task-modal-title').textContent = 'Edit Task';
+  document.getElementById('t-title').value = t.title;
+  document.getElementById('t-notes').value = t.notes || '';
+  document.getElementById('t-due').value = t.dueDate || '';
+  document.getElementById('t-priority').value = t.priority || 'none';
+  document.getElementById('t-add-to-cal').checked = t.addedToCal===true||t.addedToCal==='true';
+  document.getElementById('t-member').value = t.member;
+  document.getElementById('t-list-sel').value = t.listId || '';
+  document.getElementById('t-time').value = t.dueTime || '';
+  document.getElementById('t-recur').value = t.recurrence || '';
+  document.getElementById('task-modal').classList.add('open');
+}
+
+function saveTask() {
+  const title = document.getElementById('t-title').value.trim();
+  if (!title) { toast('Please enter a task title','error'); return; }
+  const addToCal = document.getElementById('t-add-to-cal').checked;
+  const dueDate = document.getElementById('t-due').value;
+  
+  if (state.editingTaskId) {
+    const idx = state.tasks.findIndex(x => String(x.id)===String(state.editingTaskId));
+    if (idx > -1) {
+      const updatedTask = Object.assign({}, state.tasks[idx], { 
+        title, 
+        notes: document.getElementById('t-notes').value, 
+        member: document.getElementById('t-member').value, 
+        priority: document.getElementById('t-priority').value, 
+        dueDate, 
+        dueTime: document.getElementById('t-time').value, 
+        recurrence: document.getElementById('t-recur').value, 
+        listId: document.getElementById('t-list-sel').value, 
+        addedToCal: addToCal 
+      });
+      pushTask(updatedTask, 'update'); 
+      toast('Updated!','success');
+    }
+  } else {
+    const task = makeTask(title, { 
+      notes: document.getElementById('t-notes').value, 
+      member: document.getElementById('t-member').value, 
+      priority: document.getElementById('t-priority').value, 
+      dueDate, 
+      dueTime: document.getElementById('t-time').value, 
+      recurrence: document.getElementById('t-recur').value, 
+      listId: document.getElementById('t-list-sel').value, 
+      addedToCal: addToCal 
+    });
+    pushTask(task, 'add'); 
+    toast('Task added!','success');
+    if (addToCal && dueDate) addToGoogleCalendar(task);
+  }
+  closeModal('task-modal');
+}
+
+function toggleTask(id, e) {
+  if (e) e.stopPropagation();
+  const t = state.tasks.find(x => String(x.id)===String(id)); if (!t) return;
+  
+  const updatedTask = Object.assign({}, t, {
+    completed: !t.completed,
+    completedAt: !t.completed ? new Date().toISOString() : ''
+  });
+  
+  pushTask(updatedTask, 'update');
+  if (updatedTask.completed) { confettiTask(id); if(updatedTask.recurrence) spawnRecurringTask(updatedTask); }
+}
+
+function deleteTask(id, e) {
+  if (e) e.stopPropagation();
+  if (!confirm('Delete this task?')) return;
+  pushTask({id: id}, 'delete');
+  toast('Deleted','info');
+}
+
+// ── CELEBRATION SYSTEM ──
+const CELEB_MESSAGES = [
+  { emoji: '🎉', title: 'Task crushed!', sub: 'One down, greatness continues.' },
+  { emoji: '⭐', title: 'Nailed it!', sub: 'The Boyle family gets things done.' },
+  { emoji: '🏆', title: 'Winner!', sub: 'Another one bites the dust.' },
+  { emoji: '🚀', title: 'Blasted off!', sub: 'To the moon and back.' },
+];
+
+function confettiTask(id) {
+  launchConfetti();
+  showCelebMessage();
+}
+
+function launchConfetti() {
+  const old = document.getElementById('confetti-canvas');
+  if (old) old.remove();
+
+  const canvas = document.createElement('canvas');
+  canvas.id = 'confetti-canvas';
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+
+  const COLORS = ['#6c63ff','#ff6584','#43e97b','#f7971e','#38b2ac','#a78bfa','#fbbf24','#34d399','#f87171'];
+  const SHAPES = ['circle','rect','triangle'];
+  const count = 120;
+  const pieces = Array.from({length: count}, () => ({
+    x: Math.random() * canvas.width,
+    y: -20 - Math.random() * 200,
+    r: 4 + Math.random() * 7,
+    color: COLORS[Math.floor(Math.random() * COLORS.length)],
+    shape: SHAPES[Math.floor(Math.random() * SHAPES.length)],
+    vx: (Math.random() - 0.5) * 5,
+    vy: 3 + Math.random() * 5,
+    spin: (Math.random() - 0.5) * 0.3,
+    angle: Math.random() * Math.PI * 2,
+    opacity: 1,
+    wobble: Math.random() * Math.PI * 2,
+    wobbleSpeed: 0.05 + Math.random() * 0.05,
+  }));
+
+  let frame = 0;
+  const maxFrames = 160;
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pieces.forEach(p => {
+      p.y += p.vy; p.x += p.vx; p.angle += p.spin; p.wobble += p.wobbleSpeed; p.x += Math.sin(p.wobble) * 1.5; p.vy += 0.12;
+      if (frame > maxFrames * 0.6) p.opacity = Math.max(0, p.opacity - 0.025);
+      ctx.save(); ctx.globalAlpha = p.opacity; ctx.fillStyle = p.color; ctx.translate(p.x, p.y); ctx.rotate(p.angle);
+      if (p.shape === 'circle') { ctx.beginPath(); ctx.arc(0, 0, p.r, 0, Math.PI * 2); ctx.fill(); } 
+      else if (p.shape === 'rect') { ctx.fillRect(-p.r, -p.r / 2, p.r * 2, p.r); } 
+      else { ctx.beginPath(); ctx.moveTo(0, -p.r); ctx.lineTo(p.r, p.r); ctx.lineTo(-p.r, p.r); ctx.closePath(); ctx.fill(); }
+      ctx.restore();
+    });
+    frame++;
+    if (frame < maxFrames) requestAnimationFrame(draw); else canvas.remove();
+  }
+  requestAnimationFrame(draw);
+}
+
+function showCelebMessage() {
+  const old = document.getElementById('celebration-overlay');
+  if (old) old.remove();
+  const msg = CELEB_MESSAGES[Math.floor(Math.random() * CELEB_MESSAGES.length)];
+  const overlay = document.createElement('div');
+  overlay.id = 'celebration-overlay';
+  overlay.innerHTML = '<div class="celeb-message">' +
+    '<span class="celeb-emoji">' + msg.emoji + '</span>' +
+    '<div class="celeb-title">' + msg.title + '</div>' +
+    '<div class="celeb-sub">' + msg.sub + '</div>' +
+    '</div>';
+  document.body.appendChild(overlay);
+  setTimeout(() => {
+    const el = overlay.querySelector('.celeb-message');
+    if (el) { el.style.transition = 'opacity .4s,transform .4s'; el.style.opacity='0'; el.style.transform='scale(.8) translateY(-20px)'; }
+    setTimeout(() => overlay.remove(), 420);
+  }, 2200);
+}
+
+// ══════════════════════════════════════
+// LIST CRUD
+// ══════════════════════════════════════
+let listEmojiSelected = '📋';
+let listColorSelected = '#6c63ff';
+function openAddList() {
+  state.editingListId = null;
+  listEmojiSelected = '📋'; listColorSelected = '#6c63ff';
+  document.getElementById('list-modal-title').textContent = 'Create List';
+  document.getElementById('l-name').value = '';
+  buildListEmojiGrid(); buildListColorGrid();
+  document.getElementById('list-modal').classList.add('open');
+}
+function buildListEmojiGrid() {
+  document.getElementById('list-emoji-grid').innerHTML = LIST_EMOJIS.map(e =>
+    `<button class="avatar-emoji-btn ${e===listEmojiSelected?'selected':''}" onclick="listEmojiSelected='${e}';buildListEmojiGrid()">${e}</button>`).join('');
+}
+function buildListColorGrid() {
+  document.getElementById('list-color-grid').innerHTML = LIST_COLORS.map(c =>
+    `<button onclick="listColorSelected='${c}';buildListColorGrid()" style="width:26px;height:26px;border-radius:50%;background:${c};border:2px solid ${c===listColorSelected?'var(--text)':'transparent'};cursor:pointer;transition:border .1s"></button>`).join('');
+}
+function saveList() {
+  const name = document.getElementById('l-name').value.trim();
+  if (!name) { toast('Enter a list name','error'); return; }
+  if (state.editingListId) {
+    const l = state.lists.find(x => x.id===state.editingListId);
+    if (l) { l.name=name; l.emoji=listEmojiSelected; l.color=listColorSelected; }
+  } else {
+    state.lists.push({ id:genId(), name, emoji:listEmojiSelected, color:listColorSelected });
+  }
+  saveConfigToFirebase(); closeModal('list-modal');
+  toast(state.editingListId?'List updated!':'List created!','success');
+}
+function deleteList(id, e) {
+  if (e) e.stopPropagation();
+  if (!confirm('Delete this list? Tasks in the list will remain but lose their list association.')) return;
+  state.lists = state.lists.filter(l => l.id!==id);
+  state.tasks.forEach(t => { 
+    if(t.listId===id) {
+       t.listId='';
+       pushTask(t, 'update'); // update Firebase to strip list association
+    } 
+  });
+  saveConfigToFirebase();
+  if (state.currentListId===id) { state.mainView='tasks'; state.currentListId=null; renderTasksView(); }
+  toast('List deleted','info');
+}
+
+// ══════════════════════════════════════
+// MEMBER AVATAR / EDIT
+// ══════════════════════════════════════
+let memberEditIdx = -1;
+let memberAvatarPending = null; 
+let memberColorPending = '#6c63ff';
+function openEditMember(idx) {
+  memberEditIdx = idx;
+  const m = state.members[idx]; if (!m) return;
+  memberAvatarPending = m.avatar || null;
+  memberColorPending = m.color;
+  document.getElementById('member-modal-title').textContent = 'Edit ' + m.name;
+  document.getElementById('av-name').value = m.name;
+  updateAvatarPreview();
+  buildMemberEmojiGrid();
+  buildMemberColorGrid();
+  document.getElementById('member-modal').classList.add('open');
+}
+function updateAvatarPreview() {
+  const el = document.getElementById('av-preview'); if (!el) return;
+  if (memberAvatarPending && memberAvatarPending.startsWith('data:')) {
+    el.innerHTML = `<img src="${memberAvatarPending}" style="width:60px;height:60px;object-fit:cover;border-radius:50%">`;
+  } else if (memberAvatarPending && memberAvatarPending.length <= 4) {
+    el.innerHTML = memberAvatarPending;
+    el.style.fontSize = '2rem';
+  } else {
+    el.innerHTML = state.members[memberEditIdx]?.name[0]?.toUpperCase() || '?';
+    el.style.fontSize = '1.4rem';
+  }
+}
+function buildMemberEmojiGrid() {
+  document.getElementById('member-emoji-grid').innerHTML = MEMBER_EMOJIS.map(e =>
+    `<button class="avatar-emoji-btn ${e===memberAvatarPending?'selected':''}" onclick="memberAvatarPending='${e}';updateAvatarPreview();buildMemberEmojiGrid()">${e}</button>`).join('');
+}
+function buildMemberColorGrid() {
+  document.getElementById('member-color-grid').innerHTML = COLORS.map(c =>
+    `<button onclick="memberColorPending='${c}';buildMemberColorGrid()" style="width:26px;height:26px;border-radius:50%;background:${c};border:2px solid ${c===memberColorPending?'var(--text)':'transparent'};cursor:pointer;transition:border .1s"></button>`).join('');
+}
+function handleAvatarUpload(event) {
+  const file = event.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => { memberAvatarPending = e.target.result; updateAvatarPreview(); buildMemberEmojiGrid(); };
+  reader.readAsDataURL(file);
+}
+function saveMember() {
+  const name = document.getElementById('av-name').value.trim();
+  if (!name) { toast('Enter a name','error'); return; }
+  const m = state.members[memberEditIdx]; if (!m) return;
+  m.name = name; m.avatar = memberAvatarPending; m.color = memberColorPending;
+  saveConfigToFirebase(); closeModal('member-modal');
+  toast('Member updated!','success');
+}
+
+// ══════════════════════════════════════
+// OVERVIEW
+// ══════════════════════════════════════
+function renderOverview() {
+  document.getElementById('view-tabs').style.display = 'none';
+  const today = todayStr();
+  let html = `<div class="family-grid">`;
+  state.members.forEach(m => {
+    const mTasks = state.tasks.filter(t => String(t.member)===String(m.id));
+    const active = mTasks.filter(t => !t.completed);
+    const done = mTasks.filter(t => t.completed);
+    const overdue = active.filter(t => t.dueDate && t.dueDate < today);
+    html += `<div class="family-card" onclick="selectMemberFromCard('${m.id}')">
+      <div class="family-card-header">
+        <div class="family-card-avatar" style="background:${m.color}22;color:${m.color}">${memberAvatarHtml(m,44)}</div>
+        <div>
+          <div class="family-card-name">${escHtml(m.name)}</div>
+          <div class="family-card-role">${active.length} active task${active.length!==1?'s':''}</div>
+        </div>
+        <button class="icon-btn" style="margin-left:auto;width:28px;height:28px;font-size:.8rem" onclick="event.stopPropagation();openEditMember(${state.members.indexOf(m)})" title="Edit member">✏️</button>
+      </div>
+      <div class="family-card-stats">
+        <div class="stat"><div class="stat-num">${active.length}</div><div class="stat-lbl">Active</div></div>
+        <div class="stat"><div class="stat-num">${done.length}</div><div class="stat-lbl">Done</div></div>
+        <div class="stat"><div class="stat-num" style="color:${overdue.length?'var(--accent2)':'inherit'}">${overdue.length}</div><div class="stat-lbl">Overdue</div></div>
+      </div>
+      ${(()=>{
+        const total = active.length + done.length;
+        const pct = total === 0 ? 0 : Math.round(done.length / total * 100);
+        const allDone = total > 0 && pct === 100;
+        const barColor = allDone ? '#43e97b' : overdue.length > 0 ? `linear-gradient(90deg,${m.color},var(--accent2))` : `linear-gradient(90deg,${m.color},${m.color}cc)`;
+        if (allDone) return `<div class="card-complete-badge" style="color:#43e97b;background:rgba(67,233,123,.08)">🎉 All tasks complete!</div>`;
+        if (total === 0) return `<div class="card-progress-wrap"><div class="card-progress-label"><span class="card-progress-pct" style="color:var(--text3)">No tasks yet</span></div><div class="card-progress-track"><div class="card-progress-fill" style="width:0%;background:${m.color}"></div></div></div>`;
+        return '<div class="card-progress-wrap">' +
+          '<div class="card-progress-label">' +
+          '<span class="card-progress-pct" style="color:' + (pct>=70?'#43e97b':pct>=40?m.color:'var(--accent2)') + '">' + pct + '% complete</span>' +
+          '<span class="card-progress-done">' + done.length + ' of ' + total + ' done</span>' +
+          '</div>' +
+          '<div class="card-progress-track">' +
+          '<div class="card-progress-fill" style="width:' + pct + '%;background:' + barColor + '"></div>' +
+          '</div></div>';
+      })()}
+    </div>`;
+  });
+  html += '</div>';
+  document.getElementById('main-content').innerHTML = html;
+}
+
+function selectMemberFromCard(id) {
+  const btn = document.querySelector(`[data-member="${id}"]`);
+  if (btn) selectMember(id, btn);
+}
+
+// ══════════════════════════════════════
+// CALENDAR VIEW
+// ══════════════════════════════════════
+function renderCalendar() {
+  document.getElementById('view-tabs').style.display = 'none';
+  const { calMonth: month, calYear: year } = state;
+  const monthName = new Date(year,month,1).toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  const todayStr2 = todayStr();
+  const firstDay = new Date(year,month,1).getDay();
+  const daysInMonth = new Date(year,month+1,0).getDate();
+  const daysInPrev = new Date(year,month,0).getDate();
+  let html = `
+  <div class="gcal-banner">
+    <svg width="20" height="20" viewBox="0 0 24 24"><rect width="24" height="24" rx="3" fill="#4285f4"/><rect x="3" y="11" width="18" height="10" rx="1" fill="white" opacity=".15"/><text x="12" y="19" font-size="8" fill="white" text-anchor="middle" font-family="sans-serif" font-weight="bold">CAL</text></svg>
+    <p>${state.gcalKey ? '✅ Google Calendar linked.' : '🔗 <a href="#" onclick="setView(\'settings\')">Link Google Calendar in Settings →</a>'}</p>
+  </div>
+  <div class="cal-nav">
+    <button class="icon-btn" onclick="calPrev()">‹</button>
+    <h3>${monthName}</h3>
+    <button class="icon-btn" onclick="calNext()">›</button>
+    <button class="btn btn-ghost btn-sm" onclick="calToday()">Today</button>
+  </div>
+  <div class="cal-grid">
+    ${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>`<div class="cal-header-cell">${d}</div>`).join('')}`;
+  const totalCells = Math.ceil((firstDay+daysInMonth)/7)*7;
+  for (let i=0;i<totalCells;i++) {
+    let day, isOther=false, ds;
+    if (i<firstDay) { day=daysInPrev-firstDay+i+1; isOther=true; ds=`${year}-${pad(month)}-${pad(day)}`; }
+    else if (i>=firstDay+daysInMonth) { day=i-firstDay-daysInMonth+1; isOther=true; ds=`${year}-${pad(month+2)}-${pad(day)}`; }
+    else { day=i-firstDay+1; ds=`${year}-${pad(month+1)}-${pad(day)}`; }
+    const isToday=ds===todayStr2;
+    const dayTasks = state.tasks.filter(t=>t.dueDate===ds&&!t.completed);
+    const m = state.currentMember!=='family' ? state.members.find(m=>String(m.id)===String(state.currentMember)) : null;
+    const ft = m ? dayTasks.filter(t=>String(t.member)===String(m.id)) : dayTasks;
+    html += `<div class="cal-cell ${isOther?'other-month':''} ${isToday?'today':''}" onclick="calDayClick('${ds}')">
+      <div class="cal-day-num">${day}</div>
+      ${ft.slice(0,3).map(t=>{
+        const tm=state.members.find(m=>String(m.id)===String(t.member));
+        const c=tm?tm.color:'var(--accent)';
+        return `<div class="cal-task-dot"><span class="dot" style="background:${c}"></span>${escHtml(t.title.substring(0,16))}${t.title.length>16?'…':''}</div>`;
+      }).join('')}
+      ${ft.length>3?`<div style="font-size:.66rem;color:var(--text3)">+${ft.length-3} more</div>`:''}
+    </div>`;
+  }
+  html += '</div>';
+  document.getElementById('main-content').innerHTML = html;
+}
+function calPrev() { state.calMonth--; if(state.calMonth<0){state.calMonth=11;state.calYear--;} renderCalendar(); }
+function calNext() { state.calMonth++; if(state.calMonth>11){state.calMonth=0;state.calYear++;} renderCalendar(); }
+function calToday() { state.calMonth=new Date().getMonth(); state.calYear=new Date().getFullYear(); renderCalendar(); }
+function calDayClick(ds) { openAddTask(); document.getElementById('t-due').value = ds; }
+
+// ══════════════════════════════════════
+// SETTINGS
+// ══════════════════════════════════════
+function renderSettings() {
+  document.getElementById('view-tabs').style.display = 'none';
+  const isDark = state.theme === 'dark';
+  document.getElementById('main-content').innerHTML = `
+  <div class="settings-section">
+    <h4>🎨 Appearance</h4>
+    <div class="settings-row">
+      <div><div class="settings-row-label">Dark Mode</div><div class="settings-row-sub">Toggle between dark and light theme</div></div>
+      <button class="toggle ${isDark?'on':''}" onclick="toggleTheme();renderSettings()"></button>
+    </div>
+  </div>
+  
+  <div class="settings-section">
+    <h4>🗄️ Database Connection</h4>
+    <div style="background:rgba(67,233,123,.08);border:1px solid rgba(67,233,123,.2);border-radius:10px;padding:10px 14px;font-size:.82rem;color:var(--accent3);margin-bottom:10px">
+      ✅ Connected to Firebase Realtime Database. App is syncing in real-time.
+    </div>
+  </div>
+  
+  <div class="settings-section">
+    <h4>📅 Google Calendar</h4>
+    <div class="form-group">
+      <label>Google Calendar API Key</label>
+      <input type="text" id="s-gcal-key" value="${escHtml(state.gcalKey)}" placeholder="AIza...">
+    </div>
+    <div class="form-group">
+      <label>Calendar ID</label>
+      <input type="text" id="s-gcal-id" value="${escHtml(state.gcalId)}" placeholder="family@group.calendar.google.com">
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="saveGcal()">Save Calendar Settings</button>
+  </div>
+  <div class="settings-section">
+    <h4>👨‍👩‍👧‍👦 Family Members</h4>
+    ${state.members.map((m,i) => `
+      <div class="settings-row">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="width:32px;height:32px;border-radius:50%;background:${m.color}22;color:${m.color};display:flex;align-items:center;justify-content:center;font-size:.9rem;overflow:hidden">${memberAvatarHtml(m,32)}</span>
+          <div>
+            <div class="settings-row-label">${escHtml(m.name)}</div>
+            <div class="settings-row-sub">${state.tasks.filter(t=>String(t.member)===String(m.id)&&!t.completed).length} active tasks</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:7px">
+          <button class="btn btn-ghost btn-sm" onclick="openEditMember(${i})">Edit</button>
+          <button class="btn btn-ghost btn-sm" style="color:var(--accent2)" onclick="removeMemberSetting(${i})">Remove</button>
+        </div>
+      </div>`).join('')}
+    <div class="add-member-row" style="margin-top:12px">
+      <input type="text" id="settings-new-member" placeholder="New member name" maxlength="24">
+      <button class="btn btn-ghost btn-sm" onclick="addMemberSetting()">+ Add</button>
+    </div>
+  </div>
+
+  <div class="settings-section">
+    <h4>⚠️ Danger Zone</h4>
+    <div class="settings-row">
+      <div><div class="settings-row-label">Reset Local Cache</div><div class="settings-row-sub">Forces a fresh pull from Firebase on next load</div></div>
+      <button class="btn btn-sm" style="background:var(--accent2);color:#fff" onclick="resetAll()">Reset</button>
+    </div>
+  </div>`;
+}
+
+function saveGcal() { 
+  state.gcalKey=document.getElementById('s-gcal-key').value.trim(); 
+  state.gcalId=document.getElementById('s-gcal-id').value.trim(); 
+  saveConfigToFirebase(); 
+  toast('Calendar settings saved','success'); 
+}
+
+function addMemberSetting() {
+  const name=document.getElementById('settings-new-member').value.trim();
+  if (!name||state.members.length>=9) return;
+  state.members.push({ name, color: COLORS[state.members.length%COLORS.length], id: genId(), avatar: null });
+  saveConfigToFirebase(); 
+  renderSidebar(); 
+  renderSettings(); 
+  toast(`${name} added!`,'success');
+}
+
+function removeMemberSetting(i) {
+  if (!confirm(`Remove ${state.members[i].name}?`)) return;
+  state.members.splice(i,1); 
+  saveConfigToFirebase(); 
+  renderSidebar(); 
+  renderSettings();
+}
+
+function resetAll() { 
+  if (!confirm('Reset local data and reload?')) return; 
+  localStorage.removeItem('familyhub_v2'); 
+  window.location.reload(); 
+}
+
+// ══════════════════════════════════════
+// FIREBASE REAL-TIME SYNC LOGIC
+// ══════════════════════════════════════
+async function pushTask(task, action) {
+  const db = getDb(); if (!db) return;
+  try {
+    if (action === 'delete') {
+      await db.ref('tasks/' + task.id).remove();
+    } else {
+      await db.ref('tasks/' + task.id).set(task);
+    }
+  } catch(e) {
+    console.error('pushTask error:', e);
+    toast('Failed to save to Firebase', 'error');
+  }
+}
+
+function saveConfigToFirebase() {
+  const db = getDb(); if (!db) return;
+  var payload = {
+    members: state.members.map(function(m) {
+      return {
+        id: m.id, name: m.name, color: m.color,
+        avatar: (m.avatar && m.avatar.startsWith('data:')) ? null : m.avatar
+      };
+    }),
+    lists: state.lists,
+    gcalKey: state.gcalKey,
+    gcalId: state.gcalId,
+    theme: state.theme
+  };
+  db.ref('config').set(payload).catch(function(e) { console.error('Config sync error:', e); });
+}
+
+function startFirebaseListener() {
+  if (_fbListening) return;
+  const db = getDb(); if (!db) return;
+  _fbListening = true;
+  setSyncStatus('syncing');
+
+  // Real-time listener for tasks
+  db.ref('tasks').on('value', function(snap) {
+    const data = snap.val();
+    if (data) {
+      const remoteTasks = Object.values(data).map(function(t) {
+        return Object.assign({}, t, {
+          completed: t.completed === true || t.completed === 'true',
+          addedToCal: t.addedToCal === true || t.addedToCal === 'true'
+        });
+      });
+      // Sort tasks newer first
+      state.tasks = remoteTasks.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+    } else {
+      state.tasks = [];
+    }
+    updateCounts();
+    renderView();
+    renderSidebarLists();
+    state.lastSync = new Date();
+    setSyncStatus('ok');
+  }, function(err) {
+    console.error('Firebase tasks error:', err);
+    setSyncStatus('error');
+  });
+
+  // Real-time listener for config (members, lists)
+  db.ref('config').on('value', function(snap) {
+    const data = snap.val();
+    if (data) {
+      var changed = false;
+      if (data.members && JSON.stringify(data.members) !== JSON.stringify(state.members)) {
+        state.members = data.members; changed = true;
+      }
+      if (data.lists && JSON.stringify(data.lists) !== JSON.stringify(state.lists)) {
+        state.lists = data.lists; changed = true;
+      }
+      if (data.gcalKey !== undefined) state.gcalKey = data.gcalKey;
+      if (data.gcalId !== undefined) state.gcalId = data.gcalId;
+      
+      if (changed) {
+        renderSidebar();
+        renderSidebarLists();
+        renderView();
+      }
+    } else {
+        // If Firebase config is completely empty (first time run), write the local state up to it
+        saveConfigToFirebase();
+    }
+  });
+}
+
+function setSyncStatus(s) {
+  const dot=document.getElementById('sync-dot'), txt=document.getElementById('sync-text');
+  if (!dot) return;
+  dot.className='sync-dot'+(s==='syncing'?' syncing':s==='error'?' error':'');
+  txt.textContent=s==='syncing'?'Syncing…':s==='error'?'Sync error':state.lastSync?'Synced '+timeAgo(state.lastSync):'Connected';
+}
+
+// ══════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════
+function renderView() {
+  if (state.mainView==='overview') renderOverview();
+  else if (state.mainView==='calendar') renderCalendar();
+  else if (state.mainView==='settings') renderSettings();
+  else if (state.mainView==='list') renderListView();
+  else renderTasksView();
+}
+function todayStr() { const d=new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
+function formatTime(t) { if(!t) return ''; try { const [h,m]=t.split(':'); const hr=parseInt(h); return `${hr%12||12}:${m} ${hr<12?'AM':'PM'}`; } catch(e){return t;} }
+function recurLabel(r) { const map={daily:'Daily',weekdays:'Weekdays',weekly:'Weekly',biweekly:'Every 2 wks',monthly:'Monthly',yearly:'Yearly'}; return map[r]||r; }
+function pad(n) { return String(n).padStart(2,'0'); }
+function genId() { return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function formatDate(d) { if(!d) return ''; const [y,m,day]=d.split('-'); return new Date(y,m-1,day).toLocaleDateString('en-US',{month:'short',day:'numeric'}); }
+function timeAgo(d) { const diff=Math.round((new Date()-d)/1000); if(diff<60) return 'just now'; if(diff<3600) return Math.round(diff/60)+'m ago'; return Math.round(diff/3600)+'h ago'; }
+function toast(msg,type='info') {
+  const c=document.getElementById('toasts'), el=document.createElement('div');
+  el.className=`toast ${type}`;
+  el.innerHTML=`<span class="toast-icon">${{success:'✅',error:'❌',info:'ℹ️'}[type]||'ℹ️'}</span><span>${msg}</span>`;
+  c.appendChild(el);
+  setTimeout(()=>{el.classList.add('out');setTimeout(()=>el.remove(),250);},3500);
+}
+
+// ══════════════════════════════════════
+// INIT BOOT SEQUENCE
+// ══════════════════════════════════════
+function _boot() {
+  document.querySelectorAll('.modal-overlay').forEach(function(o) {
+    o.addEventListener('click', function(e) {
+      if (e.target === o) o.classList.remove('open');
+    });
+  });
+
+  // Since we are using Firebase, we check if Firebase has populated data yet.
+  // We'll show the setup screen ONLY if local storage is completely empty, 
+  // otherwise we jump right to the app and let Firebase hydrate the data.
+  const saved = localStorage.getItem('familyhub_v2');
+  if (!saved) {
+    document.getElementById('setup-screen').style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
+  } else {
+    // We have some local cache, skip setup and let Firebase take over
+    try {
+        const c = JSON.parse(saved);
+        if (c.theme) state.theme = c.theme;
+        if (c.members) state.members = c.members;
+        if (c.lists) state.lists = c.lists;
+    } catch(e) {}
+    startApp();
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', _boot);
+} else {
+  setTimeout(_boot, 0);
+}
+</script>
+</body>
+</html>
