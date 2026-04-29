@@ -935,9 +935,7 @@ function saveConfig() {
   }));
 }
 function saveConfigToSheets() {
-  // Push members+lists+settings to the Config sheet
-  var canSync = (state.sheetsUrl && state.sheetsUrl !== '') || isAppsScriptEnv();
-  if (!canSync) return;
+  if (!state.sheetsUrl) return;
   var payload = {
     members: state.members,
     lists: state.lists,
@@ -945,8 +943,20 @@ function saveConfigToSheets() {
     gcalId: state.gcalId,
     theme: state.theme
   };
-  sheetsRequest({ action: 'saveConfig', config: JSON.stringify(payload) })
-    .catch(function(e) { console.warn('Config sync failed:', e); });
+  // Strip base64 photos to keep payload small (under sheets cell limit)
+  var stripped = JSON.parse(JSON.stringify(payload));
+  stripped.members = stripped.members.map(function(m) {
+    return {
+      id: m.id, name: m.name, color: m.color,
+      avatar: (m.avatar && m.avatar.startsWith('data:')) ? null : m.avatar
+    };
+  });
+  var configStr = JSON.stringify(stripped);
+  fetch(state.sheetsUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: 'action=saveConfig&config=' + encodeURIComponent(configStr)
+  }).catch(function(e) { console.warn('Config sync failed:', e); });
 }
 async function loadConfigFromSheets() {
   var canSync = (state.sheetsUrl && state.sheetsUrl !== '') || isAppsScriptEnv();
