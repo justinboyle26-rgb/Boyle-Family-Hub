@@ -934,6 +934,38 @@ function saveConfig() {
     theme: state.theme,
   }));
 }
+function saveConfigToSheets() {
+  // Push members+lists+settings to the Config sheet
+  var canSync = (state.sheetsUrl && state.sheetsUrl !== '') || isAppsScriptEnv();
+  if (!canSync) return;
+  var payload = {
+    members: state.members,
+    lists: state.lists,
+    gcalKey: state.gcalKey,
+    gcalId: state.gcalId,
+    theme: state.theme
+  };
+  sheetsRequest({ action: 'saveConfig', config: JSON.stringify(payload) })
+    .catch(function(e) { console.warn('Config sync failed:', e); });
+}
+async function loadConfigFromSheets() {
+  var canSync = (state.sheetsUrl && state.sheetsUrl !== '') || isAppsScriptEnv();
+  if (!canSync) return false;
+  try {
+    var data = await sheetsRequest({ action: 'getConfig' });
+    if (data && data.config) {
+      var c = JSON.parse(data.config);
+      if (c.members && c.members.length > 0) state.members = c.members;
+      if (c.lists && c.lists.length > 0) state.lists = c.lists;
+      if (c.gcalKey) state.gcalKey = c.gcalKey;
+      if (c.gcalId) state.gcalId = c.gcalId;
+      if (c.theme) state.theme = c.theme;
+      saveConfig();
+      return true;
+    }
+  } catch(e) { console.warn('Config load failed:', e); }
+  return false;
+}
 
 // ══════════════════════════════════════
 // THEME
@@ -1634,7 +1666,7 @@ function saveList() {
   } else {
     state.lists.push({ id:genId(), name, emoji:listEmojiSelected, color:listColorSelected });
   }
-  saveConfig(); renderSidebarLists(); closeModal('list-modal');
+  saveConfig(); saveConfigToSheets(); renderSidebarLists(); closeModal('list-modal');
   toast(state.editingListId?'List updated!':'List created!','success');
 }
 function deleteList(id, e) {
@@ -1696,7 +1728,7 @@ function saveMember() {
   if (!name) { toast('Enter a name','error'); return; }
   const m = state.members[memberEditIdx]; if (!m) return;
   m.name = name; m.avatar = memberAvatarPending; m.color = memberColorPending;
-  saveConfig(); renderSidebar(); renderSidebarLists(); closeModal('member-modal');
+  saveConfig(); saveConfigToSheets(); renderSidebar(); renderSidebarLists(); closeModal('member-modal');
   toast('Member updated!','success');
   renderView();
 }
@@ -2022,16 +2054,16 @@ function renderSettings() {
   </div>`;
 }
 function saveSheetUrl() { state.sheetsUrl=document.getElementById('s-sheet-url').value.trim(); saveConfig(); toast('Sheets URL saved','success'); syncData(); }
-function saveGcal() { state.gcalKey=document.getElementById('s-gcal-key').value.trim(); state.gcalId=document.getElementById('s-gcal-id').value.trim(); saveConfig(); toast('Calendar settings saved','success'); }
+function saveGcal() { state.gcalKey=document.getElementById('s-gcal-key').value.trim(); state.gcalId=document.getElementById('s-gcal-id').value.trim(); saveConfig(); saveConfigToSheets(); toast('Calendar settings saved','success'); }
 function addMemberSetting() {
   const name=document.getElementById('settings-new-member').value.trim();
   if (!name||state.members.length>=9) return;
   state.members.push({ name, color: COLORS[state.members.length%COLORS.length], id: genId(), avatar: null });
-  saveConfig(); renderSidebar(); renderSettings(); toast(`${name} added!`,'success');
+  saveConfig(); saveConfigToSheets(); renderSidebar(); renderSettings(); toast(`${name} added!`,'success');
 }
 function removeMemberSetting(i) {
   if (!confirm(`Remove ${state.members[i].name}?`)) return;
-  state.members.splice(i,1); saveConfig(); renderSidebar(); renderSettings();
+  state.members.splice(i,1); saveConfig(); saveConfigToSheets(); renderSidebar(); renderSettings();
 }
 function resetAll() { if (!confirm('Reset all data?')) return; SafeStorage.removeItem('familyhub_v2'); window.location.href = window.location.href; }
 
@@ -2278,13 +2310,18 @@ async function sheetsRequest(params) {
   return resp.json();
 }
 async function syncData() {
-  // Allow sync if we have a real URL OR if we're in Apps Script mode
-  // Allow sync via google.script.run even without a URL
   var hasUrl = state.sheetsUrl && state.sheetsUrl !== '';
   var canSync = hasUrl || isAppsScriptEnv();
   if (!canSync || state.syncing) return;
   state.syncing=true; setSyncStatus('syncing');
   try {
+    // On first sync, load config (members/lists) from sheets
+    if (!state.lastSync) {
+      await loadConfigFromSheets();
+      applyTheme(state.theme);
+      renderSidebar();
+      renderSidebarLists();
+    }
     const data = await sheetsRequest({ action:'getTasks' });
     if (data&&data.tasks) {
       const serverIds = new Set(data.tasks.map(t=>String(t.id)));
