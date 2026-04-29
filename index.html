@@ -943,7 +943,7 @@ function saveConfigToSheets() {
     gcalId: state.gcalId,
     theme: state.theme
   };
-  // Strip base64 photos to keep payload small (under sheets cell limit)
+  // Strip base64 photos to keep payload small
   var stripped = JSON.parse(JSON.stringify(payload));
   stripped.members = stripped.members.map(function(m) {
     return {
@@ -952,11 +952,12 @@ function saveConfigToSheets() {
     };
   });
   var configStr = JSON.stringify(stripped);
-  fetch(state.sheetsUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: 'action=saveConfig&config=' + encodeURIComponent(configStr)
-  }).catch(function(e) { console.warn('Config sync failed:', e); });
+  // Use GET with URL params — avoids CORS preflight
+  var url = state.sheetsUrl + '?action=saveConfig&config=' + encodeURIComponent(configStr);
+  fetch(url, { method: 'GET', redirect: 'follow' })
+    .then(function(r) { return r.json(); })
+    .then(function(d) { if (d.ok) console.log('Config saved to sheets'); })
+    .catch(function(e) { console.warn('Config sync failed:', e); });
 }
 async function loadConfigFromSheets() {
   var canSync = (state.sheetsUrl && state.sheetsUrl !== '') || isAppsScriptEnv();
