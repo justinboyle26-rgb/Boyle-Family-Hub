@@ -626,7 +626,7 @@ function selectMember(id,btn){
   document.getElementById('topbar-color').style.background=m?m.color:'var(--accent)';
   document.getElementById('view-tabs').style.display=id==='family'?'none':'flex';
   document.querySelectorAll('.view-tab').forEach((t,i)=>t.classList.toggle('active',i===0));
-  setTimeout(()=>{const lt=document.getElementById('tab-late');if(lt&&id!=='family'){const today=todayStr();const lc=state.tasks.filter(t=>String(t.member)===String(id)&&!t.completed&&t.dueDate&&t.dueDate<today).length;lt.textContent=lc>0?`Late Tasks (${lc})`:'Late Tasks';lt.style.color=lc>0?'var(--accent2)':]'';}},0);
+  setTimeout(()=>{const lt=document.getElementById('tab-late');if(lt&&id!=='family'){const today=todayStr();const lc=state.tasks.filter(t=>String(t.member)===String(id)&&!t.completed&&t.dueDate&&t.dueDate<today).length;lt.textContent=lc>0?`Late Tasks (${lc})`:'Late Tasks';lt.style.color=lc>0?'var(--accent2)':'';}},0);
   document.querySelectorAll('.list-btn,.nav-btn').forEach(b=>b.classList.remove('active'));
   renderTasksView();
   if(window.innerWidth<=768)closeSidebarMobile();
