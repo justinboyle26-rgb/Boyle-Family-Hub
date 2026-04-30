@@ -1,3 +1,6 @@
+Here is the complete file as one block to copy and paste:
+
+```html
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
@@ -8,7 +11,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 <style>
-/* ── THEME VARIABLES ── */
 [data-theme="dark"] {
   --bg: #0f0f13;
   --surface: #1a1a22;
@@ -53,8 +55,6 @@ body {
   overflow-x: hidden;
   transition: background .25s, color .25s;
 }
-
-/* ── SETUP SCREEN ── */
 #setup-screen {
   display: flex; align-items: center; justify-content: center;
   min-height: 100vh;
@@ -109,11 +109,7 @@ body {
 .btn-ghost:hover { color: var(--text); background: var(--surface2); }
 .divider { height: 1px; background: var(--border); margin: 24px 0; }
 .step-label { font-size: .75rem; font-weight: 700; color: var(--accent); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 16px; }
-
-/* ── MAIN APP ── */
 #app { display: none; min-height: 100vh; }
-
-/* SIDEBAR */
 .sidebar {
   position: fixed; left: 0; top: 0; bottom: 0; width: 268px;
   background: var(--surface); border-right: 1px solid var(--border);
@@ -139,7 +135,6 @@ body {
   font-size: .9rem; transition: all .15s; flex-shrink: 0;
 }
 .theme-toggle-btn:hover { background: var(--surface3); border-color: var(--accent); }
-
 .family-list { padding: 10px 8px; flex: 1; overflow-y: auto; }
 .family-list-label { font-size: .68rem; font-weight: 700; color: var(--text3); letter-spacing: .1em; text-transform: uppercase; padding: 6px 8px 8px; }
 .member-btn {
@@ -161,7 +156,6 @@ body {
   font-size: .7rem; font-weight: 600; padding: 2px 7px; border-radius: 20px;
 }
 .member-btn.active .m-count { background: var(--accent); color: #fff; }
-
 .lists-section { padding: 6px 8px; border-top: 1px solid var(--border); }
 .lists-section-header { display: flex; align-items: center; justify-content: space-between; padding: 6px 8px 8px; }
 .lists-section-label { font-size: .68rem; font-weight: 700; color: var(--text3); letter-spacing: .1em; text-transform: uppercase; }
@@ -180,7 +174,6 @@ body {
 .list-btn .list-del { opacity: 0; background: none; border: none; cursor: pointer; color: var(--text3); font-size: .85rem; padding: 0 2px; transition: color .1s; }
 .list-btn:hover .list-del { opacity: 1; }
 .list-btn .list-del:hover { color: var(--accent2); }
-
 .sidebar-section { padding: 8px; border-top: 1px solid var(--border); }
 .nav-btn {
   width: 100%; display: flex; align-items: center; gap: 9px;
@@ -196,8 +189,6 @@ body {
 .sync-dot.syncing { background: var(--accent4); }
 .sync-dot.error { background: var(--accent2); animation: none; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-
-/* MAIN CONTENT */
 .main { margin-left: 268px; min-height: 100vh; display: flex; flex-direction: column; }
 .topbar {
   padding: 18px 30px; display: flex; align-items: center; gap: 14px;
@@ -214,8 +205,6 @@ body {
   cursor: pointer; transition: all .15s;
 }
 .icon-btn:hover { background: var(--surface2); color: var(--text); border-color: var(--accent); }
-
-/* VIEW TABS */
 .view-tabs { display: flex; gap: 4px; padding: 14px 30px 0; border-bottom: 1px solid var(--border); }
 .view-tab {
   padding: 8px 16px; border-radius: 0; border: none;
@@ -224,13 +213,9 @@ body {
 }
 .view-tab.active { color: var(--text); border-bottom-color: var(--accent); }
 .view-tab:hover:not(.active) { color: var(--text2); }
-
-/* CONTENT AREA */
 .content { flex: 1; padding: 22px 30px; }
 .section-title { font-size: .7rem; font-weight: 700; color: var(--text3); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
 .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
-/* ADD TASK BAR */
 .add-task-bar {
   display: flex; align-items: center; gap: 10px;
   background: var(--surface); border: 1px solid var(--border);
@@ -243,8 +228,6 @@ body {
   color: var(--text); font-family: inherit; font-size: .93rem;
 }
 .add-task-bar input::placeholder { color: var(--text3); }
-
-/* TASKS */
 .task-item {
   display: flex; align-items: flex-start; gap: 11px;
   background: var(--surface); border: 1px solid var(--border);
@@ -286,8 +269,6 @@ body {
 .mini-av img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 .tasks-empty { text-align: center; padding: 60px 20px; color: var(--text3); }
 .tasks-empty .emoji { font-size: 2.5rem; display: block; margin-bottom: 12px; }
-
-/* FILTERS */
 .filters { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 14px; }
 .filter-chip {
   padding: 4px 13px; border-radius: 20px; border: 1px solid var(--border);
@@ -296,12 +277,8 @@ body {
 }
 .filter-chip:hover { border-color: var(--accent); color: var(--text); }
 .filter-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-
-/* PROGRESS BAR */
 .progress-bar { height: 4px; background: var(--surface3); border-radius: 3px; overflow: hidden; margin: 6px 0 14px; }
 .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), #a78bfa); border-radius: 3px; transition: width .4s ease; }
-
-/* CALENDAR VIEW */
 .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: var(--border); border-radius: var(--radius); overflow: hidden; }
 .cal-header-cell { background: var(--surface); text-align: center; padding: 9px 4px; font-size: .7rem; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .05em; }
 .cal-cell { background: var(--surface); min-height: 88px; padding: 7px; cursor: pointer; transition: background .1s; }
@@ -313,8 +290,6 @@ body {
 .cal-task-dot .dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
 .cal-nav { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
 .cal-nav h3 { font-family: 'DM Serif Display', serif; font-size: 1.25rem; flex: 1; }
-
-/* FAMILY OVERVIEW */
 .family-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(255px, 1fr)); gap: 14px; }
 .family-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: all .2s; cursor: pointer; }
 .family-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: rgba(108,99,255,.3); }
@@ -331,8 +306,6 @@ body {
 .mini-task { font-size: .76rem; color: var(--text2); padding: 3px 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 5px; }
 .mini-task:last-child { border-bottom: none; }
 .mini-task .dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
-
-/* Card progress bar */
 .card-progress-wrap { padding: 10px 15px 12px; border-top: 1px solid var(--border); }
 .card-progress-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
 .card-progress-pct { font-size: .75rem; font-weight: 700; }
@@ -346,8 +319,6 @@ body {
   animation: badge-pop .4s cubic-bezier(.34,1.56,.64,1);
 }
 @keyframes badge-pop { from { transform: scale(.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
-/* Full-screen celebration overlay */
 #celebration-overlay {
   position: fixed; inset: 0; pointer-events: none; z-index: 99999;
   display: flex; align-items: center; justify-content: center;
@@ -363,17 +334,11 @@ body {
 .celeb-emoji { font-size: 2.8rem; display: block; margin-bottom: 6px; }
 .celeb-title { font-family: 'DM Serif Display', serif; font-size: 1.4rem; color: var(--text); }
 .celeb-sub { font-size: .82rem; color: var(--text3); margin-top: 4px; }
-
-/* Confetti canvas */
 #confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 99998; }
-
-/* LISTS VIEW */
 .list-view-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
 .list-view-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; }
 .list-view-name { font-family: 'DM Serif Display', serif; font-size: 1.5rem; }
 .list-view-count { font-size: .8rem; color: var(--text3); margin-top: 2px; }
-
-/* MODAL */
 .modal-overlay {
   position: fixed; inset: 0; background: rgba(0,0,0,.65);
   display: flex; align-items: center; justify-content: center; z-index: 1000;
@@ -391,8 +356,6 @@ body {
 .modal h3 { font-family: 'DM Serif Display', serif; font-size: 1.35rem; margin-bottom: 18px; }
 .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 22px; }
 .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-/* AVATAR PICKER in modal */
 .avatar-picker { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
 .avatar-preview { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 3px solid var(--border); background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; overflow: hidden; flex-shrink: 0; cursor: pointer; position: relative; }
 .avatar-preview:hover::after { content: '📷'; position: absolute; inset: 0; background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; border-radius: 50%; }
@@ -403,13 +366,9 @@ body {
 .avatar-emoji-btn { width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; transition: all .15s; }
 .avatar-emoji-btn:hover { border-color: var(--accent); background: var(--surface3); }
 .avatar-emoji-btn.selected { border-color: var(--accent); background: rgba(108,99,255,.15); }
-
-/* GCAL BANNER */
 .gcal-banner { background: linear-gradient(135deg, rgba(66,133,244,.12), rgba(108,99,255,.12)); border: 1px solid rgba(66,133,244,.25); border-radius: var(--radius); padding: 13px 17px; margin-bottom: 18px; display: flex; align-items: center; gap: 11px; }
 .gcal-banner p { font-size: .83rem; color: var(--text2); line-height: 1.5; }
 .gcal-banner a { color: #4285f4; text-decoration: none; font-weight: 600; }
-
-/* SETTINGS */
 .settings-section { margin-bottom: 28px; }
 .settings-section h4 { font-weight: 600; margin-bottom: 10px; font-size: .93rem; }
 .settings-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid var(--border); }
@@ -420,8 +379,6 @@ body {
 .toggle.on { background: var(--accent); }
 .toggle::after { content: ''; position: absolute; width: 16px; height: 16px; background: #fff; border-radius: 50%; top: 3px; left: 3px; transition: transform .2s; }
 .toggle.on::after { transform: translateX(18px); }
-
-/* TOAST */
 .toast-container { position: fixed; bottom: 22px; right: 22px; z-index: 9999; display: flex; flex-direction: column; gap: 7px; }
 .toast { background: var(--surface); border: 1px solid var(--border); border-radius: 11px; padding: 11px 17px; font-size: .86rem; box-shadow: var(--shadow); display: flex; align-items: center; gap: 9px; min-width: 230px; animation: slide-in .25s ease; opacity: 1; transition: opacity .2s; }
 .toast.out { opacity: 0; }
@@ -429,13 +386,9 @@ body {
 .toast.success .toast-icon { color: var(--accent3); }
 .toast.error .toast-icon { color: var(--accent2); }
 .toast.info .toast-icon { color: var(--accent); }
-
-/* SCROLLBAR */
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
-
-/* MOBILE */
 .sidebar-toggle { display: none; position: fixed; top: 14px; left: 14px; z-index: 200; width: 38px; height: 38px; border-radius: 10px; background: var(--surface); border: 1px solid var(--border); cursor: pointer; align-items: center; justify-content: center; color: var(--text2); }
 @media (max-width: 768px) {
   .sidebar { transform: translateX(-100%); }
@@ -448,9 +401,6 @@ body {
   .family-grid { grid-template-columns: 1fr; }
   .row-2 { grid-template-columns: 1fr; }
 }
-
-@keyframes spin { to { transform: rotate(360deg); } }
-@keyframes confetti-pop { to { transform: translate(var(--dx),var(--dy)); opacity: 0; } }
 </style>
 </head>
 <body>
@@ -459,20 +409,12 @@ body {
   <div class="setup-card">
     <h1>Boyle Family Hub</h1>
     <p>The Boyle family's command center.</p>
-
     <div class="step-label">Family Members (up to 9)</div>
     <div id="member-list-setup" style="display:flex;flex-wrap:wrap;gap:8px;min-height:20px;margin:10px 0"></div>
-
     <div style="display:flex;gap:8px;margin-bottom:16px">
-      <input id="new-member-name" type="text" maxlength="24"
-        placeholder="Name (e.g. Mom, Dad, Emma…)"
-        style="flex:1;padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.95rem;font-family:inherit;outline:none">
-      <button id="add-member-btn" type="button" onclick="setupDoAdd()"
-        style="padding:11px 18px;background:var(--surface3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.88rem;font-family:inherit;font-weight:600;cursor:pointer;white-space:nowrap">
-        + Add
-      </button>
+      <input id="new-member-name" type="text" maxlength="24" placeholder="Name (e.g. Mom, Dad, Emma…)" style="flex:1;padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.95rem;font-family:inherit;outline:none">
+      <button id="add-member-btn" type="button" onclick="setupDoAdd()" style="padding:11px 18px;background:var(--surface3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.88rem;font-family:inherit;font-weight:600;cursor:pointer;white-space:nowrap">+ Add</button>
     </div>
-
     <div id="gcal-section" style="display:block">
       <div class="divider"></div>
       <div class="step-label">Google Calendar (Optional)</div>
@@ -483,12 +425,8 @@ body {
         <input type="text" id="setup-gcal-id" placeholder="Calendar ID">
       </div>
     </div>
-
     <div class="divider"></div>
-    <button id="launch-btn" type="button" onclick="setupDoLaunch()"
-      style="display:block;width:100%;padding:14px;background:#6c63ff;color:#fff;border:none;border-radius:10px;font-size:1rem;font-family:inherit;font-weight:700;cursor:pointer;text-align:center">
-      Launch Boyle Family Hub →
-    </button>
+    <button id="launch-btn" type="button" onclick="setupDoLaunch()" style="display:block;width:100%;padding:14px;background:#6c63ff;color:#fff;border:none;border-radius:10px;font-size:1rem;font-family:inherit;font-weight:700;cursor:pointer;text-align:center">Launch Boyle Family Hub →</button>
     <div id="setup-msg" style="margin-top:10px;min-height:20px;text-align:center;font-size:.82rem"></div>
   </div>
 </div>
@@ -506,7 +444,6 @@ body {
       </div>
       <button class="theme-toggle-btn" onclick="toggleTheme()" id="theme-btn" title="Toggle dark/light mode">🌙</button>
     </div>
-
     <div class="family-list">
       <div class="family-list-label">Members</div>
       <button class="member-btn active" data-member="family" onclick="selectMember('family',this)">
@@ -516,7 +453,6 @@ body {
       </button>
       <div id="sidebar-members"></div>
     </div>
-
     <div class="lists-section">
       <div class="lists-section-header">
         <span class="lists-section-label">My Lists</span>
@@ -524,7 +460,6 @@ body {
       </div>
       <div id="sidebar-lists"></div>
     </div>
-
     <div class="sidebar-section">
       <button class="nav-btn" id="nav-overview" onclick="setView('overview')">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
@@ -539,7 +474,6 @@ body {
         Settings
       </button>
     </div>
-
     <div class="sync-status">
       <div class="sync-dot" id="sync-dot"></div>
       <span id="sync-text">Connecting...</span>
@@ -551,10 +485,10 @@ body {
       <div class="member-color-bar" id="topbar-color" style="background:var(--accent)"></div>
       <h2 id="topbar-title">All Family</h2>
       <div class="topbar-actions">
+        <button class="btn btn-ghost btn-sm" onclick="openMassUpdate()" title="Mass update tasks">⚡ Mass Update</button>
         <button class="btn btn-primary btn-sm" onclick="openAddTask()">+ Add Task</button>
       </div>
     </div>
-
     <div class="view-tabs" id="view-tabs" style="display:none">
       <button class="view-tab active" onclick="setMemberView('myday',this)">My Day</button>
       <button class="view-tab" onclick="setMemberView('late',this)" id="tab-late">Late Tasks</button>
@@ -563,11 +497,11 @@ body {
       <button class="view-tab" onclick="setMemberView('all',this)">All Tasks</button>
       <button class="view-tab" onclick="setMemberView('completed',this)">Completed</button>
     </div>
-
     <div class="content" id="main-content"></div>
   </div>
 </div>
 
+<!-- TASK MODAL -->
 <div class="modal-overlay" id="task-modal">
   <div class="modal">
     <h3 id="task-modal-title">Add Task</h3>
@@ -601,15 +535,13 @@ body {
       </div>
       <div class="form-group">
         <label>Due Time (optional)</label>
-        <input type="time" id="t-time" placeholder="HH:MM">
+        <input type="time" id="t-time">
       </div>
     </div>
     <div class="row-2">
       <div class="form-group">
         <label>List</label>
-        <select id="t-list-sel">
-          <option value="">No list</option>
-        </select>
+        <select id="t-list-sel"><option value="">No list</option></select>
       </div>
       <div class="form-group">
         <label>Repeats</label>
@@ -636,6 +568,7 @@ body {
   </div>
 </div>
 
+<!-- LIST MODAL -->
 <div class="modal-overlay" id="list-modal">
   <div class="modal" style="max-width:400px">
     <h3 id="list-modal-title">Create List</h3>
@@ -658,6 +591,7 @@ body {
   </div>
 </div>
 
+<!-- MEMBER MODAL -->
 <div class="modal-overlay" id="member-modal">
   <div class="modal" style="max-width:420px">
     <h3 id="member-modal-title">Edit Member</h3>
@@ -689,13 +623,12 @@ body {
 
 <script>
 // ══════════════════════════════════════
-// FIREBASE REALTIME DATABASE CONFIG
+// FIREBASE CONFIG
 // ══════════════════════════════════════
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyDJ6p8LxMFhFn31SEyF_NeqyVetxlv3gb0",
   authDomain: "boyle-family-hub-2533b.firebaseapp.com",
-  // ADD THE LINE BELOW (ensure it ends with a comma)
-  databaseURL: "https://boyle-family-hub-2533b-default-rtdb.firebaseio.com", 
+  databaseURL: "https://boyle-family-hub-2533b-default-rtdb.firebaseio.com",
   projectId: "boyle-family-hub-2533b",
   storageBucket: "boyle-family-hub-2533b.firebasestorage.app",
   messagingSenderId: "603208983666",
@@ -723,7 +656,9 @@ function getDb() {
   }
 }
 
-// ── SETUP SCREEN FUNCTIONS ──
+// ══════════════════════════════════════
+// SETUP SCREEN
+// ══════════════════════════════════════
 var setupMembersList = [];
 var SETUP_COLORS = ['#6c63ff','#ff6584','#43e97b','#f7971e','#38b2ac','#ed64a6','#667eea','#f6ad55','#fc8181'];
 
@@ -764,12 +699,7 @@ function setupDoAdd() {
   var name = inp.value.trim();
   if (!name) { setupShowMsg('Type a name first', true); return; }
   if (setupMembersList.length >= 9) { setupShowMsg('Maximum 9 members', true); return; }
-  setupMembersList.push({
-    name: name,
-    color: SETUP_COLORS[setupMembersList.length % SETUP_COLORS.length],
-    id: String(Date.now() + Math.random()),
-    avatar: null
-  });
+  setupMembersList.push({ name: name, color: SETUP_COLORS[setupMembersList.length % SETUP_COLORS.length], id: String(Date.now() + Math.random()), avatar: null });
   inp.value = '';
   inp.focus();
   setupShowMsg('');
@@ -785,7 +715,6 @@ function setupDoLaunch() {
       { name: 'Child 1', color: '#43e97b', id: String(Date.now()+3), avatar: null }
     ];
   }
-  
   state.members = setupMembersList;
   state.lists = [
     { id: 'l1', name: 'Grocery List', emoji: '🛒', color: '#43e97b' },
@@ -793,9 +722,9 @@ function setupDoLaunch() {
     { id: 'l3', name: 'Home Tasks', emoji: '🏠', color: '#f7971e' }
   ];
   state.gcalKey = document.getElementById('setup-gcal-key').value.trim();
-  state.gcalId = document.getElementById('setup-gcal-id').value.trim();
-  
+  state.gcalId  = document.getElementById('setup-gcal-id').value.trim();
   saveConfigToFirebase();
+  localStorage.setItem('familyhub_v2', JSON.stringify({ theme: state.theme, members: state.members, lists: state.lists, gcalKey: state.gcalKey, gcalId: state.gcalId }));
   document.getElementById('setup-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   startApp();
@@ -805,9 +734,7 @@ function setupDoLaunch() {
 // GLOBAL ERROR HANDLER
 // ══════════════════════════════════════
 window.onerror = function(msg, src, line, col, err) {
-  var body = document.body;
-  if (body && document.getElementById('app') && 
-      document.getElementById('app').style.display === 'block') {
+  if (document.getElementById('app') && document.getElementById('app').style.display === 'block') {
     var existing = document.getElementById('app-error-banner');
     if (!existing) {
       var banner = document.createElement('div');
@@ -823,10 +750,10 @@ window.onerror = function(msg, src, line, col, err) {
 // ══════════════════════════════════════
 // CONSTANTS & STATE
 // ══════════════════════════════════════
-const COLORS = ['#6c63ff','#ff6584','#43e97b','#f7971e','#38b2ac','#ed64a6','#667eea','#f6ad55','#fc8181'];
-const LIST_EMOJIS = ['📋','🛒','🏠','💼','📚','🎯','💡','🔧','✈️','🎮','🏋️','🍕','💊','🎓','🔑','🌿','🎨','🎵'];
-const MEMBER_EMOJIS = ['😊','👨','👩','👦','👧','🧒','👴','👵','🧑','👶','🧔','👱','🧕','👮','👷','🧑‍🍳','🧑‍🎓','🦸'];
-const LIST_COLORS = ['#6c63ff','#ff6584','#43e97b','#f7971e','#38b2ac','#ed64a6','#4285f4','#f6ad55','#a78bfa'];
+const COLORS       = ['#6c63ff','#ff6584','#43e97b','#f7971e','#38b2ac','#ed64a6','#667eea','#f6ad55','#fc8181'];
+const LIST_EMOJIS  = ['📋','🛒','🏠','💼','📚','🎯','💡','🔧','✈️','🎮','🏋️','🍕','💊','🎓','🔑','🌿','🎨','🎵'];
+const MEMBER_EMOJIS= ['😊','👨','👩','👦','👧','🧒','👴','👵','🧑','👶','🧔','👱','🧕','👮','👷','🧑‍🍳','🧑‍🎓','🦸'];
+const LIST_COLORS  = ['#6c63ff','#ff6584','#43e97b','#f7971e','#38b2ac','#ed64a6','#4285f4','#f6ad55','#a78bfa'];
 
 let state = {
   members: [], tasks: [], lists: [],
@@ -851,7 +778,6 @@ function toggleTheme() {
   applyTheme(state.theme);
   saveConfigToFirebase();
 }
-
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
 // ══════════════════════════════════════
@@ -935,7 +861,6 @@ function selectMember(id, btn) {
   document.getElementById('topbar-color').style.background = m ? m.color : 'var(--accent)';
   document.getElementById('view-tabs').style.display = id === 'family' ? 'none' : 'flex';
   document.querySelectorAll('.view-tab').forEach((t,i) => t.classList.toggle('active', i===0));
-  
   setTimeout(() => {
     const lateTab = document.getElementById('tab-late');
     if (lateTab && id !== 'family') {
@@ -945,7 +870,6 @@ function selectMember(id, btn) {
       lateTab.style.color = lateCount > 0 ? 'var(--accent2)' : '';
     }
   }, 0);
-  
   document.querySelectorAll('.list-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   renderTasksView();
@@ -1005,10 +929,10 @@ function getFilteredTasks() {
   if (mid !== 'family') tasks = tasks.filter(t => String(t.member) === String(mid));
   const today = todayStr();
   switch (state.currentView) {
-    case 'myday': tasks = tasks.filter(t => !t.completed && (t.dueDate === today || !t.dueDate)); break;
-    case 'late': tasks = tasks.filter(t => !t.completed && t.dueDate && t.dueDate < today); break;
+    case 'myday':     tasks = tasks.filter(t => !t.completed && (t.dueDate === today || !t.dueDate)); break;
+    case 'late':      tasks = tasks.filter(t => !t.completed && t.dueDate && t.dueDate < today); break;
     case 'important': tasks = tasks.filter(t => !t.completed && t.priority === 'high'); break;
-    case 'planned': tasks = tasks.filter(t => !t.completed && t.dueDate); break;
+    case 'planned':   tasks = tasks.filter(t => !t.completed && t.dueDate); break;
     case 'completed': tasks = tasks.filter(t => t.completed); break;
   }
   return tasks;
@@ -1017,10 +941,10 @@ function getFilteredTasks() {
 function renderTasksView() {
   const tasks = getFilteredTasks();
   const incomplete = tasks.filter(t => !t.completed);
-  const complete = tasks.filter(t => t.completed);
+  const complete   = tasks.filter(t =>  t.completed);
   const today = todayStr();
   let html = '';
-  
+
   if (state.currentView === 'myday' && state.currentMember !== 'family') {
     html += `<div style="margin-bottom:18px">
       <div style="font-family:'DM Serif Display',serif;font-size:1.45rem;margin-bottom:2px">My Day</div>
@@ -1028,11 +952,9 @@ function renderTasksView() {
     </div>`;
   }
   if (state.currentView === 'late' && state.currentMember !== 'family') {
-    html += `<div style="margin-bottom:18px;display:flex;align-items:center;gap:10px">
-      <div>
-        <div style="font-family:'DM Serif Display',serif;font-size:1.45rem;margin-bottom:2px;color:var(--accent2)">Late Tasks</div>
-        <div style="font-size:.8rem;color:var(--text3)">Tasks past their due date</div>
-      </div>
+    html += `<div style="margin-bottom:18px">
+      <div style="font-family:'DM Serif Display',serif;font-size:1.45rem;margin-bottom:2px;color:var(--accent2)">Late Tasks</div>
+      <div style="font-size:.8rem;color:var(--text3)">Tasks past their due date</div>
     </div>`;
   }
   if (state.currentMember !== 'family') {
@@ -1040,6 +962,7 @@ function renderTasksView() {
     const pct = total ? Math.round(complete.length / total * 100) : 0;
     html += `<div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>`;
   }
+
   html += `<div class="add-task-bar">
     <svg width="15" height="15" fill="none" stroke="var(--text3)" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
     <input type="text" placeholder="Add a task… press Enter" id="quick-add-input" onkeydown="if(event.key==='Enter')quickAddTask()">
@@ -1052,13 +975,13 @@ function renderTasksView() {
     <button class="filter-chip" onclick="filterTasks('today',this)">📅 Today</button>
     <button class="filter-chip" onclick="filterTasks('overdue',this)">⚠️ Overdue</button>
   </div>`;
-  
+
   if (!incomplete.length && !complete.length) {
     html += `<div class="tasks-empty"><span class="emoji">✅</span><div style="font-weight:600">Nothing here yet</div><div style="font-size:.8rem;margin-top:5px">Add a task above</div></div>`;
   }
-  if (incomplete.length) html += `<div class="section-title">Active (${incomplete.length})</div>` + incomplete.map(t => renderTaskItem(t,today)).join('');
-  if (complete.length) html += `<div class="section-title" style="margin-top:22px">Completed (${complete.length})</div>` + complete.map(t => renderTaskItem(t,today)).join('');
-  
+  if (incomplete.length) html += `<div class="section-title">Active (${incomplete.length})</div>` + incomplete.map(t => renderTaskItem(t, today)).join('');
+  if (complete.length)   html += `<div class="section-title" style="margin-top:22px">Completed (${complete.length})</div>` + complete.map(t => renderTaskItem(t, today)).join('');
+
   document.getElementById('main-content').innerHTML = html;
 }
 
@@ -1067,9 +990,9 @@ function renderListView() {
   if (!list) { renderTasksView(); return; }
   const tasks = state.tasks.filter(t => t.listId === list.id);
   const incomplete = tasks.filter(t => !t.completed);
-  const complete = tasks.filter(t => t.completed);
+  const complete   = tasks.filter(t =>  t.completed);
   const today = todayStr();
-  
+
   let html = `<div class="list-view-header">
     <div class="list-view-icon" style="background:${list.color}22;color:${list.color}">${list.emoji}</div>
     <div>
@@ -1082,24 +1005,24 @@ function renderListView() {
     <input type="text" placeholder="Add item to ${escHtml(list.name)}…" id="quick-add-input" onkeydown="if(event.key==='Enter')quickAddToList('${list.id}')">
     <button class="btn btn-primary btn-sm" onclick="openAddTaskToList('${list.id}')">Details</button>
   </div>`;
-  
+
   if (!incomplete.length && !complete.length) {
     html += `<div class="tasks-empty"><span class="emoji">${list.emoji}</span><div style="font-weight:600">List is empty</div><div style="font-size:.8rem;margin-top:5px">Add items above</div></div>`;
   }
-  if (incomplete.length) html += `<div class="section-title">Items (${incomplete.length})</div>` + incomplete.map(t => renderTaskItem(t,today)).join('');
-  if (complete.length) html += `<div class="section-title" style="margin-top:20px">Completed</div>` + complete.map(t => renderTaskItem(t,today)).join('');
-  
+  if (incomplete.length) html += `<div class="section-title">Items (${incomplete.length})</div>` + incomplete.map(t => renderTaskItem(t, today)).join('');
+  if (complete.length)   html += `<div class="section-title" style="margin-top:20px">Completed</div>` + complete.map(t => renderTaskItem(t, today)).join('');
+
   document.getElementById('main-content').innerHTML = html;
 }
 
 function renderTaskItem(t, today) {
-  const member = state.members.find(m => String(m.id) === String(t.member));
-  const color = member ? member.color : 'var(--accent)';
-  const list = t.listId ? state.lists.find(l => l.id === t.listId) : null;
+  const member   = state.members.find(m => String(m.id) === String(t.member));
+  const color    = member ? member.color : 'var(--accent)';
+  const list     = t.listId ? state.lists.find(l => l.id === t.listId) : null;
   const dueClass = t.dueDate ? (t.dueDate < today ? 'overdue' : t.dueDate === today ? 'today' : '') : '';
   const dueLabel = t.dueDate ? (t.dueDate < today ? '⚠ Overdue' : t.dueDate === today ? '📅 Today' : '📅 ' + formatDate(t.dueDate)) : '';
-  const prioMap = { high:'🔴 High', medium:'🟡 Med', low:'🟢 Low' };
-  
+  const prioMap  = { high:'🔴 High', medium:'🟡 Med', low:'🟢 Low' };
+
   return `<div class="task-item ${t.completed?'completed':''}" id="task-${t.id}">
     <button class="task-check ${t.completed?'done':''}" onclick="toggleTask('${t.id}',event)" style="${t.completed?'':'border-color:'+color}"></button>
     <div class="task-body">
@@ -1111,8 +1034,8 @@ function renderTaskItem(t, today) {
         ${state.currentMember==='family' && member ? `<span class="assigned-tag"><span class="mini-av" style="background:${color}33;color:${color}">${memberAvatarHtml(member,15)}</span>${escHtml(member.name)}</span>` : ''}
         ${t.addedToCal===true||t.addedToCal==='true' ? `<span class="task-tag" style="background:#4285f422;color:#4285f4">📅 Cal</span>` : ''}
       </div>
-      ${t.dueTime ? `<span class="task-due" style="color:var(--accent4)">⏰ ${formatTime(t.dueTime)}</span>` : ''}
-      ${t.recurrence ? `<span class="task-tag" style="background:rgba(108,99,255,.15);color:var(--accent)">↻ ${recurLabel(t.recurrence)}</span>` : ''}
+      ${t.dueTime ? `<div><span class="task-due" style="color:var(--accent4)">⏰ ${formatTime(t.dueTime)}</span></div>` : ''}
+      ${t.recurrence ? `<div><span class="task-tag" style="background:rgba(108,99,255,.15);color:var(--accent)">↻ ${recurLabel(t.recurrence)}</span></div>` : ''}
       ${t.notes ? `<div style="font-size:.76rem;color:var(--text3);margin-top:4px">${escHtml(t.notes)}</div>` : ''}
     </div>
     <div class="task-actions">
@@ -1135,16 +1058,16 @@ function filterTasks(type, btn) {
     const t = state.tasks.find(x => String(x.id) === id);
     if (!t) return;
     let show = true;
-    if (type==='high') show = t.priority==='high' && !t.completed;
+    if (type==='high')    show = t.priority==='high'   && !t.completed;
     else if (type==='medium') show = t.priority==='medium' && !t.completed;
-    else if (type==='today') show = t.dueDate===today && !t.completed;
+    else if (type==='today')  show = t.dueDate===today    && !t.completed;
     else if (type==='overdue') show = t.dueDate && t.dueDate < today && !t.completed;
     el.style.display = show ? '' : 'none';
   });
 }
 
 // ══════════════════════════════════════
-// TASK CRUD (Synced to Firebase)
+// TASK CRUD
 // ══════════════════════════════════════
 function quickAddTask() {
   const inp = document.getElementById('quick-add-input');
@@ -1167,15 +1090,12 @@ function nextRecurDate(task) {
   if (!task.dueDate || !task.recurrence) return null;
   const d = new Date(task.dueDate + 'T12:00:00');
   switch(task.recurrence) {
-    case 'daily': d.setDate(d.getDate()+1); break;
-    case 'weekdays':
-      d.setDate(d.getDate()+1);
-      while(d.getDay()===0||d.getDay()===6) d.setDate(d.getDate()+1);
-      break;
-    case 'weekly': d.setDate(d.getDate()+7); break;
+    case 'daily':    d.setDate(d.getDate()+1); break;
+    case 'weekdays': d.setDate(d.getDate()+1); while(d.getDay()===0||d.getDay()===6) d.setDate(d.getDate()+1); break;
+    case 'weekly':   d.setDate(d.getDate()+7); break;
     case 'biweekly': d.setDate(d.getDate()+14); break;
-    case 'monthly': d.setMonth(d.getMonth()+1); break;
-    case 'yearly': d.setFullYear(d.getFullYear()+1); break;
+    case 'monthly':  d.setMonth(d.getMonth()+1); break;
+    case 'yearly':   d.setFullYear(d.getFullYear()+1); break;
     default: return null;
   }
   return d.toISOString().split('T')[0];
@@ -1208,12 +1128,10 @@ function openAddTask() {
   if (sel) sel.value = state.currentMember !== 'family' ? state.currentMember : (state.members[0]?.id || 'family');
   document.getElementById('task-modal').classList.add('open');
 }
-
 function openAddTaskToList(listId) {
   openAddTask();
   document.getElementById('t-list-sel').value = listId;
 }
-
 function editTask(id, e) {
   if (e) e.stopPropagation();
   const t = state.tasks.find(x => String(x.id)===String(id)); if (!t) return;
@@ -1230,61 +1148,52 @@ function editTask(id, e) {
   document.getElementById('t-recur').value = t.recurrence || '';
   document.getElementById('task-modal').classList.add('open');
 }
-
 function saveTask() {
   const title = document.getElementById('t-title').value.trim();
   if (!title) { toast('Please enter a task title','error'); return; }
   const addToCal = document.getElementById('t-add-to-cal').checked;
-  const dueDate = document.getElementById('t-due').value;
-  
+  const dueDate  = document.getElementById('t-due').value;
   if (state.editingTaskId) {
     const idx = state.tasks.findIndex(x => String(x.id)===String(state.editingTaskId));
     if (idx > -1) {
-      const updatedTask = Object.assign({}, state.tasks[idx], { 
-        title, 
-        notes: document.getElementById('t-notes').value, 
-        member: document.getElementById('t-member').value, 
-        priority: document.getElementById('t-priority').value, 
-        dueDate, 
-        dueTime: document.getElementById('t-time').value, 
-        recurrence: document.getElementById('t-recur').value, 
-        listId: document.getElementById('t-list-sel').value, 
-        addedToCal: addToCal 
+      const updatedTask = Object.assign({}, state.tasks[idx], {
+        title, notes: document.getElementById('t-notes').value,
+        member: document.getElementById('t-member').value,
+        priority: document.getElementById('t-priority').value,
+        dueDate, dueTime: document.getElementById('t-time').value,
+        recurrence: document.getElementById('t-recur').value,
+        listId: document.getElementById('t-list-sel').value,
+        addedToCal: addToCal
       });
-      pushTask(updatedTask, 'update'); 
+      pushTask(updatedTask, 'update');
       toast('Updated!','success');
     }
   } else {
-    const task = makeTask(title, { 
-      notes: document.getElementById('t-notes').value, 
-      member: document.getElementById('t-member').value, 
-      priority: document.getElementById('t-priority').value, 
-      dueDate, 
-      dueTime: document.getElementById('t-time').value, 
-      recurrence: document.getElementById('t-recur').value, 
-      listId: document.getElementById('t-list-sel').value, 
-      addedToCal: addToCal 
+    const task = makeTask(title, {
+      notes: document.getElementById('t-notes').value,
+      member: document.getElementById('t-member').value,
+      priority: document.getElementById('t-priority').value,
+      dueDate, dueTime: document.getElementById('t-time').value,
+      recurrence: document.getElementById('t-recur').value,
+      listId: document.getElementById('t-list-sel').value,
+      addedToCal: addToCal
     });
-    pushTask(task, 'add'); 
+    pushTask(task, 'add');
     toast('Task added!','success');
     if (addToCal && dueDate) addToGoogleCalendar(task);
   }
   closeModal('task-modal');
 }
-
 function toggleTask(id, e) {
   if (e) e.stopPropagation();
   const t = state.tasks.find(x => String(x.id)===String(id)); if (!t) return;
-  
   const updatedTask = Object.assign({}, t, {
     completed: !t.completed,
     completedAt: !t.completed ? new Date().toISOString() : ''
   });
-  
   pushTask(updatedTask, 'update');
   if (updatedTask.completed) { confettiTask(id); if(updatedTask.recurrence) spawnRecurringTask(updatedTask); }
 }
-
 function deleteTask(id, e) {
   if (e) e.stopPropagation();
   if (!confirm('Delete this task?')) return;
@@ -1292,85 +1201,63 @@ function deleteTask(id, e) {
   toast('Deleted','info');
 }
 
-// ── CELEBRATION SYSTEM ──
+// ══════════════════════════════════════
+// CELEBRATION
+// ══════════════════════════════════════
 const CELEB_MESSAGES = [
-  { emoji: '🎉', title: 'Task crushed!', sub: 'One down, greatness continues.' },
-  { emoji: '⭐', title: 'Nailed it!', sub: 'The Boyle family gets things done.' },
-  { emoji: '🏆', title: 'Winner!', sub: 'Another one bites the dust.' },
-  { emoji: '🚀', title: 'Blasted off!', sub: 'To the moon and back.' },
+  { emoji: '🎉', title: 'Task crushed!',  sub: 'One down, greatness continues.' },
+  { emoji: '⭐', title: 'Nailed it!',     sub: 'The Boyle family gets things done.' },
+  { emoji: '🏆', title: 'Winner!',        sub: 'Another one bites the dust.' },
+  { emoji: '🚀', title: 'Blasted off!',   sub: 'To the moon and back.' },
 ];
-
-function confettiTask(id) {
-  launchConfetti();
-  showCelebMessage();
-}
-
+function confettiTask(id) { launchConfetti(); showCelebMessage(); }
 function launchConfetti() {
-  const old = document.getElementById('confetti-canvas');
-  if (old) old.remove();
-
+  const old = document.getElementById('confetti-canvas'); if (old) old.remove();
   const canvas = document.createElement('canvas');
   canvas.id = 'confetti-canvas';
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
   document.body.appendChild(canvas);
   const ctx = canvas.getContext('2d');
-
-  const COLORS = ['#6c63ff','#ff6584','#43e97b','#f7971e','#38b2ac','#a78bfa','#fbbf24','#34d399','#f87171'];
+  const COLS = ['#6c63ff','#ff6584','#43e97b','#f7971e','#38b2ac','#a78bfa','#fbbf24','#34d399','#f87171'];
   const SHAPES = ['circle','rect','triangle'];
-  const count = 120;
-  const pieces = Array.from({length: count}, () => ({
-    x: Math.random() * canvas.width,
-    y: -20 - Math.random() * 200,
-    r: 4 + Math.random() * 7,
-    color: COLORS[Math.floor(Math.random() * COLORS.length)],
-    shape: SHAPES[Math.floor(Math.random() * SHAPES.length)],
-    vx: (Math.random() - 0.5) * 5,
-    vy: 3 + Math.random() * 5,
-    spin: (Math.random() - 0.5) * 0.3,
-    angle: Math.random() * Math.PI * 2,
-    opacity: 1,
-    wobble: Math.random() * Math.PI * 2,
-    wobbleSpeed: 0.05 + Math.random() * 0.05,
+  const pieces = Array.from({length:120}, () => ({
+    x: Math.random()*canvas.width, y: -20-Math.random()*200,
+    r: 4+Math.random()*7, color: COLS[Math.floor(Math.random()*COLS.length)],
+    shape: SHAPES[Math.floor(Math.random()*SHAPES.length)],
+    vx:(Math.random()-.5)*5, vy:3+Math.random()*5,
+    spin:(Math.random()-.5)*.3, angle:Math.random()*Math.PI*2,
+    opacity:1, wobble:Math.random()*Math.PI*2, wobbleSpeed:.05+Math.random()*.05
   }));
-
-  let frame = 0;
-  const maxFrames = 160;
-
+  let frame=0; const maxFrames=160;
   function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
     pieces.forEach(p => {
-      p.y += p.vy; p.x += p.vx; p.angle += p.spin; p.wobble += p.wobbleSpeed; p.x += Math.sin(p.wobble) * 1.5; p.vy += 0.12;
-      if (frame > maxFrames * 0.6) p.opacity = Math.max(0, p.opacity - 0.025);
-      ctx.save(); ctx.globalAlpha = p.opacity; ctx.fillStyle = p.color; ctx.translate(p.x, p.y); ctx.rotate(p.angle);
-      if (p.shape === 'circle') { ctx.beginPath(); ctx.arc(0, 0, p.r, 0, Math.PI * 2); ctx.fill(); } 
-      else if (p.shape === 'rect') { ctx.fillRect(-p.r, -p.r / 2, p.r * 2, p.r); } 
-      else { ctx.beginPath(); ctx.moveTo(0, -p.r); ctx.lineTo(p.r, p.r); ctx.lineTo(-p.r, p.r); ctx.closePath(); ctx.fill(); }
+      p.y+=p.vy; p.x+=p.vx; p.angle+=p.spin; p.wobble+=p.wobbleSpeed;
+      p.x+=Math.sin(p.wobble)*1.5; p.vy+=.12;
+      if(frame>maxFrames*.6) p.opacity=Math.max(0,p.opacity-.025);
+      ctx.save(); ctx.globalAlpha=p.opacity; ctx.fillStyle=p.color;
+      ctx.translate(p.x,p.y); ctx.rotate(p.angle);
+      if(p.shape==='circle'){ctx.beginPath();ctx.arc(0,0,p.r,0,Math.PI*2);ctx.fill();}
+      else if(p.shape==='rect'){ctx.fillRect(-p.r,-p.r/2,p.r*2,p.r);}
+      else{ctx.beginPath();ctx.moveTo(0,-p.r);ctx.lineTo(p.r,p.r);ctx.lineTo(-p.r,p.r);ctx.closePath();ctx.fill();}
       ctx.restore();
     });
-    frame++;
-    if (frame < maxFrames) requestAnimationFrame(draw); else canvas.remove();
+    frame++; if(frame<maxFrames) requestAnimationFrame(draw); else canvas.remove();
   }
   requestAnimationFrame(draw);
 }
-
 function showCelebMessage() {
-  const old = document.getElementById('celebration-overlay');
-  if (old) old.remove();
-  const msg = CELEB_MESSAGES[Math.floor(Math.random() * CELEB_MESSAGES.length)];
+  const old = document.getElementById('celebration-overlay'); if (old) old.remove();
+  const msg = CELEB_MESSAGES[Math.floor(Math.random()*CELEB_MESSAGES.length)];
   const overlay = document.createElement('div');
   overlay.id = 'celebration-overlay';
-  overlay.innerHTML = '<div class="celeb-message">' +
-    '<span class="celeb-emoji">' + msg.emoji + '</span>' +
-    '<div class="celeb-title">' + msg.title + '</div>' +
-    '<div class="celeb-sub">' + msg.sub + '</div>' +
-    '</div>';
+  overlay.innerHTML = '<div class="celeb-message"><span class="celeb-emoji">'+msg.emoji+'</span><div class="celeb-title">'+msg.title+'</div><div class="celeb-sub">'+msg.sub+'</div></div>';
   document.body.appendChild(overlay);
   setTimeout(() => {
     const el = overlay.querySelector('.celeb-message');
-    if (el) { el.style.transition = 'opacity .4s,transform .4s'; el.style.opacity='0'; el.style.transform='scale(.8) translateY(-20px)'; }
-    setTimeout(() => overlay.remove(), 420);
-  }, 2200);
+    if(el){el.style.transition='opacity .4s,transform .4s';el.style.opacity='0';el.style.transform='scale(.8) translateY(-20px)';}
+    setTimeout(()=>overlay.remove(),420);
+  },2200);
 }
 
 // ══════════════════════════════════════
@@ -1410,12 +1297,7 @@ function deleteList(id, e) {
   if (e) e.stopPropagation();
   if (!confirm('Delete this list? Tasks in the list will remain but lose their list association.')) return;
   state.lists = state.lists.filter(l => l.id!==id);
-  state.tasks.forEach(t => { 
-    if(t.listId===id) {
-       t.listId='';
-       pushTask(t, 'update'); // update Firebase to strip list association
-    } 
-  });
+  state.tasks.forEach(t => { if(t.listId===id){ t.listId=''; pushTask(t,'update'); } });
   saveConfigToFirebase();
   if (state.currentListId===id) { state.mainView='tasks'; state.currentListId=null; renderTasksView(); }
   toast('List deleted','info');
@@ -1425,13 +1307,14 @@ function deleteList(id, e) {
 // MEMBER AVATAR / EDIT
 // ══════════════════════════════════════
 let memberEditIdx = -1;
-let memberAvatarPending = null; 
+let memberAvatarPending = null;
 let memberColorPending = '#6c63ff';
+
 function openEditMember(idx) {
   memberEditIdx = idx;
   const m = state.members[idx]; if (!m) return;
   memberAvatarPending = m.avatar || null;
-  memberColorPending = m.color;
+  memberColorPending  = m.color;
   document.getElementById('member-modal-title').textContent = 'Edit ' + m.name;
   document.getElementById('av-name').value = m.name;
   updateAvatarPreview();
@@ -1464,35 +1347,35 @@ function handleAvatarUpload(event) {
   const reader = new FileReader();
   reader.onload = e => { memberAvatarPending = e.target.result; updateAvatarPreview(); buildMemberEmojiGrid(); };
   reader.readAsDataURL(file);
+}
 function saveMember() {
   const name = document.getElementById('av-name').value.trim();
   if (!name) { toast('Enter a name','error'); return; }
   const m = state.members[memberEditIdx]; if (!m) return;
 
-  // Internal helper to push to Firebase once photo is ready
   const proceedWithSave = (finalAvatar) => {
-    m.name = name;
+    m.name   = name;
     m.avatar = finalAvatar;
-    m.color = memberColorPending;
-    saveConfigToFirebase(); 
+    m.color  = memberColorPending;
+    saveConfigToFirebase();
     closeModal('member-modal');
+    renderSidebar();
+    if (state.mainView === 'overview') renderOverview();
     toast('Member updated!','success');
   };
 
-  // NEW: Image Compression Logic to prevent Firebase crashes
-  if (memberAvatarPending && memberAvatarPending.startsWith('data:') && memberAvatarPending.length > 50000) {
+  if (memberAvatarPending && memberAvatarPending.startsWith('data:')) {
     const img = new Image();
     img.onload = function() {
       const canvas = document.createElement('canvas');
-      const MAX_WIDTH = 120; // Hub icons only need to be small
-      const scale = MAX_WIDTH / img.width;
-      canvas.width = MAX_WIDTH;
-      canvas.height = img.height * scale;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      // Convert to small JPEG string (much smaller than raw PNG)
-      proceedWithSave(canvas.toDataURL('image/jpeg', 0.6));
+      const MAX_DIM = 120;
+      const scale   = Math.min(MAX_DIM / img.width, MAX_DIM / img.height, 1);
+      canvas.width  = Math.round(img.width  * scale);
+      canvas.height = Math.round(img.height * scale);
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      proceedWithSave(canvas.toDataURL('image/jpeg', 0.65));
     };
+    img.onerror = () => proceedWithSave(memberAvatarPending);
     img.src = memberAvatarPending;
   } else {
     proceedWithSave(memberAvatarPending);
@@ -1507,10 +1390,34 @@ function renderOverview() {
   const today = todayStr();
   let html = `<div class="family-grid">`;
   state.members.forEach(m => {
-    const mTasks = state.tasks.filter(t => String(t.member)===String(m.id));
-    const active = mTasks.filter(t => !t.completed);
-    const done = mTasks.filter(t => t.completed);
+    const mTasks  = state.tasks.filter(t => String(t.member)===String(m.id));
+    const active  = mTasks.filter(t => !t.completed);
+    const done    = mTasks.filter(t =>  t.completed);
     const overdue = active.filter(t => t.dueDate && t.dueDate < today);
+    const total   = active.length + done.length;
+    const pct     = total === 0 ? 0 : Math.round(done.length / total * 100);
+    const allDone = total > 0 && pct === 100;
+    const barColor = allDone ? '#43e97b' : overdue.length > 0
+      ? `linear-gradient(90deg,${m.color},var(--accent2))`
+      : `linear-gradient(90deg,${m.color},${m.color}cc)`;
+
+    let progressHtml;
+    if (allDone) {
+      progressHtml = `<div class="card-complete-badge" style="color:#43e97b;background:rgba(67,233,123,.08)">🎉 All tasks complete!</div>`;
+    } else if (total === 0) {
+      progressHtml = `<div class="card-progress-wrap"><div class="card-progress-label"><span class="card-progress-pct" style="color:var(--text3)">No tasks yet</span></div><div class="card-progress-track"><div class="card-progress-fill" style="width:0%;background:${m.color}"></div></div></div>`;
+    } else {
+      progressHtml = `<div class="card-progress-wrap">
+        <div class="card-progress-label">
+          <span class="card-progress-pct" style="color:${pct>=70?'#43e97b':pct>=40?m.color:'var(--accent2)'}">${pct}% complete</span>
+          <span class="card-progress-done">${done.length} of ${total} done</span>
+        </div>
+        <div class="card-progress-track">
+          <div class="card-progress-fill" style="width:${pct}%;background:${barColor}"></div>
+        </div>
+      </div>`;
+    }
+
     html += `<div class="family-card" onclick="selectMemberFromCard('${m.id}')">
       <div class="family-card-header">
         <div class="family-card-avatar" style="background:${m.color}22;color:${m.color}">${memberAvatarHtml(m,44)}</div>
@@ -1525,22 +1432,7 @@ function renderOverview() {
         <div class="stat"><div class="stat-num">${done.length}</div><div class="stat-lbl">Done</div></div>
         <div class="stat"><div class="stat-num" style="color:${overdue.length?'var(--accent2)':'inherit'}">${overdue.length}</div><div class="stat-lbl">Overdue</div></div>
       </div>
-      ${(()=>{
-        const total = active.length + done.length;
-        const pct = total === 0 ? 0 : Math.round(done.length / total * 100);
-        const allDone = total > 0 && pct === 100;
-        const barColor = allDone ? '#43e97b' : overdue.length > 0 ? `linear-gradient(90deg,${m.color},var(--accent2))` : `linear-gradient(90deg,${m.color},${m.color}cc)`;
-        if (allDone) return `<div class="card-complete-badge" style="color:#43e97b;background:rgba(67,233,123,.08)">🎉 All tasks complete!</div>`;
-        if (total === 0) return `<div class="card-progress-wrap"><div class="card-progress-label"><span class="card-progress-pct" style="color:var(--text3)">No tasks yet</span></div><div class="card-progress-track"><div class="card-progress-fill" style="width:0%;background:${m.color}"></div></div></div>`;
-        return '<div class="card-progress-wrap">' +
-          '<div class="card-progress-label">' +
-          '<span class="card-progress-pct" style="color:' + (pct>=70?'#43e97b':pct>=40?m.color:'var(--accent2)') + '">' + pct + '% complete</span>' +
-          '<span class="card-progress-done">' + done.length + ' of ' + total + ' done</span>' +
-          '</div>' +
-          '<div class="card-progress-track">' +
-          '<div class="card-progress-fill" style="width:' + pct + '%;background:' + barColor + '"></div>' +
-          '</div></div>';
-      })()}
+      ${progressHtml}
     </div>`;
   });
   html += '</div>';
@@ -1553,16 +1445,17 @@ function selectMemberFromCard(id) {
 }
 
 // ══════════════════════════════════════
-// CALENDAR VIEW
+// CALENDAR
 // ══════════════════════════════════════
 function renderCalendar() {
   document.getElementById('view-tabs').style.display = 'none';
   const { calMonth: month, calYear: year } = state;
-  const monthName = new Date(year,month,1).toLocaleDateString('en-US',{month:'long',year:'numeric'});
-  const todayStr2 = todayStr();
-  const firstDay = new Date(year,month,1).getDay();
+  const monthName   = new Date(year,month,1).toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  const todayStr2   = todayStr();
+  const firstDay    = new Date(year,month,1).getDay();
   const daysInMonth = new Date(year,month+1,0).getDate();
-  const daysInPrev = new Date(year,month,0).getDate();
+  const daysInPrev  = new Date(year,month,0).getDate();
+
   let html = `
   <div class="gcal-banner">
     <svg width="20" height="20" viewBox="0 0 24 24"><rect width="24" height="24" rx="3" fill="#4285f4"/><rect x="3" y="11" width="18" height="10" rx="1" fill="white" opacity=".15"/><text x="12" y="19" font-size="8" fill="white" text-anchor="middle" font-family="sans-serif" font-weight="bold">CAL</text></svg>
@@ -1576,31 +1469,45 @@ function renderCalendar() {
   </div>
   <div class="cal-grid">
     ${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>`<div class="cal-header-cell">${d}</div>`).join('')}`;
-  const totalCells = Math.ceil((firstDay+daysInMonth)/7)*7;
-  for (let i=0;i<totalCells;i++) {
-    let day, isOther=false, ds;
-    if (i<firstDay) { day=daysInPrev-firstDay+i+1; isOther=true; ds=`${year}-${pad(month)}-${pad(day)}`; }
-    else if (i>=firstDay+daysInMonth) { day=i-firstDay-daysInMonth+1; isOther=true; ds=`${year}-${pad(month+2)}-${pad(day)}`; }
-    else { day=i-firstDay+1; ds=`${year}-${pad(month+1)}-${pad(day)}`; }
-    const isToday=ds===todayStr2;
-    const dayTasks = state.tasks.filter(t=>t.dueDate===ds&&!t.completed);
-    const m = state.currentMember!=='family' ? state.members.find(m=>String(m.id)===String(state.currentMember)) : null;
-    const ft = m ? dayTasks.filter(t=>String(t.member)===String(m.id)) : dayTasks;
+
+  const totalCells = Math.ceil((firstDay + daysInMonth) / 7) * 7;
+  for (let i = 0; i < totalCells; i++) {
+    let day, isOther = false, ds;
+    if (i < firstDay) {
+      day = daysInPrev - firstDay + i + 1;
+      isOther = true;
+      const prevMonth = month === 0 ? 12 : month;
+      const prevYear  = month === 0 ? year - 1 : year;
+      ds = `${prevYear}-${pad(prevMonth)}-${pad(day)}`;
+    } else if (i >= firstDay + daysInMonth) {
+      day = i - firstDay - daysInMonth + 1;
+      isOther = true;
+      const nextMonth = month === 11 ? 1 : month + 2;
+      const nextYear  = month === 11 ? year + 1 : year;
+      ds = `${nextYear}-${pad(nextMonth)}-${pad(day)}`;
+    } else {
+      day = i - firstDay + 1;
+      ds = `${year}-${pad(month + 1)}-${pad(day)}`;
+    }
+    const isToday  = ds === todayStr2;
+    const dayTasks = state.tasks.filter(t => t.dueDate === ds && !t.completed);
+    const m2       = state.currentMember !== 'family' ? state.members.find(m => String(m.id) === String(state.currentMember)) : null;
+    const ft       = m2 ? dayTasks.filter(t => String(t.member) === String(m2.id)) : dayTasks;
     html += `<div class="cal-cell ${isOther?'other-month':''} ${isToday?'today':''}" onclick="calDayClick('${ds}')">
       <div class="cal-day-num">${day}</div>
-      ${ft.slice(0,3).map(t=>{
-        const tm=state.members.find(m=>String(m.id)===String(t.member));
-        const c=tm?tm.color:'var(--accent)';
+      ${ft.slice(0,3).map(t => {
+        const tm = state.members.find(m => String(m.id) === String(t.member));
+        const c  = tm ? tm.color : 'var(--accent)';
         return `<div class="cal-task-dot"><span class="dot" style="background:${c}"></span>${escHtml(t.title.substring(0,16))}${t.title.length>16?'…':''}</div>`;
       }).join('')}
-      ${ft.length>3?`<div style="font-size:.66rem;color:var(--text3)">+${ft.length-3} more</div>`:''}
+      ${ft.length > 3 ? `<div style="font-size:.66rem;color:var(--text3)">+${ft.length-3} more</div>` : ''}
     </div>`;
   }
   html += '</div>';
   document.getElementById('main-content').innerHTML = html;
 }
-function calPrev() { state.calMonth--; if(state.calMonth<0){state.calMonth=11;state.calYear--;} renderCalendar(); }
-function calNext() { state.calMonth++; if(state.calMonth>11){state.calMonth=0;state.calYear++;} renderCalendar(); }
+function calPrev()  { state.calMonth--; if(state.calMonth<0){state.calMonth=11;state.calYear--;} renderCalendar(); }
+function calNext()  { state.calMonth++; if(state.calMonth>11){state.calMonth=0;state.calYear++;} renderCalendar(); }
 function calToday() { state.calMonth=new Date().getMonth(); state.calYear=new Date().getFullYear(); renderCalendar(); }
 function calDayClick(ds) { openAddTask(); document.getElementById('t-due').value = ds; }
 
@@ -1618,14 +1525,12 @@ function renderSettings() {
       <button class="toggle ${isDark?'on':''}" onclick="toggleTheme();renderSettings()"></button>
     </div>
   </div>
-  
   <div class="settings-section">
     <h4>🗄️ Database Connection</h4>
     <div style="background:rgba(67,233,123,.08);border:1px solid rgba(67,233,123,.2);border-radius:10px;padding:10px 14px;font-size:.82rem;color:var(--accent3);margin-bottom:10px">
       ✅ Connected to Firebase Realtime Database. App is syncing in real-time.
     </div>
   </div>
-  
   <div class="settings-section">
     <h4>📅 Google Calendar</h4>
     <div class="form-group">
@@ -1659,7 +1564,6 @@ function renderSettings() {
       <button class="btn btn-ghost btn-sm" onclick="addMemberSetting()">+ Add</button>
     </div>
   </div>
-
   <div class="settings-section">
     <h4>⚠️ Danger Zone</h4>
     <div class="settings-row">
@@ -1668,40 +1572,38 @@ function renderSettings() {
     </div>
   </div>`;
 }
-
-function saveGcal() { 
-  state.gcalKey=document.getElementById('s-gcal-key').value.trim(); 
-  state.gcalId=document.getElementById('s-gcal-id').value.trim(); 
-  saveConfigToFirebase(); 
-  toast('Calendar settings saved','success'); 
+function saveGcal() {
+  state.gcalKey = document.getElementById('s-gcal-key').value.trim();
+  state.gcalId  = document.getElementById('s-gcal-id').value.trim();
+  saveConfigToFirebase();
+  toast('Calendar settings saved','success');
 }
-
 function addMemberSetting() {
-  const name=document.getElementById('settings-new-member').value.trim();
-  if (!name||state.members.length>=9) return;
-  state.members.push({ name, color: COLORS[state.members.length%COLORS.length], id: genId(), avatar: null });
-  saveConfigToFirebase(); 
-  renderSidebar(); 
-  renderSettings(); 
+  const name = document.getElementById('settings-new-member').value.trim();
+  if (!name || state.members.length >= 9) return;
+  state.members.push({ name, color: COLORS[state.members.length % COLORS.length], id: genId(), avatar: null });
+  saveConfigToFirebase(); renderSidebar(); renderSettings();
   toast(`${name} added!`,'success');
 }
-
 function removeMemberSetting(i) {
   if (!confirm(`Remove ${state.members[i].name}?`)) return;
-  state.members.splice(i,1); 
-  saveConfigToFirebase(); 
-  renderSidebar(); 
-  renderSettings();
+  state.members.splice(i,1); saveConfigToFirebase(); renderSidebar(); renderSettings();
 }
-
-function resetAll() { 
-  if (!confirm('Reset local data and reload?')) return; 
-  localStorage.removeItem('familyhub_v2'); 
-  window.location.reload(); 
+function resetAll() {
+  if (!confirm('Reset local data and reload?')) return;
+  localStorage.removeItem('familyhub_v2'); window.location.reload();
 }
 
 // ══════════════════════════════════════
-// FIREBASE REAL-TIME SYNC LOGIC
+// GOOGLE CALENDAR STUB
+// ══════════════════════════════════════
+function addToGoogleCalendar(task) {
+  if (!state.gcalKey || !state.gcalId) return;
+  console.log('GCal add stub:', task.title, task.dueDate);
+}
+
+// ══════════════════════════════════════
+// FIREBASE SYNC
 // ══════════════════════════════════════
 async function pushTask(task, action) {
   const db = getDb(); if (!db) return;
@@ -1713,25 +1615,25 @@ async function pushTask(task, action) {
     }
   } catch(e) {
     console.error('pushTask error:', e);
-    toast('Failed to save to Firebase', 'error');
+    toast('Failed to save to Firebase','error');
   }
 }
 
 function saveConfigToFirebase() {
   const db = getDb(); if (!db) return;
-  var payload = {
-    members: state.members.map(function(m) {
-      return {
-        id: m.id, name: m.name, color: m.color,
-        avatar: (m.avatar && m.avatar.startsWith('data:')) ? null : m.avatar
-      };
-    }),
-    lists: state.lists,
-    gcalKey: state.gcalKey,
-    gcalId: state.gcalId,
-    theme: state.theme
+  const payload = {
+    members: state.members.map(m => ({
+      id:     m.id,
+      name:   m.name,
+      color:  m.color,
+      avatar: m.avatar || null
+    })),
+    lists:    state.lists,
+    gcalKey:  state.gcalKey,
+    gcalId:   state.gcalId,
+    theme:    state.theme
   };
-  db.ref('config').set(payload).catch(function(e) { console.error('Config sync error:', e); });
+  db.ref('config').set(payload).catch(e => console.error('Config sync error:', e));
 }
 
 function startFirebaseListener() {
@@ -1740,18 +1642,13 @@ function startFirebaseListener() {
   _fbListening = true;
   setSyncStatus('syncing');
 
-  // Real-time listener for tasks
   db.ref('tasks').on('value', function(snap) {
     const data = snap.val();
     if (data) {
-      const remoteTasks = Object.values(data).map(function(t) {
-        return Object.assign({}, t, {
-          completed: t.completed === true || t.completed === 'true',
-          addedToCal: t.addedToCal === true || t.addedToCal === 'true'
-        });
-      });
-      // Sort tasks newer first
-      state.tasks = remoteTasks.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+      state.tasks = Object.values(data).map(t => Object.assign({}, t, {
+        completed:  t.completed  === true || t.completed  === 'true',
+        addedToCal: t.addedToCal === true || t.addedToCal === 'true'
+      })).sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
     } else {
       state.tasks = [];
     }
@@ -1765,58 +1662,246 @@ function startFirebaseListener() {
     setSyncStatus('error');
   });
 
-  // Real-time listener for config (members, lists)
   db.ref('config').on('value', function(snap) {
     const data = snap.val();
     if (data) {
-      var changed = false;
-      if (data.members && JSON.stringify(data.members) !== JSON.stringify(state.members)) {
-        state.members = data.members; changed = true;
-      }
-      if (data.lists && JSON.stringify(data.lists) !== JSON.stringify(state.lists)) {
-        state.lists = data.lists; changed = true;
-      }
+      let changed = false;
+      if (data.members && JSON.stringify(data.members) !== JSON.stringify(state.members)) { state.members = data.members; changed = true; }
+      if (data.lists   && JSON.stringify(data.lists)   !== JSON.stringify(state.lists))   { state.lists   = data.lists;   changed = true; }
       if (data.gcalKey !== undefined) state.gcalKey = data.gcalKey;
-      if (data.gcalId !== undefined) state.gcalId = data.gcalId;
-      
-      if (changed) {
-        renderSidebar();
-        renderSidebarLists();
-        renderView();
-      }
+      if (data.gcalId  !== undefined) state.gcalId  = data.gcalId;
+      if (data.theme   !== undefined && data.theme !== state.theme) { state.theme = data.theme; applyTheme(state.theme); }
+      localStorage.setItem('familyhub_v2', JSON.stringify({
+        theme: state.theme, members: state.members, lists: state.lists,
+        gcalKey: state.gcalKey, gcalId: state.gcalId
+      }));
+      if (changed) { renderSidebar(); renderSidebarLists(); renderView(); }
     } else {
-        // If Firebase config is completely empty (first time run), write the local state up to it
-        saveConfigToFirebase();
+      saveConfigToFirebase();
     }
   });
 }
 
 function setSyncStatus(s) {
-  const dot=document.getElementById('sync-dot'), txt=document.getElementById('sync-text');
+  const dot = document.getElementById('sync-dot');
+  const txt = document.getElementById('sync-text');
   if (!dot) return;
-  dot.className='sync-dot'+(s==='syncing'?' syncing':s==='error'?' error':'');
-  txt.textContent=s==='syncing'?'Syncing…':s==='error'?'Sync error':state.lastSync?'Synced '+timeAgo(state.lastSync):'Connected';
+  dot.className = 'sync-dot' + (s==='syncing' ? ' syncing' : s==='error' ? ' error' : '');
+  txt.textContent = s==='syncing' ? 'Syncing…' : s==='error' ? 'Sync error' : state.lastSync ? 'Synced ' + timeAgo(state.lastSync) : 'Connected';
+}
+
+// ══════════════════════════════════════
+// MASS UPDATE TOOL
+// ══════════════════════════════════════
+function openMassUpdate() {
+  const existing = document.getElementById('mass-update-modal');
+  if (existing) existing.remove();
+
+  const memberOptions = '<option value="">— Any member —</option>'
+    + state.members.map(m => `<option value="${m.id}">${escHtml(m.name)}</option>`).join('');
+  const listOptions = '<option value="">— Any list —</option>'
+    + state.lists.map(l => `<option value="${l.id}">${l.emoji} ${escHtml(l.name)}</option>`).join('');
+
+  document.body.insertAdjacentHTML('beforeend', `
+  <div class="modal-overlay open" id="mass-update-modal" style="z-index:2000">
+    <div class="modal" style="width:600px;max-width:96vw">
+      <h3>⚡ Mass Update Tasks</h3>
+      <p style="font-size:.82rem;color:var(--text3);margin-bottom:18px">Filter tasks, select which ones to act on, then choose an action.</p>
+      <div style="background:var(--surface2);border-radius:10px;padding:14px;margin-bottom:16px">
+        <div style="font-size:.7rem;font-weight:700;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">Filter Tasks</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="form-group" style="margin:0"><label>Assigned To</label><select id="mu-filter-member">${memberOptions}</select></div>
+          <div class="form-group" style="margin:0"><label>Priority</label>
+            <select id="mu-filter-priority">
+              <option value="">— Any priority —</option>
+              <option value="high">🔴 High</option>
+              <option value="medium">🟡 Medium</option>
+              <option value="low">🟢 Low</option>
+              <option value="none">None</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin:0"><label>List</label><select id="mu-filter-list">${listOptions}</select></div>
+          <div class="form-group" style="margin:0"><label>Status</label>
+            <select id="mu-filter-status">
+              <option value="active">Active only</option>
+              <option value="completed">Completed only</option>
+              <option value="all">All tasks</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
+          <input type="text" id="mu-filter-search" placeholder="Search title…" style="flex:1;padding:8px 12px;background:var(--surface3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:.88rem;outline:none">
+          <button class="btn btn-ghost btn-sm" onclick="massUpdateRunFilter()">Apply Filter</button>
+        </div>
+      </div>
+      <div style="max-height:260px;overflow-y:auto;border:1px solid var(--border);border-radius:10px;margin-bottom:14px" id="mu-task-list">
+        <div style="padding:20px;text-align:center;color:var(--text3);font-size:.84rem">Apply a filter above to see tasks</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <span id="mu-selected-count" style="font-size:.8rem;color:var(--text3)">0 tasks selected</span>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost btn-sm" onclick="massSelectAll()">Select All</button>
+          <button class="btn btn-ghost btn-sm" onclick="massSelectNone()">Select None</button>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border-radius:10px;padding:14px">
+        <div style="font-size:.7rem;font-weight:700;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">Action to Apply to Selected</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="form-group" style="margin:0"><label>Action Type</label>
+            <select id="mu-action-type" onchange="massUpdateToggleActionFields()">
+              <option value="">— Choose action —</option>
+              <option value="reassign">Reassign to member</option>
+              <option value="priority">Change priority</option>
+              <option value="due">Set due date</option>
+              <option value="list">Move to list</option>
+              <option value="complete">Mark complete</option>
+              <option value="incomplete">Mark incomplete</option>
+              <option value="delete">🗑️ Delete tasks</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin:0" id="mu-action-value-wrap"></div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="closeMassUpdate()">Cancel</button>
+        <button class="btn btn-primary" onclick="massUpdateApply()">Apply to Selected</button>
+      </div>
+    </div>
+  </div>`);
+
+  document.getElementById('mass-update-modal').addEventListener('click', e => {
+    if (e.target === document.getElementById('mass-update-modal')) closeMassUpdate();
+  });
+  massUpdateRunFilter();
+}
+
+function closeMassUpdate() {
+  const m = document.getElementById('mass-update-modal'); if (m) m.remove();
+}
+
+function massUpdateRunFilter() {
+  const filterMember   = document.getElementById('mu-filter-member')?.value   || '';
+  const filterPriority = document.getElementById('mu-filter-priority')?.value || '';
+  const filterList     = document.getElementById('mu-filter-list')?.value     || '';
+  const filterStatus   = document.getElementById('mu-filter-status')?.value   || 'active';
+  const filterSearch   = (document.getElementById('mu-filter-search')?.value  || '').toLowerCase().trim();
+
+  let tasks = [...state.tasks];
+  if (filterMember)   tasks = tasks.filter(t => String(t.member) === filterMember);
+  if (filterPriority) tasks = tasks.filter(t => (t.priority || 'none') === filterPriority);
+  if (filterList)     tasks = tasks.filter(t => (t.listId || '') === filterList);
+  if (filterStatus === 'active')    tasks = tasks.filter(t => !t.completed);
+  if (filterStatus === 'completed') tasks = tasks.filter(t =>  t.completed);
+  if (filterSearch)   tasks = tasks.filter(t => t.title.toLowerCase().includes(filterSearch));
+
+  const container = document.getElementById('mu-task-list');
+  if (!tasks.length) {
+    container.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text3);font-size:.84rem">No tasks match this filter</div>';
+    massUpdateSelectedCount(); return;
+  }
+
+  const today = todayStr();
+  container.innerHTML = tasks.map(t => {
+    const m   = state.members.find(x => String(x.id) === String(t.member));
+    const lst = t.listId ? state.lists.find(l => l.id === t.listId) : null;
+    const overdue = !t.completed && t.dueDate && t.dueDate < today;
+    return `<label style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s" onmouseover="this.style.background='var(--surface3)'" onmouseout="this.style.background=''">
+      <input type="checkbox" class="mu-task-cb" data-id="${t.id}" style="width:15px;height:15px;cursor:pointer;flex-shrink:0" onchange="massUpdateSelectedCount()">
+      <span style="flex:1;min-width:0">
+        <span style="font-size:.87rem;font-weight:500;${t.completed?'text-decoration:line-through;opacity:.5':''}">${escHtml(t.title)}</span>
+        <span style="display:flex;gap:5px;flex-wrap:wrap;margin-top:2px">
+          ${m   ? `<span style="font-size:.7rem;background:${m.color}22;color:${m.color};padding:1px 7px;border-radius:10px">${escHtml(m.name)}</span>` : ''}
+          ${lst ? `<span style="font-size:.7rem;background:${lst.color}22;color:${lst.color};padding:1px 7px;border-radius:10px">${lst.emoji} ${escHtml(lst.name)}</span>` : ''}
+          ${t.dueDate ? `<span style="font-size:.7rem;color:${overdue?'var(--accent2)':'var(--text3)'}">${overdue?'⚠':'📅'} ${formatDate(t.dueDate)}</span>` : ''}
+          ${t.priority && t.priority!=='none' ? `<span style="font-size:.7rem;color:${t.priority==='high'?'var(--accent2)':t.priority==='medium'?'var(--accent4)':'var(--accent3)'}">${{high:'🔴',medium:'🟡',low:'🟢'}[t.priority]}</span>` : ''}
+        </span>
+      </span>
+    </label>`;
+  }).join('');
+  massUpdateSelectedCount();
+}
+
+function massUpdateSelectedCount() {
+  const cbs = document.querySelectorAll('.mu-task-cb:checked');
+  const el  = document.getElementById('mu-selected-count');
+  if (el) el.textContent = cbs.length + ' task' + (cbs.length !== 1 ? 's' : '') + ' selected';
+}
+function massSelectAll()  { document.querySelectorAll('.mu-task-cb').forEach(cb => cb.checked = true);  massUpdateSelectedCount(); }
+function massSelectNone() { document.querySelectorAll('.mu-task-cb').forEach(cb => cb.checked = false); massUpdateSelectedCount(); }
+
+function massUpdateToggleActionFields() {
+  const type = document.getElementById('mu-action-type')?.value;
+  const wrap = document.getElementById('mu-action-value-wrap');
+  if (!wrap) return;
+  const memberOpts = state.members.map(m => `<option value="${m.id}">${escHtml(m.name)}</option>`).join('');
+  const listOpts   = '<option value="">No list</option>' + state.lists.map(l => `<option value="${l.id}">${l.emoji} ${escHtml(l.name)}</option>`).join('');
+  const fields = {
+    reassign:  `<label>Reassign To</label><select id="mu-action-val"><option value="family">All Family</option>${memberOpts}</select>`,
+    priority:  `<label>New Priority</label><select id="mu-action-val"><option value="none">None</option><option value="low">🟢 Low</option><option value="medium">🟡 Medium</option><option value="high">🔴 High</option></select>`,
+    due:       `<label>New Due Date</label><input type="date" id="mu-action-val">`,
+    list:      `<label>Move to List</label><select id="mu-action-val">${listOpts}</select>`,
+    complete:  '', incomplete: '', delete: ''
+  };
+  if (type && fields[type] !== undefined) {
+    wrap.innerHTML = fields[type]
+      ? `<div class="form-group" style="margin:0">${fields[type]}</div>`
+      : `<div style="display:flex;align-items:flex-end;padding-bottom:4px"><span style="font-size:.8rem;color:var(--text3)">No extra value needed</span></div>`;
+  } else {
+    wrap.innerHTML = '';
+  }
+}
+
+async function massUpdateApply() {
+  const type = document.getElementById('mu-action-type')?.value;
+  if (!type) { toast('Choose an action first','error'); return; }
+  const selectedIds = [...document.querySelectorAll('.mu-task-cb:checked')].map(cb => cb.dataset.id);
+  if (!selectedIds.length) { toast('No tasks selected','error'); return; }
+  if (type === 'delete') {
+    if (!confirm(`Permanently delete ${selectedIds.length} task${selectedIds.length!==1?'s':''}? This cannot be undone.`)) return;
+  }
+  const actionVal = document.getElementById('mu-action-val')?.value ?? '';
+  let successCount = 0;
+  for (const id of selectedIds) {
+    const task = state.tasks.find(t => String(t.id) === String(id));
+    if (!task) continue;
+    if (type === 'delete') {
+      await pushTask({ id }, 'delete');
+    } else {
+      const updated = Object.assign({}, task);
+      if (type === 'reassign')   updated.member    = actionVal;
+      if (type === 'priority')   updated.priority  = actionVal;
+      if (type === 'due')        updated.dueDate   = actionVal;
+      if (type === 'list')       updated.listId    = actionVal;
+      if (type === 'complete')   { updated.completed = true;  updated.completedAt = new Date().toISOString(); }
+      if (type === 'incomplete') { updated.completed = false; updated.completedAt = ''; }
+      await pushTask(updated, 'update');
+    }
+    successCount++;
+  }
+  const labels = { reassign:'Reassigned', priority:'Priority updated', due:'Due date set', list:'Moved to list', complete:'Marked complete', incomplete:'Marked incomplete', delete:'Deleted' };
+  toast(`${labels[type]}: ${successCount} task${successCount!==1?'s':''}`, 'success');
+  closeMassUpdate();
 }
 
 // ══════════════════════════════════════
 // UTILS
 // ══════════════════════════════════════
 function renderView() {
-  if (state.mainView==='overview') renderOverview();
-  else if (state.mainView==='calendar') renderCalendar();
-  else if (state.mainView==='settings') renderSettings();
-  else if (state.mainView==='list') renderListView();
-  else renderTasksView();
+  if      (state.mainView==='overview')  renderOverview();
+  else if (state.mainView==='calendar')  renderCalendar();
+  else if (state.mainView==='settings')  renderSettings();
+  else if (state.mainView==='list')      renderListView();
+  else                                   renderTasksView();
 }
 function todayStr() { const d=new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
-function formatTime(t) { if(!t) return ''; try { const [h,m]=t.split(':'); const hr=parseInt(h); return `${hr%12||12}:${m} ${hr<12?'AM':'PM'}`; } catch(e){return t;} }
-function recurLabel(r) { const map={daily:'Daily',weekdays:'Weekdays',weekly:'Weekly',biweekly:'Every 2 wks',monthly:'Monthly',yearly:'Yearly'}; return map[r]||r; }
+function formatTime(t) { if(!t)return''; try{const[h,m]=t.split(':');const hr=parseInt(h);return`${hr%12||12}:${m} ${hr<12?'AM':'PM'}`;}catch(e){return t;} }
+function recurLabel(r) { return {daily:'Daily',weekdays:'Weekdays',weekly:'Weekly',biweekly:'Every 2 wks',monthly:'Monthly',yearly:'Yearly'}[r]||r; }
 function pad(n) { return String(n).padStart(2,'0'); }
 function genId() { return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
 function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function formatDate(d) { if(!d) return ''; const [y,m,day]=d.split('-'); return new Date(y,m-1,day).toLocaleDateString('en-US',{month:'short',day:'numeric'}); }
-function timeAgo(d) { const diff=Math.round((new Date()-d)/1000); if(diff<60) return 'just now'; if(diff<3600) return Math.round(diff/60)+'m ago'; return Math.round(diff/3600)+'h ago'; }
-function toast(msg,type='info') {
+function formatDate(d) { if(!d)return''; const[y,m,day]=d.split('-'); return new Date(y,m-1,day).toLocaleDateString('en-US',{month:'short',day:'numeric'}); }
+function timeAgo(d) { const diff=Math.round((new Date()-d)/1000); if(diff<60)return'just now'; if(diff<3600)return Math.round(diff/60)+'m ago'; return Math.round(diff/3600)+'h ago'; }
+function toast(msg, type='info') {
   const c=document.getElementById('toasts'), el=document.createElement('div');
   el.className=`toast ${type}`;
   el.innerHTML=`<span class="toast-icon">${{success:'✅',error:'❌',info:'ℹ️'}[type]||'ℹ️'}</span><span>${msg}</span>`;
@@ -1825,29 +1910,24 @@ function toast(msg,type='info') {
 }
 
 // ══════════════════════════════════════
-// INIT BOOT SEQUENCE
+// BOOT
 // ══════════════════════════════════════
 function _boot() {
-  document.querySelectorAll('.modal-overlay').forEach(function(o) {
-    o.addEventListener('click', function(e) {
-      if (e.target === o) o.classList.remove('open');
-    });
+  document.querySelectorAll('.modal-overlay').forEach(o => {
+    o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
   });
-
-  // Since we are using Firebase, we check if Firebase has populated data yet.
-  // We'll show the setup screen ONLY if local storage is completely empty, 
-  // otherwise we jump right to the app and let Firebase hydrate the data.
   const saved = localStorage.getItem('familyhub_v2');
   if (!saved) {
     document.getElementById('setup-screen').style.display = 'flex';
     document.getElementById('app').style.display = 'none';
   } else {
-    // We have some local cache, skip setup and let Firebase take over
     try {
-        const c = JSON.parse(saved);
-        if (c.theme) state.theme = c.theme;
-        if (c.members) state.members = c.members;
-        if (c.lists) state.lists = c.lists;
+      const c = JSON.parse(saved);
+      if (c.theme)   state.theme   = c.theme;
+      if (c.members) state.members = c.members;
+      if (c.lists)   state.lists   = c.lists;
+      if (c.gcalKey) state.gcalKey = c.gcalKey;
+      if (c.gcalId)  state.gcalId  = c.gcalId;
     } catch(e) {}
     startApp();
   }
@@ -1861,3 +1941,4 @@ if (document.readyState === 'loading') {
 </script>
 </body>
 </html>
+```
