@@ -67,7 +67,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .divider { height: 1px; background: var(--border); margin: 24px 0; }
 .step-label { font-size: .75rem; font-weight: 700; color: var(--accent5); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 16px; }
 #app { display: none; min-height: 100vh; }
-
 /* SIDEBAR */
 .sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 268px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 100; transition: transform .25s ease, background .25s; }
 .sidebar-header { padding: 18px 18px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
@@ -107,11 +106,8 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .sync-dot.syncing { background: var(--accent4); }
 .sync-dot.error { background: var(--accent2); animation: none; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-
-/* SIDEBAR OVERLAY for mobile */
 .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 99; }
 .sidebar-overlay.visible { display: block; }
-
 /* MAIN */
 .main { margin-left: 268px; min-height: 100vh; display: flex; flex-direction: column; }
 .topbar { padding: 18px 30px; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid var(--border); background: var(--surface); position: sticky; top: 0; z-index: 50; transition: background .25s; box-shadow: 0 2px 12px rgba(0,60,140,.10); }
@@ -165,7 +161,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .filter-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
 .progress-bar { height: 5px; background: var(--surface3); border-radius: 3px; overflow: hidden; margin: 6px 0 14px; }
 .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent5)); border-radius: 3px; transition: width .4s ease; }
-
 /* KANBAN */
 .kanban-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: start; }
 .kanban-col { background: var(--surface2); border-radius: 14px; border: 1px solid var(--border); overflow: hidden; }
@@ -181,7 +176,34 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .kanban-card:hover .kanban-card-actions { opacity: 1; }
 .kanban-drag-hint { text-align: center; padding: 20px; color: var(--text3); font-size: .78rem; }
 @media (max-width: 768px) { .kanban-board { grid-template-columns: 1fr; } }
-
+/* VIEW TOGGLE + LIST VIEW + KANBAN FILTERS */
+.view-toggle { display: flex; gap: 6px; margin-bottom: 14px; }
+.view-toggle-btn { padding: 7px 15px; border-radius: 9px; border: 1px solid var(--border); background: var(--surface2); color: var(--text2); font-family: inherit; font-size: .82rem; font-weight: 600; cursor: pointer; transition: all .15s; display: flex; align-items: center; gap: 6px; }
+.view-toggle-btn:hover { color: var(--text); border-color: var(--accent5); }
+.view-toggle-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.kanban-filter-bar { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin-bottom: 16px; padding: 11px 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); }
+.kfilter-group { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+.kfilter-label { font-size: .68rem; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; margin-right: 3px; }
+.kfilter-chip { padding: 3px 11px; border-radius: 16px; border: 1px solid var(--border); background: transparent; color: var(--text3); font-family: inherit; font-size: .74rem; font-weight: 600; cursor: pointer; transition: all .15s; }
+.kfilter-chip:hover { border-color: var(--accent); color: var(--text); }
+.kfilter-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.lv-hint { font-size: .76rem; color: var(--text3); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.lv-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: 0 1px 6px rgba(0,60,140,.06); }
+.lv-table { width: 100%; border-collapse: collapse; font-size: .82rem; min-width: 760px; }
+.lv-table th { background: var(--surface3); color: var(--accent5); text-align: left; padding: 9px 11px; font-size: .68rem; text-transform: uppercase; letter-spacing: .05em; font-weight: 700; border-bottom: 1px solid var(--border); white-space: nowrap; position: sticky; top: 0; z-index: 2; }
+.lv-cell { padding: 3px 6px; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); position: relative; vertical-align: middle; }
+.lv-cell.fill-range { background: rgba(26,127,232,.18); box-shadow: inset 0 0 0 1px var(--accent); }
+.lv-cell.lv-check-cell { text-align: center; width: 42px; }
+.lv-input { width: 100%; background: transparent; border: 1px solid transparent; border-radius: 6px; color: var(--text); font-family: inherit; font-size: .82rem; padding: 5px 6px; outline: none; cursor: pointer; }
+.lv-input:hover { border-color: var(--border); background: var(--surface2); }
+.lv-input:focus { border-color: var(--accent); background: var(--surface2); cursor: text; }
+select.lv-input { cursor: pointer; }
+.lv-title-input { font-weight: 500; min-width: 150px; }
+.lv-row.done .lv-title-input { text-decoration: line-through; opacity: .55; }
+.lv-check { width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent); }
+.fill-handle { position: absolute; right: 2px; bottom: 2px; width: 10px; height: 10px; background: var(--accent); border: 1.5px solid var(--surface); border-radius: 2px; cursor: crosshair; opacity: 0; transition: opacity .1s; z-index: 3; }
+.lv-cell:hover .fill-handle { opacity: 1; }
+.lv-empty { padding: 40px 20px; text-align: center; color: var(--text3); }
 /* CALENDAR */
 .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: var(--border); border-radius: var(--radius); overflow: hidden; }
 .cal-header-cell { background: var(--surface2); text-align: center; padding: 9px 4px; font-size: .7rem; font-weight: 700; color: var(--accent5); text-transform: uppercase; letter-spacing: .05em; }
@@ -195,7 +217,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .cal-task-dot.gcal-event { background: rgba(15,157,88,.12); color: #0f9d58; }
 .cal-nav { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
 .cal-nav h3 { font-family: 'DM Serif Display', serif; font-size: 1.25rem; flex: 1; }
-
 /* FAMILY OVERVIEW */
 .family-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(255px, 1fr)); gap: 14px; }
 .family-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: all .2s; cursor: pointer; box-shadow: 0 2px 8px rgba(0,60,140,.07); }
@@ -216,7 +237,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .card-progress-track { height: 7px; background: var(--surface3); border-radius: 99px; overflow: hidden; }
 .card-progress-fill { height: 100%; border-radius: 99px; transition: width .6s cubic-bezier(.4,0,.2,1); }
 .card-complete-badge { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 7px; font-size: .78rem; font-weight: 600; border-top: 1px solid var(--border); background: rgba(24,201,122,.07); }
-
 /* CELEBRATION */
 #celebration-overlay { position: fixed; inset: 0; pointer-events: none; z-index: 99999; display: flex; align-items: center; justify-content: center; }
 .celeb-message { background: var(--surface); border: 2px solid var(--accent); border-radius: 20px; padding: 20px 36px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,.4); animation: celeb-in .4s cubic-bezier(.34,1.56,.64,1) forwards; pointer-events: none; }
@@ -225,7 +245,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .celeb-title { font-family: 'DM Serif Display', serif; font-size: 1.4rem; color: var(--text); }
 .celeb-sub { font-size: .82rem; color: var(--text3); margin-top: 4px; }
 #confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 99998; }
-
 /* MODAL */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,20,60,.70); display: flex; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: opacity .2s; }
 .modal-overlay.open { opacity: 1; pointer-events: all; }
@@ -243,7 +262,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .avatar-emoji-btn { width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; transition: all .15s; }
 .avatar-emoji-btn:hover { border-color: var(--accent); }
 .avatar-emoji-btn.selected { border-color: var(--accent); background: rgba(26,127,232,.18); }
-
 /* SETTINGS */
 .settings-section { margin-bottom: 28px; }
 .settings-section h4 { font-weight: 700; margin-bottom: 10px; font-size: .93rem; color: var(--accent5); }
@@ -255,7 +273,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .toggle.on { background: var(--accent); }
 .toggle::after { content: ''; position: absolute; width: 16px; height: 16px; background: #fff; border-radius: 50%; top: 3px; left: 3px; transition: transform .2s; }
 .toggle.on::after { transform: translateX(18px); }
-
 /* TOAST */
 .toast-container { position: fixed; bottom: 22px; right: 22px; z-index: 9999; display: flex; flex-direction: column; gap: 7px; }
 .toast { background: var(--surface); border: 1px solid var(--border); border-radius: 11px; padding: 11px 17px; font-size: .86rem; box-shadow: var(--shadow); display: flex; align-items: center; gap: 9px; min-width: 230px; animation: slide-in .25s ease; opacity: 1; transition: opacity .2s; }
@@ -264,7 +281,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .toast.success .toast-icon { color: var(--accent3); }
 .toast.error .toast-icon { color: var(--accent2); }
 .toast.info .toast-icon { color: var(--accent5); }
-
 /* DAILY OFFICE */
 .office-btn-row { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
 .office-btn { padding: 12px 24px; border-radius: 12px; border: 2px solid var(--border); background: var(--surface2); color: var(--text2); font-family: 'DM Sans', inherit; font-size: .9rem; font-weight: 600; cursor: pointer; transition: all .2s; }
@@ -285,7 +301,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .gcal-banner { background: linear-gradient(135deg,rgba(26,127,232,.10),rgba(90,180,255,.10)); border: 1px solid rgba(26,127,232,.25); border-radius: var(--radius); padding: 13px 17px; margin-bottom: 18px; display: flex; align-items: center; gap: 11px; }
 .gcal-banner p { font-size: .83rem; color: var(--text2); line-height: 1.5; }
 .gcal-banner a { color: var(--accent5); text-decoration: none; font-weight: 600; }
-
 /* IMPORT */
 .import-zone { border: 2px dashed var(--border); border-radius: 12px; padding: 28px; text-align: center; cursor: pointer; transition: all .2s; background: var(--surface2); }
 .import-zone:hover, .import-zone.dragover { border-color: var(--accent); background: rgba(26,127,232,.07); }
@@ -301,8 +316,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .import-col-map select { padding: 7px 10px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: inherit; font-size: .82rem; outline: none; }
 .sheets-banner { background: linear-gradient(135deg,rgba(15,157,88,.10),rgba(26,127,232,.10)); border: 1px solid rgba(15,157,88,.25); border-radius: 10px; padding: 12px 15px; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; font-size: .82rem; color: var(--text2); }
 .sheets-banner a { color: #0f9d58; font-weight: 600; text-decoration: none; }
-
-::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
 .sidebar-toggle { display: none; position: fixed; top: 14px; left: 14px; z-index: 200; width: 38px; height: 38px; border-radius: 10px; background: var(--surface); border: 1px solid var(--border); cursor: pointer; align-items: center; justify-content: center; color: var(--text2); }
@@ -320,10 +334,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 </style>
 </head>
 <body>
-
-<!-- SIDEBAR OVERLAY -->
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebarMobile()"></div>
-
 <div id="setup-screen" style="display:none">
   <div class="setup-card">
     <h1>Boyle Family Hub</h1>
@@ -343,12 +354,10 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
     <div id="setup-msg" style="margin-top:10px;min-height:20px;text-align:center;font-size:.82rem"></div>
   </div>
 </div>
-
 <div id="app" style="display:block">
   <button class="sidebar-toggle" onclick="toggleSidebar()">
     <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
   </button>
-
   <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <div><div class="app-name">Boyle Family Hub</div><div class="app-sub">To-Do &amp; Calendar</div></div>
@@ -397,7 +406,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
       <span id="sync-text">Connecting...</span>
     </div>
   </div>
-
   <div class="main">
     <div class="topbar">
       <div class="member-color-bar" id="topbar-color" style="background:var(--accent)"></div>
@@ -419,7 +427,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
     <div class="content" id="main-content"></div>
   </div>
 </div>
-
 <!-- TASK MODAL -->
 <div class="modal-overlay" id="task-modal">
   <div class="modal">
@@ -430,6 +437,14 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
       <div class="form-group"><label>Assigned To</label><select id="t-member"></select></div>
       <div class="form-group"><label>Priority</label>
         <select id="t-priority"><option value="none">None</option><option value="low">🟢 Low</option><option value="medium">🟡 Medium</option><option value="high">🔴 High</option></select>
+      </div>
+    </div>
+    <div class="row-2">
+      <div class="form-group"><label>Duration</label>
+        <select id="t-duration"><option value="">— None —</option><option value="5m">5 minutes</option><option value="10m">10 minutes</option><option value="15m">15 minutes</option><option value="30m">30 minutes</option><option value="1h">1 hour</option><option value="2h">2 hour</option><option value="3h">3 hour</option></select>
+      </div>
+      <div class="form-group"><label>Start On</label>
+        <select id="t-starton"><option value="">— None —</option><option value="today">Today</option><option value="week">This Week</option><option value="month">This Month</option></select>
       </div>
     </div>
     <div class="row-2">
@@ -458,7 +473,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
     </div>
   </div>
 </div>
-
 <!-- LIST MODAL -->
 <div class="modal-overlay" id="list-modal">
   <div class="modal" style="max-width:400px">
@@ -472,7 +486,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
     </div>
   </div>
 </div>
-
 <!-- MEMBER MODAL -->
 <div class="modal-overlay" id="member-modal">
   <div class="modal" style="max-width:420px">
@@ -494,9 +507,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
     </div>
   </div>
 </div>
-
 <div class="toast-container" id="toasts"></div>
-
 <script>
 // ══════════════════════════════════════
 // FIREBASE
@@ -512,7 +523,6 @@ const FIREBASE_CONFIG = {
 };
 var _fbDb=null,_fbListening=false;
 function getDb(){if(_fbDb)return _fbDb;try{const app=firebase.apps.length?firebase.apps[0]:firebase.initializeApp(FIREBASE_CONFIG);_fbDb=firebase.database();return _fbDb;}catch(e){console.error(e);return null;}}
-
 // ══════════════════════════════════════
 // SETUP
 // ══════════════════════════════════════
@@ -535,9 +545,7 @@ function setupDoLaunch(){
   document.getElementById('app').style.display='block';
   startApp();
 }
-
 window.onerror=function(msg,src,line){if(document.getElementById('app')&&document.getElementById('app').style.display==='block'){if(!document.getElementById('app-err')){var b=document.createElement('div');b.id='app-err';b.style.cssText='position:fixed;top:0;left:0;right:0;background:#e84a6f;color:#fff;padding:10px 16px;font-size:.82rem;z-index:99999;display:flex;justify-content:space-between;align-items:center';b.innerHTML='<span>⚠️ '+msg+' (line '+line+')</span><button onclick="this.parentElement.remove()" style="background:none;border:none;color:#fff;cursor:pointer;font-size:1.1rem">×</button>';document.body.prepend(b);}}return false;};
-
 // ══════════════════════════════════════
 // STATE
 // ══════════════════════════════════════
@@ -545,13 +553,18 @@ const COLORS=['#1a7fe8','#e84a6f','#18c97a','#f0960a','#38b2ac','#8b5cf6','#5ab4
 const LIST_EMOJIS=['📋','🛒','🏠','💼','📚','🎯','💡','🔧','✈️','🎮','🏋️','🍕','💊','🎓','🔑','🌿','🎨','🎵'];
 const MEMBER_EMOJIS=['😊','👨','👩','👦','👧','🧒','👴','👵','🧑','👶','🧔','👱','🧕','👮','👷','🧑‍🍳','🧑‍🎓','🦸'];
 const LIST_COLORS=['#1a7fe8','#e84a6f','#18c97a','#f0960a','#38b2ac','#8b5cf6','#5ab4ff','#f6ad55','#a78bfa'];
+const DURATIONS=[{v:'5m',label:'5 min'},{v:'10m',label:'10 min'},{v:'15m',label:'15 min'},{v:'30m',label:'30 min'},{v:'1h',label:'1 hour'},{v:'2h',label:'2 hour'},{v:'3h',label:'3 hour'}];
+const STARTONS=[{v:'today',label:'Today'},{v:'week',label:'This Week'},{v:'month',label:'This Month'}];
+function durationLabel(v){const d=DURATIONS.find(x=>x.v===v);return d?d.label:'';}
+function startOnLabel(v){const s=STARTONS.find(x=>x.v===v);return s?s.label:'';}
 let state={
   members:[],tasks:[],lists:[],gcalKey:'',gcalId:'',theme:'dark',gcalEvents:[],
   currentMember:'family',currentView:'myday',mainView:'tasks',currentListId:null,
+  listView:'kanban',kanbanFilters:{members:[],priorities:[],durations:[],startOns:[]},
+  lvTaskIds:[],
   calMonth:new Date().getMonth(),calYear:new Date().getFullYear(),
   editingTaskId:null,editingListId:null,syncing:false,lastSync:null,
 };
-
 // ══════════════════════════════════════
 // THEME & UTILS
 // ══════════════════════════════════════
@@ -567,7 +580,11 @@ function formatTime(t){if(!t)return'';try{const[h,m]=t.split(':');const hr=parse
 function recurLabel(r){return{daily:'Daily',weekdays:'Weekdays',weekly:'Weekly',biweekly:'Every 2 wks',monthly:'Monthly',yearly:'Yearly'}[r]||r;}
 function timeAgo(d){const diff=Math.round((new Date()-d)/1000);if(diff<60)return'just now';if(diff<3600)return Math.round(diff/60)+'m ago';return Math.round(diff/3600)+'h ago';}
 function toast(msg,type='info'){const c=document.getElementById('toasts'),el=document.createElement('div');el.className=`toast ${type}`;el.innerHTML=`<span class="toast-icon">${{success:'✅',error:'❌',info:'ℹ️'}[type]||'ℹ️'}</span><span>${msg}</span>`;c.appendChild(el);setTimeout(()=>{el.classList.add('out');setTimeout(()=>el.remove(),250);},3500);}
-
+function memberOptionsHtml(sel,includeFamily){let h=includeFamily?`<option value="family"${String(sel)==='family'?' selected':''}>All Family</option>`:'';return h+state.members.map(m=>`<option value="${m.id}"${String(sel)===String(m.id)?' selected':''}>${escHtml(m.name)}</option>`).join('');}
+function durationOptionsHtml(sel){return'<option value="">—</option>'+DURATIONS.map(d=>`<option value="${d.v}"${sel===d.v?' selected':''}>${d.label}</option>`).join('');}
+function startOnOptionsHtml(sel){return'<option value="">—</option>'+STARTONS.map(s=>`<option value="${s.v}"${sel===s.v?' selected':''}>${s.label}</option>`).join('');}
+function priorityOptionsHtml(sel){return[['none','None'],['low','🟢 Low'],['medium','🟡 Medium'],['high','🔴 High']].map(([v,l])=>`<option value="${v}"${(sel||'none')===v?' selected':''}>${l}</option>`).join('');}
+function statusOptionsHtml(sel){return[['notstarted','⬜ Not Started'],['inprogress','🔵 In Progress'],['complete','✅ Complete']].map(([v,l])=>`<option value="${v}"${(sel||'notstarted')===v?' selected':''}>${l}</option>`).join('');}
 // ══════════════════════════════════════
 // SIDEBAR MOBILE
 // ══════════════════════════════════════
@@ -582,7 +599,6 @@ function closeSidebarMobile(){
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('sidebar-overlay').classList.remove('visible');
 }
-
 // ══════════════════════════════════════
 // APP START
 // ══════════════════════════════════════
@@ -614,10 +630,7 @@ function renderSidebarLists(){
 }
 function renderTaskListSelect(){const sel=document.getElementById('t-list-sel');if(!sel)return;sel.innerHTML='<option value="">No list</option>'+state.lists.map(l=>`<option value="${l.id}">${l.emoji} ${escHtml(l.name)}</option>`).join('');}
 function updateCounts(){const active=state.tasks.filter(t=>!t.completed);const fe=document.getElementById('count-family');if(fe)fe.textContent=active.length;state.members.forEach(m=>{const el=document.getElementById('count-'+m.id);if(el)el.textContent=active.filter(t=>t.member===String(m.id)).length;});}
-
-// navTo — setView + close sidebar on mobile
 function navTo(v){setView(v);if(window.innerWidth<=768)closeSidebarMobile();}
-
 function selectMember(id,btn){
   state.currentMember=id;state.currentView='myday';state.mainView='tasks';state.currentListId=null;
   document.querySelectorAll('.member-btn').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');
@@ -653,10 +666,9 @@ function openList(listId){
   const list=state.lists.find(l=>l.id===listId);
   document.getElementById('topbar-title').textContent=list?list.name:'List';
   document.getElementById('topbar-color').style.background=list?list.color:'var(--accent)';
-  renderKanban(listId);
+  renderListView(listId);
   if(window.innerWidth<=768)closeSidebarMobile();
 }
-
 // ══════════════════════════════════════
 // GOOGLE CALENDAR — FETCH EVENTS
 // ══════════════════════════════════════
@@ -685,7 +697,6 @@ async function fetchGoogleCalendarEvents(){
   }
 }
 function addToGoogleCalendar(task){if(!state.gcalKey||!state.gcalId)return;console.log('GCal push stub:',task.title,task.dueDate);}
-
 // ══════════════════════════════════════
 // TASKS VIEW
 // ══════════════════════════════════════
@@ -728,6 +739,8 @@ function renderTaskItem(t,today){
       <div class="task-meta">
         ${t.dueDate?`<span class="task-due ${dueClass}">${dueLabel}</span>`:''}
         ${t.priority&&t.priority!=='none'?`<span class="${t.priority==='high'?'prio-high':t.priority==='medium'?'prio-med':'prio-low'}">${prioMap[t.priority]||''}</span>`:''}
+        ${t.duration?`<span class="task-tag" style="background:rgba(138,92,246,.15);color:#8b5cf6">⏱ ${durationLabel(t.duration)}</span>`:''}
+        ${t.startOn?`<span class="task-tag" style="background:rgba(56,178,172,.15);color:#38b2ac">📆 ${startOnLabel(t.startOn)}</span>`:''}
         ${list?`<span class="task-tag" style="background:${list.color}22;color:${list.color}">${list.emoji} ${escHtml(list.name)}</span>`:''}
         ${state.currentMember==='family'&&member?`<span class="assigned-tag"><span class="mini-av" style="background:${color}33;color:${color}">${memberAvatarHtml(member,15)}</span>${escHtml(member.name)}</span>`:''}
         ${t.status&&t.status!=='notstarted'?`<span class="task-tag" style="background:rgba(26,127,232,.12);color:var(--accent5);font-size:.68rem">${statusMap[t.status]||''}</span>`:''}
@@ -747,13 +760,66 @@ function filterTasks(type,btn){
   const today=todayStr();
   document.querySelectorAll('.task-item').forEach(el=>{const id=el.id.replace('task-','');const t=state.tasks.find(x=>String(x.id)===id);if(!t)return;let show=true;if(type==='high')show=t.priority==='high'&&!t.completed;else if(type==='medium')show=t.priority==='medium'&&!t.completed;else if(type==='today')show=t.dueDate===today&&!t.completed;else if(type==='overdue')show=t.dueDate&&t.dueDate<today&&!t.completed;el.style.display=show?'':'none';});
 }
-
 // ══════════════════════════════════════
-// KANBAN BOARD (List View)
+// LIST PAGE — KANBAN + LIST VIEW TOGGLE
 // ══════════════════════════════════════
+function renderListView(listId){
+  state.currentListId=listId;state.mainView='list';
+  if(state.listView==='list')renderListTable(listId);
+  else renderKanban(listId);
+}
+function setListView(v){if(state.listView===v)return;state.listView=v;renderListView(state.currentListId);}
+function viewToggleHtml(){
+  return`<div class="view-toggle">
+    <button class="view-toggle-btn ${state.listView==='kanban'?'active':''}" onclick="setListView('kanban')">▦ Kanban</button>
+    <button class="view-toggle-btn ${state.listView==='list'?'active':''}" onclick="setListView('list')">☰ List</button>
+  </div>`;
+}
+function listPageHeaderHtml(list,subtitle){
+  return`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+    <div style="display:flex;align-items:center;gap:12px">
+      <span style="font-size:1.6rem">${list.emoji}</span>
+      <div><div style="font-family:'DM Serif Display',serif;font-size:1.4rem">${escHtml(list.name)}</div><div style="font-size:.78rem;color:var(--text3)">${subtitle}</div></div>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="openAddTaskToList('${list.id}')">+ Add ${state.listView==='list'?'Row':'Card'}</button>
+  </div>`;
+}
+// ── KANBAN FILTERS ──
+function applyKanbanFilters(tasks){
+  const f=state.kanbanFilters;
+  return tasks.filter(t=>{
+    if(f.members.length&&!f.members.includes(String(t.member)))return false;
+    if(f.priorities.length&&!f.priorities.includes(t.priority||'none'))return false;
+    if(f.durations.length&&!f.durations.includes(t.duration||''))return false;
+    if(f.startOns.length&&!f.startOns.includes(t.startOn||''))return false;
+    return true;
+  });
+}
+function toggleKanbanFilter(cat,val){
+  const arr=state.kanbanFilters[cat];const i=arr.indexOf(val);
+  if(i>-1)arr.splice(i,1);else arr.push(val);
+  renderKanban(state.currentListId);
+}
+function clearKanbanFilters(){state.kanbanFilters={members:[],priorities:[],durations:[],startOns:[]};renderKanban(state.currentListId);}
+function kanbanFilterBarHtml(){
+  const f=state.kanbanFilters;
+  const chip=(cat,val,label)=>`<button class="kfilter-chip ${f[cat].includes(val)?'active':''}" onclick="toggleKanbanFilter('${cat}','${val}')">${label}</button>`;
+  let h='<div class="kanban-filter-bar">';
+  h+='<div class="kfilter-group"><span class="kfilter-label">Who</span>'+state.members.map(m=>chip('members',String(m.id),escHtml(m.name))).join('')+'</div>';
+  h+='<div class="kfilter-group"><span class="kfilter-label">Priority</span>'+[['high','🔴 High'],['medium','🟡 Med'],['low','🟢 Low'],['none','None']].map(([v,l])=>chip('priorities',v,l)).join('')+'</div>';
+  h+='<div class="kfilter-group"><span class="kfilter-label">Duration</span>'+DURATIONS.map(d=>chip('durations',d.v,d.label)).join('')+'</div>';
+  h+='<div class="kfilter-group"><span class="kfilter-label">Start</span>'+STARTONS.map(s=>chip('startOns',s.v,s.label)).join('')+'</div>';
+  const any=f.members.length+f.priorities.length+f.durations.length+f.startOns.length;
+  if(any)h+=`<button class="kfilter-chip" style="border-color:var(--accent2);color:var(--accent2)" onclick="clearKanbanFilters()">✕ Clear (${any})</button>`;
+  h+='</div>';
+  return h;
+}
+// ── KANBAN BOARD ──
 function renderKanban(listId){
   const list=state.lists.find(l=>l.id===listId);if(!list){renderTasksView();return;}
-  const tasks=state.tasks.filter(t=>t.listId===listId);
+  let tasks=state.tasks.filter(t=>t.listId===listId);
+  const totalAll=tasks.length;
+  tasks=applyKanbanFilters(tasks);
   const cols=[
     {key:'notstarted',label:'Not Started',color:'#5ab4ff',bg:'rgba(90,180,255,.12)',icon:'⬜'},
     {key:'inprogress',label:'In Progress',color:'#f0960a',bg:'rgba(240,150,10,.12)',icon:'🔵'},
@@ -762,14 +828,8 @@ function renderKanban(listId){
   const today=todayStr();
   document.getElementById('topbar-title').textContent=list.name;
   document.getElementById('topbar-color').style.background=list.color;
-  let html=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
-    <div style="display:flex;align-items:center;gap:12px">
-      <span style="font-size:1.6rem">${list.emoji}</span>
-      <div><div style="font-family:'DM Serif Display',serif;font-size:1.4rem">${escHtml(list.name)}</div><div style="font-size:.78rem;color:var(--text3)">${tasks.length} total · Kanban view</div></div>
-    </div>
-    <button class="btn btn-primary btn-sm" onclick="openAddTaskToList('${listId}')">+ Add Card</button>
-  </div>
-  <div class="kanban-board">`;
+  const filtered=tasks.length!==totalAll?` · ${tasks.length} of ${totalAll} shown`:'';
+  let html=listPageHeaderHtml(list,`${totalAll} total · Kanban view${filtered}`)+viewToggleHtml()+kanbanFilterBarHtml()+`<div class="kanban-board">`;
   cols.forEach(col=>{
     const colTasks=tasks.filter(t=>{
       if(col.key==='complete')return t.completed||(t.status==='complete');
@@ -793,6 +853,8 @@ function renderKanban(listId){
         <div class="kanban-card-title">${escHtml(t.title)}</div>
         <div class="kanban-card-meta">
           ${t.priority&&t.priority!=='none'?`<span style="font-size:.68rem;padding:1px 6px;border-radius:8px;background:${t.priority==='high'?'rgba(232,74,111,.15)':t.priority==='medium'?'rgba(240,150,10,.15)':'rgba(24,201,122,.15)'};color:${t.priority==='high'?'var(--accent2)':t.priority==='medium'?'var(--accent4)':'var(--accent3)'}">${{high:'🔴 High',medium:'🟡 Med',low:'🟢 Low'}[t.priority]}</span>`:''}
+          ${t.duration?`<span style="font-size:.68rem;padding:1px 6px;border-radius:8px;background:rgba(138,92,246,.15);color:#8b5cf6">⏱ ${durationLabel(t.duration)}</span>`:''}
+          ${t.startOn?`<span style="font-size:.68rem;padding:1px 6px;border-radius:8px;background:rgba(56,178,172,.15);color:#38b2ac">📆 ${startOnLabel(t.startOn)}</span>`:''}
           ${t.dueDate?`<span style="font-size:.68rem;color:${overdue?'var(--accent2)':'var(--text3)'}">${overdue?'⚠':''} ${formatDate(t.dueDate)}</span>`:''}
           ${member?`<span style="font-size:.68rem;background:${color}22;color:${color};padding:1px 6px;border-radius:8px">${memberAvatarHtml(member,12)} ${escHtml(member.name)}</span>`:''}
         </div>
@@ -809,25 +871,114 @@ function renderKanban(listId){
   html+=`</div>`;
   document.getElementById('main-content').innerHTML=html;
 }
-
 function setTaskStatus(id,status){
   const t=state.tasks.find(x=>String(x.id)===String(id));if(!t)return;
   const updated=Object.assign({},t,{status,completed:status==='complete',completedAt:status==='complete'?new Date().toISOString():''});
   pushTask(updated,'update');
   if(status==='complete'){confettiTask();}
 }
-
+// ══════════════════════════════════════
+// LIST VIEW (spreadsheet) + DRAG-TO-FILL
+// ══════════════════════════════════════
+function renderListTable(listId){
+  const list=state.lists.find(l=>l.id===listId);if(!list){renderTasksView();return;}
+  const tasks=state.tasks.filter(t=>t.listId===listId);
+  state.lvTaskIds=tasks.map(t=>t.id);
+  document.getElementById('topbar-title').textContent=list.name;
+  document.getElementById('topbar-color').style.background=list.color;
+  let html=listPageHeaderHtml(list,`${tasks.length} total · List view`)+viewToggleHtml();
+  html+=`<div class="lv-hint">↳ Tip: hover any cell and drag the small blue square at its corner downward to copy that value to the rows below.</div>`;
+  if(!tasks.length){
+    html+=`<div class="lv-wrap"><div class="lv-empty">No tasks in this list yet. Click “+ Add Row”.</div></div>`;
+    document.getElementById('main-content').innerHTML=html;return;
+  }
+  html+=`<div class="lv-wrap"><table class="lv-table"><thead><tr>
+    <th>Done</th><th>Task</th><th>Assignee</th><th>Priority</th><th>Status</th><th>Due</th><th>Duration</th><th>Start On</th><th></th>
+  </tr></thead><tbody>`;
+  tasks.forEach((t,i)=>{
+    const done=t.completed||t.status==='complete';
+    html+=`<tr class="lv-row ${done?'done':''}">
+      <td class="lv-cell lv-check-cell"><input type="checkbox" class="lv-check" ${done?'checked':''} onchange="toggleTask('${t.id}',event)"></td>
+      <td class="lv-cell" data-row="${i}" data-field="title"><input class="lv-input lv-title-input" type="text" value="${escHtml(t.title).replace(/"/g,'&quot;')}" onchange="lvUpdate('${t.id}','title',this.value)"></td>
+      <td class="lv-cell" data-row="${i}" data-field="member"><select class="lv-input" onchange="lvUpdate('${t.id}','member',this.value)">${memberOptionsHtml(t.member,true)}</select><span class="fill-handle" onmousedown="lvFillStart(event,${i},'member')"></span></td>
+      <td class="lv-cell" data-row="${i}" data-field="priority"><select class="lv-input" onchange="lvUpdate('${t.id}','priority',this.value)">${priorityOptionsHtml(t.priority)}</select><span class="fill-handle" onmousedown="lvFillStart(event,${i},'priority')"></span></td>
+      <td class="lv-cell" data-row="${i}" data-field="status"><select class="lv-input" onchange="lvUpdate('${t.id}','status',this.value)">${statusOptionsHtml(t.status)}</select><span class="fill-handle" onmousedown="lvFillStart(event,${i},'status')"></span></td>
+      <td class="lv-cell" data-row="${i}" data-field="dueDate"><input class="lv-input" type="date" value="${t.dueDate||''}" onchange="lvUpdate('${t.id}','dueDate',this.value)"><span class="fill-handle" onmousedown="lvFillStart(event,${i},'dueDate')"></span></td>
+      <td class="lv-cell" data-row="${i}" data-field="duration"><select class="lv-input" onchange="lvUpdate('${t.id}','duration',this.value)">${durationOptionsHtml(t.duration||'')}</select><span class="fill-handle" onmousedown="lvFillStart(event,${i},'duration')"></span></td>
+      <td class="lv-cell" data-row="${i}" data-field="startOn"><select class="lv-input" onchange="lvUpdate('${t.id}','startOn',this.value)">${startOnOptionsHtml(t.startOn||'')}</select><span class="fill-handle" onmousedown="lvFillStart(event,${i},'startOn')"></span></td>
+      <td class="lv-cell" style="text-align:center"><button class="task-action-btn del" onclick="deleteTask('${t.id}',event)"><svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button></td>
+    </tr>`;
+  });
+  html+=`</tbody></table></div>`;
+  document.getElementById('main-content').innerHTML=html;
+}
+function lvFieldValue(t,field){
+  switch(field){
+    case'member':return t.member;
+    case'priority':return t.priority||'none';
+    case'status':return t.status||'notstarted';
+    case'dueDate':return t.dueDate||'';
+    case'duration':return t.duration||'';
+    case'startOn':return t.startOn||'';
+    case'title':return t.title||'';
+  }
+  return'';
+}
+function lvApplyField(u,field,value){
+  if(field==='status'){u.status=value;u.completed=value==='complete';u.completedAt=value==='complete'?new Date().toISOString():'';}
+  else u[field]=value;
+}
+function lvUpdate(id,field,value){
+  const t=state.tasks.find(x=>String(x.id)===String(id));if(!t)return;
+  const u=Object.assign({},t);lvApplyField(u,field,value);pushTask(u,'update');
+}
+var lvDrag=null;
+function lvFillStart(e,row,field){
+  e.preventDefault();e.stopPropagation();
+  const ids=state.lvTaskIds||[];const id=ids[row];const t=state.tasks.find(x=>String(x.id)===String(id));if(!t)return;
+  lvDrag={field,sourceRow:row,targetRow:row,value:lvFieldValue(t,field)};
+  document.body.style.userSelect='none';
+  document.addEventListener('mousemove',lvFillMove);
+  document.addEventListener('mouseup',lvFillEnd);
+}
+function lvFillMove(e){
+  if(!lvDrag)return;
+  const el=document.elementFromPoint(e.clientX,e.clientY);
+  const cell=el&&el.closest?el.closest('.lv-cell'):null;
+  let targetRow=lvDrag.sourceRow;
+  if(cell&&cell.dataset.field===lvDrag.field&&cell.dataset.row!==undefined)targetRow=parseInt(cell.dataset.row);
+  lvDrag.targetRow=targetRow;
+  document.querySelectorAll('.lv-cell.fill-range').forEach(c=>c.classList.remove('fill-range'));
+  const lo=Math.min(lvDrag.sourceRow,targetRow),hi=Math.max(lvDrag.sourceRow,targetRow);
+  document.querySelectorAll(`.lv-cell[data-field="${lvDrag.field}"]`).forEach(c=>{const r=parseInt(c.dataset.row);if(r>=lo&&r<=hi)c.classList.add('fill-range');});
+}
+async function lvFillEnd(){
+  document.removeEventListener('mousemove',lvFillMove);
+  document.removeEventListener('mouseup',lvFillEnd);
+  document.body.style.userSelect='';
+  document.querySelectorAll('.lv-cell.fill-range').forEach(c=>c.classList.remove('fill-range'));
+  if(!lvDrag)return;
+  const{field,sourceRow,targetRow,value}=lvDrag;const ids=state.lvTaskIds||[];lvDrag=null;
+  const lo=Math.min(sourceRow,targetRow),hi=Math.max(sourceRow,targetRow);
+  let n=0;
+  for(let r=lo;r<=hi;r++){
+    if(r===sourceRow)continue;
+    const id=ids[r];const t=state.tasks.find(x=>String(x.id)===String(id));if(!t)continue;
+    const u=Object.assign({},t);lvApplyField(u,field,value);await pushTask(u,'update');n++;
+  }
+  if(n>0)toast(`Copied to ${n} row${n!==1?'s':''}`,'success');
+}
 // ══════════════════════════════════════
 // TASK CRUD
 // ══════════════════════════════════════
 function quickAddTask(){const inp=document.getElementById('quick-add-input');const title=inp.value.trim();if(!title)return;pushTask(makeTask(title,{member:state.currentMember==='family'?'family':state.currentMember}),'add');toast('Task added!','success');inp.value='';}
 function quickAddToList(listId){const inp=document.getElementById('quick-add-input');const title=inp.value.trim();if(!title)return;pushTask(makeTask(title,{member:'family',listId}),'add');toast('Added!','success');inp.value='';}
-function makeTask(title,overrides={}){return{id:genId(),title,notes:'',member:'family',priority:'none',dueDate:'',dueTime:'',recurrence:'',listId:'',completed:false,completedAt:'',createdAt:new Date().toISOString(),addedToCal:false,status:'notstarted',...overrides};}
+function makeTask(title,overrides={}){return{id:genId(),title,notes:'',member:'family',priority:'none',dueDate:'',dueTime:'',recurrence:'',listId:'',duration:'',startOn:'',completed:false,completedAt:'',createdAt:new Date().toISOString(),addedToCal:false,status:'notstarted',...overrides};}
 function nextRecurDate(task){if(!task.dueDate||!task.recurrence)return null;const d=new Date(task.dueDate+'T12:00:00');switch(task.recurrence){case'daily':d.setDate(d.getDate()+1);break;case'weekdays':d.setDate(d.getDate()+1);while(d.getDay()===0||d.getDay()===6)d.setDate(d.getDate()+1);break;case'weekly':d.setDate(d.getDate()+7);break;case'biweekly':d.setDate(d.getDate()+14);break;case'monthly':d.setMonth(d.getMonth()+1);break;case'yearly':d.setFullYear(d.getFullYear()+1);break;default:return null;}return d.toISOString().split('T')[0];}
-function spawnRecurringTask(ct){if(!ct.recurrence)return;const next=nextRecurDate(ct);if(!next)return;pushTask(makeTask(ct.title,{notes:ct.notes,member:ct.member,priority:ct.priority,dueDate:next,dueTime:ct.dueTime,recurrence:ct.recurrence,listId:ct.listId,addedToCal:ct.addedToCal}),'add');toast('Recurring task for '+formatDate(next),'info');}
+function spawnRecurringTask(ct){if(!ct.recurrence)return;const next=nextRecurDate(ct);if(!next)return;pushTask(makeTask(ct.title,{notes:ct.notes,member:ct.member,priority:ct.priority,dueDate:next,dueTime:ct.dueTime,recurrence:ct.recurrence,listId:ct.listId,duration:ct.duration,startOn:ct.startOn,addedToCal:ct.addedToCal}),'add');toast('Recurring task for '+formatDate(next),'info');}
 function openAddTask(){
   state.editingTaskId=null;document.getElementById('task-modal-title').textContent='Add Task';
-  ['t-title','t-notes','t-due','t-time','t-recur'].forEach(id=>document.getElementById(id).value='');
+  ['t-title','t-notes','t-due','t-time','t-recur','t-duration','t-starton'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('t-priority').value='none';document.getElementById('t-add-to-cal').checked=false;document.getElementById('t-list-sel').value='';document.getElementById('t-status').value='notstarted';
   const sel=document.getElementById('t-member');if(sel)sel.value=state.currentMember!=='family'?state.currentMember:(state.members[0]?.id||'family');
   document.getElementById('task-modal').classList.add('open');
@@ -842,12 +993,13 @@ function editTask(id,e){
   document.getElementById('t-member').value=t.member;document.getElementById('t-list-sel').value=t.listId||'';
   document.getElementById('t-time').value=t.dueTime||'';document.getElementById('t-recur').value=t.recurrence||'';
   document.getElementById('t-status').value=t.status||'notstarted';
+  document.getElementById('t-duration').value=t.duration||'';document.getElementById('t-starton').value=t.startOn||'';
   document.getElementById('task-modal').classList.add('open');
 }
 function saveTask(){
   const title=document.getElementById('t-title').value.trim();if(!title){toast('Please enter a task title','error');return;}
   const addToCal=document.getElementById('t-add-to-cal').checked;const dueDate=document.getElementById('t-due').value;
-  const fields={notes:document.getElementById('t-notes').value,member:document.getElementById('t-member').value,priority:document.getElementById('t-priority').value,dueDate,dueTime:document.getElementById('t-time').value,recurrence:document.getElementById('t-recur').value,listId:document.getElementById('t-list-sel').value,addedToCal:addToCal,status:document.getElementById('t-status').value};
+  const fields={notes:document.getElementById('t-notes').value,member:document.getElementById('t-member').value,priority:document.getElementById('t-priority').value,dueDate,dueTime:document.getElementById('t-time').value,recurrence:document.getElementById('t-recur').value,listId:document.getElementById('t-list-sel').value,duration:document.getElementById('t-duration').value,startOn:document.getElementById('t-starton').value,addedToCal:addToCal,status:document.getElementById('t-status').value};
   if(state.editingTaskId){const idx=state.tasks.findIndex(x=>String(x.id)===String(state.editingTaskId));if(idx>-1){pushTask(Object.assign({},state.tasks[idx],fields),'update');toast('Updated!','success');}}
   else{const task=makeTask(title,fields);pushTask(task,'add');toast('Task added!','success');if(addToCal&&dueDate)addToGoogleCalendar(task);}
   closeModal('task-modal');
@@ -858,7 +1010,6 @@ function toggleTask(id,e){
   pushTask(u,'update');if(u.completed){confettiTask();if(u.recurrence)spawnRecurringTask(u);}
 }
 function deleteTask(id,e){if(e)e.stopPropagation();if(!confirm('Delete this task?'))return;pushTask({id},'delete');toast('Deleted','info');}
-
 // ══════════════════════════════════════
 // CELEBRATION
 // ══════════════════════════════════════
@@ -866,7 +1017,6 @@ const CELEB_MESSAGES=[{emoji:'🎉',title:'Task crushed!',sub:'One down, greatne
 function confettiTask(){launchConfetti();showCelebMessage();}
 function launchConfetti(){const old=document.getElementById('confetti-canvas');if(old)old.remove();const canvas=document.createElement('canvas');canvas.id='confetti-canvas';canvas.width=window.innerWidth;canvas.height=window.innerHeight;document.body.appendChild(canvas);const ctx=canvas.getContext('2d');const COLS=['#1a7fe8','#e84a6f','#18c97a','#f0960a','#38b2ac','#8b5cf6','#5ab4ff','#fbbf24','#34d399'];const SHAPES=['circle','rect','triangle'];const pieces=Array.from({length:120},()=>({x:Math.random()*canvas.width,y:-20-Math.random()*200,r:4+Math.random()*7,color:COLS[Math.floor(Math.random()*COLS.length)],shape:SHAPES[Math.floor(Math.random()*SHAPES.length)],vx:(Math.random()-.5)*5,vy:3+Math.random()*5,spin:(Math.random()-.5)*.3,angle:Math.random()*Math.PI*2,opacity:1,wobble:Math.random()*Math.PI*2,wobbleSpeed:.05+Math.random()*.05}));let frame=0;const maxFrames=160;function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);pieces.forEach(p=>{p.y+=p.vy;p.x+=p.vx;p.angle+=p.spin;p.wobble+=p.wobbleSpeed;p.x+=Math.sin(p.wobble)*1.5;p.vy+=.12;if(frame>maxFrames*.6)p.opacity=Math.max(0,p.opacity-.025);ctx.save();ctx.globalAlpha=p.opacity;ctx.fillStyle=p.color;ctx.translate(p.x,p.y);ctx.rotate(p.angle);if(p.shape==='circle'){ctx.beginPath();ctx.arc(0,0,p.r,0,Math.PI*2);ctx.fill();}else if(p.shape==='rect'){ctx.fillRect(-p.r,-p.r/2,p.r*2,p.r);}else{ctx.beginPath();ctx.moveTo(0,-p.r);ctx.lineTo(p.r,p.r);ctx.lineTo(-p.r,p.r);ctx.closePath();ctx.fill();}ctx.restore();});frame++;if(frame<maxFrames)requestAnimationFrame(draw);else canvas.remove();}requestAnimationFrame(draw);}
 function showCelebMessage(){const old=document.getElementById('celebration-overlay');if(old)old.remove();const msg=CELEB_MESSAGES[Math.floor(Math.random()*CELEB_MESSAGES.length)];const overlay=document.createElement('div');overlay.id='celebration-overlay';overlay.innerHTML='<div class="celeb-message"><span class="celeb-emoji">'+msg.emoji+'</span><div class="celeb-title">'+msg.title+'</div><div class="celeb-sub">'+msg.sub+'</div></div>';document.body.appendChild(overlay);setTimeout(()=>{const el=overlay.querySelector('.celeb-message');if(el){el.style.transition='opacity .4s,transform .4s';el.style.opacity='0';el.style.transform='scale(.8) translateY(-20px)';}setTimeout(()=>overlay.remove(),420);},2200);}
-
 // ══════════════════════════════════════
 // LIST CRUD
 // ══════════════════════════════════════
@@ -876,7 +1026,6 @@ function buildListEmojiGrid(){document.getElementById('list-emoji-grid').innerHT
 function buildListColorGrid(){document.getElementById('list-color-grid').innerHTML=LIST_COLORS.map(c=>`<button onclick="listColorSelected='${c}';buildListColorGrid()" style="width:26px;height:26px;border-radius:50%;background:${c};border:2px solid ${c===listColorSelected?'var(--text)':'transparent'};cursor:pointer"></button>`).join('');}
 function saveList(){const name=document.getElementById('l-name').value.trim();if(!name){toast('Enter a list name','error');return;}if(state.editingListId){const l=state.lists.find(x=>x.id===state.editingListId);if(l){l.name=name;l.emoji=listEmojiSelected;l.color=listColorSelected;}}else state.lists.push({id:genId(),name,emoji:listEmojiSelected,color:listColorSelected});saveConfigToFirebase();closeModal('list-modal');toast('List saved!','success');}
 function deleteList(id,e){if(e)e.stopPropagation();if(!confirm('Delete this list?'))return;state.lists=state.lists.filter(l=>l.id!==id);state.tasks.forEach(t=>{if(t.listId===id){t.listId='';pushTask(t,'update');}});saveConfigToFirebase();if(state.currentListId===id){state.mainView='tasks';state.currentListId=null;renderTasksView();}toast('List deleted','info');}
-
 // ══════════════════════════════════════
 // MEMBER EDIT
 // ══════════════════════════════════════
@@ -891,7 +1040,6 @@ function saveMember(){
   const proceed=(av)=>{m.name=name;m.avatar=av;m.color=memberColorPending;saveConfigToFirebase();closeModal('member-modal');renderSidebar();if(state.mainView==='overview')renderOverview();toast('Member updated!','success');};
   if(memberAvatarPending&&memberAvatarPending.startsWith('data:')){const img=new Image();img.onload=function(){const canvas=document.createElement('canvas');const MAX=120;const scale=Math.min(MAX/img.width,MAX/img.height,1);canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);proceed(canvas.toDataURL('image/jpeg',.65));};img.onerror=()=>proceed(memberAvatarPending);img.src=memberAvatarPending;}else proceed(memberAvatarPending);
 }
-
 // ══════════════════════════════════════
 // OVERVIEW
 // ══════════════════════════════════════
@@ -910,7 +1058,6 @@ function renderOverview(){
   html+='</div>';document.getElementById('main-content').innerHTML=html;
 }
 function selectMemberFromCard(id){const btn=document.querySelector(`[data-member="${id}"]`);if(btn)selectMember(id,btn);}
-
 // ══════════════════════════════════════
 // CALENDAR
 // ══════════════════════════════════════
@@ -948,7 +1095,6 @@ function calPrev(){state.calMonth--;if(state.calMonth<0){state.calMonth=11;state
 function calNext(){state.calMonth++;if(state.calMonth>11){state.calMonth=0;state.calYear++;}renderCalendar();}
 function calToday(){state.calMonth=new Date().getMonth();state.calYear=new Date().getFullYear();renderCalendar();}
 function calDayClick(ds){openAddTask();document.getElementById('t-due').value=ds;}
-
 // ══════════════════════════════════════
 // DAILY OFFICE (2019 BCP)
 // ══════════════════════════════════════
@@ -985,7 +1131,6 @@ function getOfficeHtml(which){
   if(which==='evening')return getEvening();
   return getCombined();
 }
-
 function getMorning(){return`
 <div class="office-section">
   <h2>Morning Prayer</h2>
@@ -1081,7 +1226,6 @@ function getMorning(){return`
   </div>
   <p style="margin-top:14px;font-style:italic">The grace of our Lord Jesus Christ, and the love of God, and the fellowship of the Holy Ghost, be with us all evermore. Amen. — 2 Corinthians 13:14</p>
 </div>`;}
-
 function getMidday(){return`
 <div class="office-section">
   <h2>Mid-Day Prayer</h2>
@@ -1153,7 +1297,6 @@ function getMidday(){return`
     <div><span class="v-label">R.</span>Thanks be to God.</div>
   </div>
 </div>`;}
-
 function getEvening(){return`
 <div class="office-section">
   <h2>Evening Prayer</h2>
@@ -1250,7 +1393,6 @@ function getEvening(){return`
   </div>
   <p style="margin-top:14px;font-style:italic">The grace of our Lord Jesus Christ, and the love of God, and the fellowship of the Holy Ghost, be with us all evermore. Amen.</p>
 </div>`;}
-
 function getCombined(){return`
 <div class="office-section">
   <h2>Combined Daily Office</h2>
@@ -1347,7 +1489,6 @@ function getCombined(){return`
   </div>
   <p style="margin-top:14px;font-style:italic">The grace of our Lord Jesus Christ, and the love of God, and the fellowship of the Holy Ghost, be with us all evermore. Amen.</p>
 </div>`;}
-
 // ══════════════════════════════════════
 // IMPORT
 // ══════════════════════════════════════
@@ -1452,7 +1593,6 @@ async function importExecute(){
   setTimeout(()=>{state.mainView='tasks';state.currentMember='family';selectMember('family',document.querySelector('[data-member="family"]'));},800);
 }
 function importReset(){importParsedRows=[];importHeaders=[];renderImport();}
-
 // ══════════════════════════════════════
 // SETTINGS
 // ══════════════════════════════════════
@@ -1486,7 +1626,6 @@ function saveGcal(){state.gcalKey=document.getElementById('s-gcal-key').value.tr
 function addMemberSetting(){const name=document.getElementById('settings-new-member').value.trim();if(!name||state.members.length>=9)return;state.members.push({name,color:COLORS[state.members.length%COLORS.length],id:genId(),avatar:null});saveConfigToFirebase();renderSidebar();renderSettings();toast(`${name} added!`,'success');}
 function removeMemberSetting(i){if(!confirm(`Remove ${state.members[i].name}?`))return;state.members.splice(i,1);saveConfigToFirebase();renderSidebar();renderSettings();}
 function resetAll(){if(!confirm('Reset local data and reload?'))return;localStorage.removeItem('familyhub_v2');window.location.reload();}
-
 // ══════════════════════════════════════
 // FIREBASE SYNC
 // ══════════════════════════════════════
@@ -1520,7 +1659,6 @@ function startFirebaseListener(){
   });
 }
 function setSyncStatus(s){const dot=document.getElementById('sync-dot'),txt=document.getElementById('sync-text');if(!dot)return;dot.className='sync-dot'+(s==='syncing'?' syncing':s==='error'?' error':'');txt.textContent=s==='syncing'?'Syncing…':s==='error'?'Sync error':state.lastSync?'Synced '+timeAgo(state.lastSync):'Connected';}
-
 // ══════════════════════════════════════
 // MASS UPDATE
 // ══════════════════════════════════════
@@ -1546,7 +1684,7 @@ function openMassUpdate(){
   <div style="background:var(--surface2);border-radius:10px;padding:14px">
     <div style="font-size:.7rem;font-weight:700;color:var(--accent5);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">Action</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div class="form-group" style="margin:0"><label>Action Type</label><select id="mu-action-type" onchange="massUpdateToggleActionFields()"><option value="">— Choose —</option><option value="reassign">Reassign</option><option value="priority">Change priority</option><option value="due">Set due date</option><option value="list">Move to list</option><option value="status">Change status</option><option value="complete">Mark complete</option><option value="incomplete">Mark incomplete</option><option value="delete">🗑️ Delete</option></select></div>
+      <div class="form-group" style="margin:0"><label>Action Type</label><select id="mu-action-type" onchange="massUpdateToggleActionFields()"><option value="">— Choose —</option><option value="reassign">Reassign</option><option value="priority">Change priority</option><option value="due">Set due date</option><option value="duration">Set duration</option><option value="starton">Set start on</option><option value="list">Move to list</option><option value="status">Change status</option><option value="complete">Mark complete</option><option value="incomplete">Mark incomplete</option><option value="delete">🗑️ Delete</option></select></div>
       <div class="form-group" style="margin:0" id="mu-action-value-wrap"></div>
     </div>
   </div>
@@ -1569,6 +1707,8 @@ function massUpdateRunFilter(){
       <span style="display:flex;gap:5px;flex-wrap:wrap;margin-top:2px">
         ${m?`<span style="font-size:.7rem;background:${m.color}22;color:${m.color};padding:1px 7px;border-radius:10px">${escHtml(m.name)}</span>`:''}
         ${lst?`<span style="font-size:.7rem;background:${lst.color}22;color:${lst.color};padding:1px 7px;border-radius:10px">${lst.emoji} ${escHtml(lst.name)}</span>`:''}
+        ${t.duration?`<span style="font-size:.7rem;background:rgba(138,92,246,.15);color:#8b5cf6;padding:1px 7px;border-radius:10px">⏱ ${durationLabel(t.duration)}</span>`:''}
+        ${t.startOn?`<span style="font-size:.7rem;background:rgba(56,178,172,.15);color:#38b2ac;padding:1px 7px;border-radius:10px">📆 ${startOnLabel(t.startOn)}</span>`:''}
         ${t.dueDate?`<span style="font-size:.7rem;color:${ov?'var(--accent2)':'var(--text3)'}">${ov?'⚠':'📅'} ${formatDate(t.dueDate)}</span>`:''}
       </span>
     </span>
@@ -1582,7 +1722,9 @@ function massUpdateToggleActionFields(){
   const type=document.getElementById('mu-action-type')?.value;const wrap=document.getElementById('mu-action-value-wrap');if(!wrap)return;
   const mo=state.members.map(m=>`<option value="${m.id}">${escHtml(m.name)}</option>`).join('');
   const lo='<option value="">No list</option>'+state.lists.map(l=>`<option value="${l.id}">${l.emoji} ${escHtml(l.name)}</option>`).join('');
-  const fields={reassign:`<label>Assign To</label><select id="mu-action-val"><option value="family">All Family</option>${mo}</select>`,priority:`<label>Priority</label><select id="mu-action-val"><option value="none">None</option><option value="low">🟢 Low</option><option value="medium">🟡 Medium</option><option value="high">🔴 High</option></select>`,due:`<label>Due Date</label><input type="date" id="mu-action-val">`,list:`<label>List</label><select id="mu-action-val">${lo}</select>`,status:`<label>Status</label><select id="mu-action-val"><option value="notstarted">⬜ Not Started</option><option value="inprogress">🔵 In Progress</option><option value="complete">✅ Complete</option></select>`,complete:'',incomplete:'',delete:''};
+  const dro=DURATIONS.map(d=>`<option value="${d.v}">${d.label}</option>`).join('');
+  const sto=STARTONS.map(s=>`<option value="${s.v}">${s.label}</option>`).join('');
+  const fields={reassign:`<label>Assign To</label><select id="mu-action-val"><option value="family">All Family</option>${mo}</select>`,priority:`<label>Priority</label><select id="mu-action-val"><option value="none">None</option><option value="low">🟢 Low</option><option value="medium">🟡 Medium</option><option value="high">🔴 High</option></select>`,due:`<label>Due Date</label><input type="date" id="mu-action-val">`,duration:`<label>Duration</label><select id="mu-action-val"><option value="">— None —</option>${dro}</select>`,starton:`<label>Start On</label><select id="mu-action-val"><option value="">— None —</option>${sto}</select>`,list:`<label>List</label><select id="mu-action-val">${lo}</select>`,status:`<label>Status</label><select id="mu-action-val"><option value="notstarted">⬜ Not Started</option><option value="inprogress">🔵 In Progress</option><option value="complete">✅ Complete</option></select>`,complete:'',incomplete:'',delete:''};
   if(type&&fields[type]!==undefined)wrap.innerHTML=fields[type]?`<div class="form-group" style="margin:0">${fields[type]}</div>`:`<div style="display:flex;align-items:flex-end;padding-bottom:4px"><span style="font-size:.8rem;color:var(--text3)">No extra value needed</span></div>`;else wrap.innerHTML='';
 }
 async function massUpdateApply(){
@@ -1590,11 +1732,10 @@ async function massUpdateApply(){
   const ids=[...document.querySelectorAll('.mu-task-cb:checked')].map(cb=>cb.dataset.id);if(!ids.length){toast('No tasks selected','error');return;}
   if(type==='delete'&&!confirm(`Delete ${ids.length} task${ids.length!==1?'s':''}?`))return;
   const av=document.getElementById('mu-action-val')?.value??'';let n=0;
-  for(const id of ids){const t=state.tasks.find(x=>String(x.id)===String(id));if(!t)continue;if(type==='delete'){await pushTask({id},'delete');}else{const u=Object.assign({},t);if(type==='reassign')u.member=av;if(type==='priority')u.priority=av;if(type==='due')u.dueDate=av;if(type==='list')u.listId=av;if(type==='status'){u.status=av;u.completed=av==='complete';u.completedAt=av==='complete'?new Date().toISOString():'';}if(type==='complete'){u.completed=true;u.completedAt=new Date().toISOString();u.status='complete';}if(type==='incomplete'){u.completed=false;u.completedAt='';u.status='notstarted';}await pushTask(u,'update');}n++;}
-  const lbl={reassign:'Reassigned',priority:'Priority updated',due:'Due date set',list:'Moved',status:'Status updated',complete:'Marked complete',incomplete:'Marked incomplete',delete:'Deleted'};
+  for(const id of ids){const t=state.tasks.find(x=>String(x.id)===String(id));if(!t)continue;if(type==='delete'){await pushTask({id},'delete');}else{const u=Object.assign({},t);if(type==='reassign')u.member=av;if(type==='priority')u.priority=av;if(type==='due')u.dueDate=av;if(type==='duration')u.duration=av;if(type==='starton')u.startOn=av;if(type==='list')u.listId=av;if(type==='status'){u.status=av;u.completed=av==='complete';u.completedAt=av==='complete'?new Date().toISOString():'';}if(type==='complete'){u.completed=true;u.completedAt=new Date().toISOString();u.status='complete';}if(type==='incomplete'){u.completed=false;u.completedAt='';u.status='notstarted';}await pushTask(u,'update');}n++;}
+  const lbl={reassign:'Reassigned',priority:'Priority updated',due:'Due date set',duration:'Duration set',starton:'Start-on set',list:'Moved',status:'Status updated',complete:'Marked complete',incomplete:'Marked incomplete',delete:'Deleted'};
   toast(`${lbl[type]}: ${n} task${n!==1?'s':''}`, 'success');closeMassUpdate();
 }
-
 // ══════════════════════════════════════
 // RENDER VIEW
 // ══════════════════════════════════════
@@ -1604,10 +1745,9 @@ function renderView(){
   else if(state.mainView==='settings')renderSettings();
   else if(state.mainView==='import')renderImport();
   else if(state.mainView==='office')renderOffice();
-  else if(state.mainView==='list'&&state.currentListId)renderKanban(state.currentListId);
+  else if(state.mainView==='list'&&state.currentListId)renderListView(state.currentListId);
   else renderTasksView();
 }
-
 // ══════════════════════════════════════
 // BOOT
 // ══════════════════════════════════════
