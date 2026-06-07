@@ -162,8 +162,8 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .progress-bar { height: 5px; background: var(--surface3); border-radius: 3px; overflow: hidden; margin: 6px 0 14px; }
 .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent5)); border-radius: 3px; transition: width .4s ease; }
 /* KANBAN */
-.kanban-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: start; }
-.kanban-col { background: var(--surface2); border-radius: 14px; border: 1px solid var(--border); overflow: hidden; }
+.kanban-board { display: flex; flex-wrap: nowrap; gap: 16px; align-items: flex-start; overflow-x: auto; padding-bottom: 8px; }
+.kanban-col { background: var(--surface2); border-radius: 14px; border: 1px solid var(--border); overflow: hidden; flex: 1 0 264px; min-width: 264px; max-width: 460px; }
 .kanban-col-header { padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
 .kanban-col-title { font-weight: 700; font-size: .85rem; display: flex; align-items: center; gap: 8px; }
 .kanban-col-badge { font-size: .7rem; font-weight: 700; padding: 2px 8px; border-radius: 12px; }
@@ -175,7 +175,26 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .kanban-card-actions { display: flex; gap: 4px; opacity: 0; position: absolute; top: 8px; right: 8px; transition: opacity .15s; }
 .kanban-card:hover .kanban-card-actions { opacity: 1; }
 .kanban-drag-hint { text-align: center; padding: 20px; color: var(--text3); font-size: .78rem; }
-@media (max-width: 768px) { .kanban-board { grid-template-columns: 1fr; } }
+.kanban-card[draggable="true"] { cursor: grab; }
+.kanban-card.dragging { opacity: .4; cursor: grabbing; }
+.kanban-cards.drag-over { background: rgba(26,127,232,.10); outline: 2px dashed var(--accent); outline-offset: -5px; border-radius: 10px; }
+.kanban-grip { color: var(--text3); font-size: .8rem; margin-right: 4px; cursor: grab; user-select: none; }
+/* KANBAN CONTROLS + FILTER DROPDOWN */
+.kanban-controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 16px; }
+.kctl { display: flex; align-items: center; gap: 7px; }
+.kctl label { font-size: .68rem; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; }
+.kctl select { padding: 7px 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 9px; color: var(--text); font-family: inherit; font-size: .82rem; font-weight: 600; cursor: pointer; outline: none; }
+.kctl select:focus { border-color: var(--accent); }
+.kfilter-dd { position: relative; }
+.kfilter-dd-btn { padding: 7px 14px; border-radius: 9px; border: 1px solid var(--border); background: var(--surface2); color: var(--text2); font-family: inherit; font-size: .82rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all .15s; }
+.kfilter-dd-btn:hover { color: var(--text); border-color: var(--accent5); }
+.kfilter-dd-btn.has-active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.kfilter-panel { position: absolute; top: calc(100% + 6px); left: 0; z-index: 60; width: 320px; max-width: 84vw; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--modal-shadow); padding: 14px 16px; }
+.kfilter-panel .kfilter-group { display: block; margin-bottom: 12px; }
+.kfilter-panel .kfilter-group:last-of-type { margin-bottom: 6px; }
+.kfilter-panel .kfilter-label { display: block; font-size: .66rem; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
+.kfilter-panel .kfilter-chip-wrap { display: flex; flex-wrap: wrap; gap: 5px; }
+@media (max-width: 768px) { .kanban-col { flex: 0 0 84vw; min-width: 84vw; } }
 /* VIEW TOGGLE + LIST VIEW + KANBAN FILTERS */
 .view-toggle { display: flex; gap: 6px; margin-bottom: 14px; }
 .view-toggle-btn { padding: 7px 15px; border-radius: 9px; border: 1px solid var(--border); background: var(--surface2); color: var(--text2); font-family: inherit; font-size: .82rem; font-weight: 600; cursor: pointer; transition: all .15s; display: flex; align-items: center; gap: 6px; }
@@ -561,6 +580,7 @@ let state={
   members:[],tasks:[],lists:[],gcalKey:'',gcalId:'',theme:'dark',gcalEvents:[],
   currentMember:'family',currentView:'myday',mainView:'tasks',currentListId:null,
   listView:'kanban',kanbanFilters:{members:[],priorities:[],durations:[],startOns:[]},
+  kanbanGroupBy:'status',filterOpen:false,dragTaskId:null,kanbanDragging:false,
   lvTaskIds:[],
   calMonth:new Date().getMonth(),calYear:new Date().getFullYear(),
   editingTaskId:null,editingListId:null,syncing:false,lastSync:null,
@@ -784,7 +804,7 @@ function listPageHeaderHtml(list,subtitle){
     <button class="btn btn-primary btn-sm" onclick="openAddTaskToList('${list.id}')">+ Add ${state.listView==='list'?'Row':'Card'}</button>
   </div>`;
 }
-// ── KANBAN FILTERS ──
+// ── KANBAN FILTERS (dropdown) ──
 function applyKanbanFilters(tasks){
   const f=state.kanbanFilters;
   return tasks.filter(t=>{
@@ -795,81 +815,160 @@ function applyKanbanFilters(tasks){
     return true;
   });
 }
-function toggleKanbanFilter(cat,val){
+function kanbanFilterCount(){const f=state.kanbanFilters;return f.members.length+f.priorities.length+f.durations.length+f.startOns.length;}
+function toggleKanbanFilter(cat,val,e){
+  if(e)e.stopPropagation();
   const arr=state.kanbanFilters[cat];const i=arr.indexOf(val);
   if(i>-1)arr.splice(i,1);else arr.push(val);
   renderKanban(state.currentListId);
 }
-function clearKanbanFilters(){state.kanbanFilters={members:[],priorities:[],durations:[],startOns:[]};renderKanban(state.currentListId);}
-function kanbanFilterBarHtml(){
+function clearKanbanFilters(e){if(e)e.stopPropagation();state.kanbanFilters={members:[],priorities:[],durations:[],startOns:[]};renderKanban(state.currentListId);}
+function toggleFilterDropdown(e){if(e)e.stopPropagation();state.filterOpen=!state.filterOpen;renderKanban(state.currentListId);}
+function closeFilterOnOutside(e){
+  if(!state.filterOpen)return;
+  if(e&&e.target&&!document.contains(e.target))return;
+  if(e&&e.target&&e.target.closest&&e.target.closest('.kfilter-dd'))return;
+  state.filterOpen=false;
+  document.removeEventListener('click',closeFilterOnOutside);
+  if(state.mainView==='list'&&state.listView==='kanban')renderKanban(state.currentListId);
+}
+function setKanbanGroupBy(g){state.kanbanGroupBy=g;renderKanban(state.currentListId);}
+function kanbanFilterPanelHtml(){
   const f=state.kanbanFilters;
-  const chip=(cat,val,label)=>`<button class="kfilter-chip ${f[cat].includes(val)?'active':''}" onclick="toggleKanbanFilter('${cat}','${val}')">${label}</button>`;
-  let h='<div class="kanban-filter-bar">';
-  h+='<div class="kfilter-group"><span class="kfilter-label">Who</span>'+state.members.map(m=>chip('members',String(m.id),escHtml(m.name))).join('')+'</div>';
-  h+='<div class="kfilter-group"><span class="kfilter-label">Priority</span>'+[['high','🔴 High'],['medium','🟡 Med'],['low','🟢 Low'],['none','None']].map(([v,l])=>chip('priorities',v,l)).join('')+'</div>';
-  h+='<div class="kfilter-group"><span class="kfilter-label">Duration</span>'+DURATIONS.map(d=>chip('durations',d.v,d.label)).join('')+'</div>';
-  h+='<div class="kfilter-group"><span class="kfilter-label">Start</span>'+STARTONS.map(s=>chip('startOns',s.v,s.label)).join('')+'</div>';
-  const any=f.members.length+f.priorities.length+f.durations.length+f.startOns.length;
-  if(any)h+=`<button class="kfilter-chip" style="border-color:var(--accent2);color:var(--accent2)" onclick="clearKanbanFilters()">✕ Clear (${any})</button>`;
+  const chip=(cat,val,label)=>`<button class="kfilter-chip ${f[cat].includes(val)?'active':''}" onclick="toggleKanbanFilter('${cat}','${val}',event)">${label}</button>`;
+  let h='<div class="kfilter-panel" id="kfilter-panel" onclick="event.stopPropagation()">';
+  h+='<div class="kfilter-group"><span class="kfilter-label">Who</span><div class="kfilter-chip-wrap">'+(state.members.map(m=>chip('members',String(m.id),escHtml(m.name))).join('')||'<span style="font-size:.74rem;color:var(--text3)">No members</span>')+'</div></div>';
+  h+='<div class="kfilter-group"><span class="kfilter-label">Priority</span><div class="kfilter-chip-wrap">'+[['high','🔴 High'],['medium','🟡 Med'],['low','🟢 Low'],['none','None']].map(([v,l])=>chip('priorities',v,l)).join('')+'</div></div>';
+  h+='<div class="kfilter-group"><span class="kfilter-label">Duration</span><div class="kfilter-chip-wrap">'+DURATIONS.map(d=>chip('durations',d.v,d.label)).join('')+'</div></div>';
+  h+='<div class="kfilter-group"><span class="kfilter-label">Start On</span><div class="kfilter-chip-wrap">'+STARTONS.map(s=>chip('startOns',s.v,s.label)).join('')+'</div></div>';
+  const any=kanbanFilterCount();
+  h+=`<div style="display:flex;justify-content:flex-end;border-top:1px solid var(--border);padding-top:10px;margin-top:4px"><button class="btn btn-ghost btn-sm" onclick="clearKanbanFilters(event)"${any?'':' disabled style="opacity:.5;cursor:default"'}>Clear all${any?` (${any})`:''}</button></div>`;
   h+='</div>';
   return h;
 }
+function kanbanControlsHtml(){
+  const g=state.kanbanGroupBy;
+  const opt=(v,l)=>`<option value="${v}"${g===v?' selected':''}>${l}</option>`;
+  const any=kanbanFilterCount();
+  return`<div class="kanban-controls">
+    <div class="kctl"><label>Group by</label>
+      <select onchange="setKanbanGroupBy(this.value)">${opt('status','Status')}${opt('member','Who')}${opt('priority','Priority')}${opt('duration','Duration')}</select>
+    </div>
+    <div class="kfilter-dd">
+      <button class="kfilter-dd-btn ${any?'has-active':''}" onclick="toggleFilterDropdown(event)">⛃ Filter${any?` (${any})`:''} <span style="font-size:.7rem">▾</span></button>
+      ${state.filterOpen?kanbanFilterPanelHtml():''}
+    </div>
+  </div>`;
+}
+// ── KANBAN COLUMNS (dynamic group-by) ──
+function kanbanColumns(){
+  const g=state.kanbanGroupBy;
+  if(g==='member'){
+    const cols=state.members.map(m=>({label:escHtml(m.name),color:m.color,bg:m.color+'22',icon:'',field:'member',val:String(m.id)}));
+    cols.push({label:'Unassigned / All Family',color:'#5ab4ff',bg:'rgba(90,180,255,.12)',icon:'🏠',field:'member',val:'family'});
+    return cols;
+  }
+  if(g==='priority'){
+    return[
+      {label:'High',color:'#e84a6f',bg:'rgba(232,74,111,.12)',icon:'🔴',field:'priority',val:'high'},
+      {label:'Medium',color:'#f0960a',bg:'rgba(240,150,10,.12)',icon:'🟡',field:'priority',val:'medium'},
+      {label:'Low',color:'#18c97a',bg:'rgba(24,201,122,.12)',icon:'🟢',field:'priority',val:'low'},
+      {label:'No Priority',color:'#5ab4ff',bg:'rgba(90,180,255,.12)',icon:'⚪',field:'priority',val:'none'}
+    ];
+  }
+  if(g==='duration'){
+    const cols=[{label:'No Duration',color:'#5ab4ff',bg:'rgba(90,180,255,.12)',icon:'⏳',field:'duration',val:''}];
+    DURATIONS.forEach(d=>cols.push({label:d.label,color:'#8b5cf6',bg:'rgba(138,92,246,.12)',icon:'⏱',field:'duration',val:d.v}));
+    return cols;
+  }
+  return[
+    {label:'Not Started',color:'#5ab4ff',bg:'rgba(90,180,255,.12)',icon:'⬜',field:'status',val:'notstarted'},
+    {label:'In Progress',color:'#f0960a',bg:'rgba(240,150,10,.12)',icon:'🔵',field:'status',val:'inprogress'},
+    {label:'Complete',color:'#18c97a',bg:'rgba(24,201,122,.12)',icon:'✅',field:'status',val:'complete'}
+  ];
+}
+function taskInColumn(t,col){
+  if(col.field==='member')return col.val==='family'?(!t.member||String(t.member)==='family'):String(t.member)===col.val;
+  if(col.field==='priority')return (t.priority||'none')===col.val;
+  if(col.field==='duration')return (t.duration||'')===col.val;
+  if(col.val==='complete')return t.completed||t.status==='complete';
+  if(col.val==='inprogress')return !t.completed&&t.status==='inprogress';
+  return !t.completed&&(!t.status||t.status==='notstarted');
+}
+// ── DRAG & DROP ──
+function kanbanDragStart(e,id){
+  state.dragTaskId=id;state.kanbanDragging=true;
+  if(e.dataTransfer){e.dataTransfer.effectAllowed='move';try{e.dataTransfer.setData('text/plain',id);}catch(_){}}
+  const card=e.target.closest?e.target.closest('.kanban-card'):null;if(card)card.classList.add('dragging');
+}
+function kanbanDragEnd(){
+  state.kanbanDragging=false;state.dragTaskId=null;state.lastDragEnd=Date.now();
+  document.querySelectorAll('.kanban-card.dragging').forEach(c=>c.classList.remove('dragging'));
+  document.querySelectorAll('.kanban-cards.drag-over').forEach(c=>c.classList.remove('drag-over'));
+}
+function kanbanDragOver(e,el){e.preventDefault();if(e.dataTransfer)e.dataTransfer.dropEffect='move';if(el)el.classList.add('drag-over');}
+function kanbanDragLeave(e,el){if(el&&!el.contains(e.relatedTarget))el.classList.remove('drag-over');}
+function kanbanDrop(e,colKey,el){
+  e.preventDefault();if(el)el.classList.remove('drag-over');
+  const id=state.dragTaskId||(e.dataTransfer?e.dataTransfer.getData('text/plain'):'');
+  const col=kanbanColumns().find(c=>c.val+'|'+c.field===colKey);
+  state.kanbanDragging=false;state.dragTaskId=null;state.lastDragEnd=Date.now();
+  if(!id||!col)return;
+  const t=state.tasks.find(x=>String(x.id)===String(id));if(!t||taskInColumn(t,col))return;
+  const u=Object.assign({},t);
+  if(col.field==='status'){u.status=col.val;u.completed=col.val==='complete';u.completedAt=col.val==='complete'?new Date().toISOString():'';}
+  else u[col.field]=col.val;
+  pushTask(u,'update');
+  if(col.field==='status'&&col.val==='complete')confettiTask();
+}
+function kanbanCardClick(e,id){if(state.kanbanDragging)return;if(state.lastDragEnd&&Date.now()-state.lastDragEnd<250)return;editTask(id,e);}
 // ── KANBAN BOARD ──
 function renderKanban(listId){
   const list=state.lists.find(l=>l.id===listId);if(!list){renderTasksView();return;}
   let tasks=state.tasks.filter(t=>t.listId===listId);
   const totalAll=tasks.length;
   tasks=applyKanbanFilters(tasks);
-  const cols=[
-    {key:'notstarted',label:'Not Started',color:'#5ab4ff',bg:'rgba(90,180,255,.12)',icon:'⬜'},
-    {key:'inprogress',label:'In Progress',color:'#f0960a',bg:'rgba(240,150,10,.12)',icon:'🔵'},
-    {key:'complete',label:'Complete',color:'#18c97a',bg:'rgba(24,201,122,.12)',icon:'✅'}
-  ];
+  const cols=kanbanColumns();
   const today=todayStr();
   document.getElementById('topbar-title').textContent=list.name;
   document.getElementById('topbar-color').style.background=list.color;
   const filtered=tasks.length!==totalAll?` · ${tasks.length} of ${totalAll} shown`:'';
-  let html=listPageHeaderHtml(list,`${totalAll} total · Kanban view${filtered}`)+viewToggleHtml()+kanbanFilterBarHtml()+`<div class="kanban-board">`;
+  const groupLabel={status:'Status',member:'Who',priority:'Priority',duration:'Duration'}[state.kanbanGroupBy]||'Status';
+  let html=listPageHeaderHtml(list,`${totalAll} total · Kanban by ${groupLabel}${filtered}`)+viewToggleHtml()+kanbanControlsHtml()+`<div class="kanban-board">`;
   cols.forEach(col=>{
-    const colTasks=tasks.filter(t=>{
-      if(col.key==='complete')return t.completed||(t.status==='complete');
-      if(col.key==='inprogress')return !t.completed&&t.status==='inprogress';
-      return !t.completed&&(!t.status||t.status==='notstarted');
-    });
+    const colKey=col.val+'|'+col.field;
+    const colTasks=tasks.filter(t=>taskInColumn(t,col));
     html+=`<div class="kanban-col">
       <div class="kanban-col-header">
-        <div class="kanban-col-title"><span>${col.icon}</span><span style="color:${col.color}">${col.label}</span></div>
+        <div class="kanban-col-title">${col.icon?`<span>${col.icon}</span>`:''}<span style="color:${col.color}">${col.label}</span></div>
         <span class="kanban-col-badge" style="background:${col.bg};color:${col.color}">${colTasks.length}</span>
       </div>
-      <div class="kanban-cards">`;
-    if(!colTasks.length)html+=`<div class="kanban-drag-hint">No tasks here</div>`;
+      <div class="kanban-cards" ondragover="kanbanDragOver(event,this)" ondragleave="kanbanDragLeave(event,this)" ondrop="kanbanDrop(event,'${colKey}',this)">`;
+    if(!colTasks.length)html+=`<div class="kanban-drag-hint">Drop here</div>`;
     colTasks.forEach(t=>{
       const member=state.members.find(m=>String(m.id)===String(t.member));const color=member?member.color:'var(--accent)';
       const overdue=!t.completed&&t.dueDate&&t.dueDate<today;
-      html+=`<div class="kanban-card" onclick="editTask('${t.id}',event)">
+      html+=`<div class="kanban-card" draggable="true" ondragstart="kanbanDragStart(event,'${t.id}')" ondragend="kanbanDragEnd()" onclick="kanbanCardClick(event,'${t.id}')">
         <div class="kanban-card-actions">
           <button class="task-action-btn del" onclick="deleteTask('${t.id}',event)"><svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button>
         </div>
-        <div class="kanban-card-title">${escHtml(t.title)}</div>
+        <div class="kanban-card-title"><span class="kanban-grip">⠿</span>${escHtml(t.title)}</div>
         <div class="kanban-card-meta">
-          ${t.priority&&t.priority!=='none'?`<span style="font-size:.68rem;padding:1px 6px;border-radius:8px;background:${t.priority==='high'?'rgba(232,74,111,.15)':t.priority==='medium'?'rgba(240,150,10,.15)':'rgba(24,201,122,.15)'};color:${t.priority==='high'?'var(--accent2)':t.priority==='medium'?'var(--accent4)':'var(--accent3)'}">${{high:'🔴 High',medium:'🟡 Med',low:'🟢 Low'}[t.priority]}</span>`:''}
-          ${t.duration?`<span style="font-size:.68rem;padding:1px 6px;border-radius:8px;background:rgba(138,92,246,.15);color:#8b5cf6">⏱ ${durationLabel(t.duration)}</span>`:''}
+          ${state.kanbanGroupBy!=='priority'&&t.priority&&t.priority!=='none'?`<span style="font-size:.68rem;padding:1px 6px;border-radius:8px;background:${t.priority==='high'?'rgba(232,74,111,.15)':t.priority==='medium'?'rgba(240,150,10,.15)':'rgba(24,201,122,.15)'};color:${t.priority==='high'?'var(--accent2)':t.priority==='medium'?'var(--accent4)':'var(--accent3)'}">${{high:'🔴 High',medium:'🟡 Med',low:'🟢 Low'}[t.priority]}</span>`:''}
+          ${state.kanbanGroupBy!=='duration'&&t.duration?`<span style="font-size:.68rem;padding:1px 6px;border-radius:8px;background:rgba(138,92,246,.15);color:#8b5cf6">⏱ ${durationLabel(t.duration)}</span>`:''}
           ${t.startOn?`<span style="font-size:.68rem;padding:1px 6px;border-radius:8px;background:rgba(56,178,172,.15);color:#38b2ac">📆 ${startOnLabel(t.startOn)}</span>`:''}
           ${t.dueDate?`<span style="font-size:.68rem;color:${overdue?'var(--accent2)':'var(--text3)'}">${overdue?'⚠':''} ${formatDate(t.dueDate)}</span>`:''}
-          ${member?`<span style="font-size:.68rem;background:${color}22;color:${color};padding:1px 6px;border-radius:8px">${memberAvatarHtml(member,12)} ${escHtml(member.name)}</span>`:''}
+          ${state.kanbanGroupBy!=='member'&&member?`<span style="font-size:.68rem;background:${color}22;color:${color};padding:1px 6px;border-radius:8px">${memberAvatarHtml(member,12)} ${escHtml(member.name)}</span>`:''}
+          ${state.kanbanGroupBy!=='status'&&t.status&&t.status!=='notstarted'?`<span style="font-size:.68rem;padding:1px 6px;border-radius:8px;background:rgba(26,127,232,.12);color:var(--accent5)">${{inprogress:'🔵 In Progress',complete:'✅ Complete'}[t.status]||''}</span>`:''}
         </div>
         ${t.notes?`<div style="font-size:.72rem;color:var(--text3);margin-top:6px;line-height:1.5">${escHtml(t.notes.substring(0,80))}${t.notes.length>80?'…':''}</div>`:''}
-        <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
-          ${col.key!=='notstarted'?`<button onclick="event.stopPropagation();setTaskStatus('${t.id}','notstarted')" style="font-size:.66rem;padding:2px 7px;border-radius:6px;border:1px solid var(--border);background:var(--surface3);color:var(--text3);cursor:pointer">⬜ Not Started</button>`:''}
-          ${col.key!=='inprogress'?`<button onclick="event.stopPropagation();setTaskStatus('${t.id}','inprogress')" style="font-size:.66rem;padding:2px 7px;border-radius:6px;border:1px solid rgba(240,150,10,.3);background:rgba(240,150,10,.1);color:var(--accent4);cursor:pointer">🔵 In Progress</button>`:''}
-          ${col.key!=='complete'?`<button onclick="event.stopPropagation();setTaskStatus('${t.id}','complete')" style="font-size:.66rem;padding:2px 7px;border-radius:6px;border:1px solid rgba(24,201,122,.3);background:rgba(24,201,122,.1);color:var(--accent3);cursor:pointer">✅ Complete</button>`:''}
-        </div>
       </div>`;
     });
     html+=`</div></div>`;
   });
   html+=`</div>`;
   document.getElementById('main-content').innerHTML=html;
+  if(state.filterOpen){document.removeEventListener('click',closeFilterOnOutside);document.addEventListener('click',closeFilterOnOutside);}
 }
 function setTaskStatus(id,status){
   const t=state.tasks.find(x=>String(x.id)===String(id));if(!t)return;
