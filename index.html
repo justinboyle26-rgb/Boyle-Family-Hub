@@ -7,7 +7,7 @@
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="favicon.png">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&family=Noto+Color+Emoji&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 <style>
@@ -46,9 +46,12 @@
   --accent4: #f0960a;
   --accent5: #5ab4ff;
   --radius: 14px;
+  --emoji: 'Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol','Twemoji Mozilla',sans-serif;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; transition: background .25s, color .25s; }
+body { font-family: 'DM Sans', 'Noto Color Emoji', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; transition: background .25s, color .25s; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
+/* Crisp, full-color emoji on Linux / Raspberry Pi where the system emoji font may be missing or monochrome */
+.emoji, .celeb-emoji, .tasks-empty .emoji, .import-icon, .m-avatar, .list-icon, .cal-task-dot, .task-tag, .filter-chip, .kfilter-chip, .office-btn, .view-toggle-btn, .theme-toggle-btn, .btn, .nav-btn, .member-btn, .v-label, .vkb-key { font-family: 'DM Sans', var(--emoji); }
 #setup-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: var(--setup-bg); }
 .setup-card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 48px; width: 540px; max-width: 95vw; box-shadow: var(--shadow); }
 .setup-card h1 { font-family: 'DM Serif Display', serif; font-size: 2.2rem; margin-bottom: 8px; background: linear-gradient(135deg, #5ab4ff, #1a7fe8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -231,9 +234,10 @@ select.lv-input { cursor: pointer; }
 .cal-cell.other-month { opacity: .35; }
 .cal-cell.today .cal-day-num { background: var(--accent); color: #fff; }
 .cal-day-num { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .76rem; font-weight: 600; margin-bottom: 4px; }
-.cal-task-dot { font-size: .7rem; background: rgba(26,127,232,.12); border-radius: 4px; padding: 2px 5px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 3px; color: var(--text2); }
+.cal-task-dot { font-size: .7rem; background: rgba(26,127,232,.12); border-radius: 4px; padding: 2px 5px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 3px; color: var(--text2); cursor: pointer; }
+.cal-task-dot:hover { background: rgba(26,127,232,.28); color: var(--text); }
 .cal-task-dot .dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
-.cal-task-dot.gcal-event { background: rgba(15,157,88,.12); color: #0f9d58; }
+.cal-task-dot.gcal-event { background: rgba(15,157,88,.12); color: #0f9d58; cursor: default; }
 .cal-nav { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
 .cal-nav h3 { font-family: 'DM Serif Display', serif; font-size: 1.25rem; flex: 1; }
 /* FAMILY OVERVIEW */
@@ -302,14 +306,14 @@ select.lv-input { cursor: pointer; }
 .toast.info .toast-icon { color: var(--accent5); }
 /* DAILY OFFICE */
 .office-btn-row { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
-.office-btn { padding: 12px 24px; border-radius: 12px; border: 2px solid var(--border); background: var(--surface2); color: var(--text2); font-family: 'DM Sans', inherit; font-size: .9rem; font-weight: 600; cursor: pointer; transition: all .2s; }
+.office-btn { padding: 12px 24px; border-radius: 12px; border: 2px solid var(--border); background: var(--surface2); color: var(--text2); font-family: 'DM Sans', var(--emoji); font-size: .9rem; font-weight: 600; cursor: pointer; transition: all .2s; }
 .office-btn:hover { border-color: var(--accent); color: var(--text); background: rgba(26,127,232,.08); }
 .office-btn.active { background: linear-gradient(135deg, #1a7fe8, #1260c0); border-color: #1a7fe8; color: #fff; box-shadow: 0 4px 14px rgba(26,127,232,.35); }
 .office-content { max-width: 680px; margin: 0 auto; text-align: center; }
 .office-content h2 { font-family: 'DM Serif Display', serif; font-size: 1.8rem; margin-bottom: 6px; }
 .office-content .office-subtitle { font-size: .85rem; color: var(--text3); margin-bottom: 28px; letter-spacing: .05em; text-transform: uppercase; }
 .office-section { margin-bottom: 26px; text-align: center; }
-.office-section h3 { font-family: 'DM Serif Display', serif; font-size: 1.15rem; color: var(--accent5); margin-bottom: 10px; }
+.office-section h3 { font-family: 'DM Serif Display', var(--emoji); font-size: 1.15rem; color: var(--accent5); margin-bottom: 10px; }
 .office-section p { font-size: .92rem; line-height: 1.85; color: var(--text2); margin-bottom: 8px; }
 .office-section .rubric { font-size: .8rem; color: var(--text3); font-style: italic; margin-bottom: 10px; }
 .office-section .versicle { font-size: .92rem; line-height: 2; }
@@ -339,6 +343,18 @@ select.lv-input { cursor: pointer; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
 .sidebar-toggle { display: none; position: fixed; top: 14px; left: 14px; z-index: 200; width: 38px; height: 38px; border-radius: 10px; background: var(--surface); border: 1px solid var(--border); cursor: pointer; align-items: center; justify-content: center; color: var(--text2); }
+/* ON-SCREEN KEYBOARD */
+.vkb { position: fixed; left: 0; right: 0; bottom: 0; z-index: 3000; max-width: 1000px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-bottom: none; border-top-left-radius: 18px; border-top-right-radius: 18px; box-shadow: 0 -10px 40px rgba(0,0,0,.40); padding: 12px 12px calc(12px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 7px; transform: translateY(115%); transition: transform .24s cubic-bezier(.4,0,.2,1); }
+.vkb.open { transform: translateY(0); }
+.vkb-row { display: flex; gap: 7px; justify-content: center; }
+.vkb-key { flex: 1 1 0; min-width: 0; height: 48px; border-radius: 11px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); font-family: 'DM Sans', var(--emoji); font-size: 1.08rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .1s, transform .04s; user-select: none; -webkit-user-select: none; box-shadow: 0 1px 2px rgba(0,0,0,.18); }
+.vkb-key:hover { background: var(--surface3); }
+.vkb-key:active { transform: translateY(1px); background: var(--accent); color: #fff; border-color: var(--accent); }
+.vkb-key.vkb-sp { flex: 1.6 1 0; background: var(--surface3); color: var(--text2); font-size: .92rem; }
+.vkb-key.vkb-space { flex: 6 1 0; }
+.vkb-key.vkb-active-key { background: var(--accent); color: #fff; border-color: var(--accent); }
+body.vkb-active { padding-bottom: 320px; }
+@media (max-width: 768px) { .vkb-key { height: 44px; font-size: 1rem; border-radius: 9px; } body.vkb-active { padding-bottom: 290px; } }
 @media (max-width: 768px) {
   .sidebar { transform: translateX(-100%); }
   .sidebar.open { transform: translateX(0); box-shadow: 4px 0 24px rgba(0,0,0,.4); }
@@ -380,6 +396,7 @@ select.lv-input { cursor: pointer; }
   <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <div><div class="app-name">Boyle Family Hub</div><div class="app-sub">To-Do &amp; Calendar</div></div>
+      <button class="theme-toggle-btn" onclick="toggleFullscreen()" id="fs-btn" title="Toggle fullscreen">⤢</button>
       <button class="theme-toggle-btn" onclick="toggleTheme()" id="theme-btn" title="Toggle theme">🌙</button>
     </div>
     <div class="family-list">
@@ -527,6 +544,7 @@ select.lv-input { cursor: pointer; }
   </div>
 </div>
 <div class="toast-container" id="toasts"></div>
+<div class="vkb" id="vkb" aria-hidden="true"></div>
 <script>
 // ══════════════════════════════════════
 // FIREBASE
@@ -586,10 +604,24 @@ let state={
   editingTaskId:null,editingListId:null,syncing:false,lastSync:null,
 };
 // ══════════════════════════════════════
-// THEME & UTILS
+// THEME, FULLSCREEN & UTILS
 // ══════════════════════════════════════
 function applyTheme(t){document.documentElement.setAttribute('data-theme',t);const b=document.getElementById('theme-btn');if(b)b.textContent=t==='dark'?'🌙':'☀️';}
 function toggleTheme(){state.theme=state.theme==='dark'?'light':'dark';applyTheme(state.theme);saveConfigToFirebase();}
+function isFullscreen(){return!!(document.fullscreenElement||document.webkitFullscreenElement);}
+function toggleFullscreen(){
+  try{
+    if(!isFullscreen()){
+      const el=document.documentElement;
+      const req=el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen||el.msRequestFullscreen;
+      if(req)req.call(el);else{toast('Fullscreen not supported on this device','error');return;}
+    }else{
+      const ex=document.exitFullscreen||document.webkitExitFullscreen||document.mozCancelFullScreen||document.msExitFullscreen;
+      if(ex)ex.call(document);
+    }
+  }catch(e){toast('Fullscreen not available','error');}
+}
+function updateFsIcon(){const b=document.getElementById('fs-btn');if(b){b.textContent=isFullscreen()?'⤡':'⤢';b.title=isFullscreen()?'Exit fullscreen':'Enter fullscreen';}}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 function todayStr(){const d=new Date();return`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;}
 function pad(n){return String(n).padStart(2,'0');}
@@ -626,6 +658,7 @@ function startApp(){
   applyTheme(state.theme);
   document.getElementById('setup-screen').style.display='none';
   document.getElementById('app').style.display='block';
+  updateFsIcon();
   renderSidebar();renderSidebarLists();setView('tasks');startFirebaseListener();
   if(state.gcalKey&&state.gcalId)fetchGoogleCalendarEvents();
 }
@@ -1168,6 +1201,7 @@ function renderCalendar(){
   const daysInMonth=new Date(year,month+1,0).getDate();const daysInPrev=new Date(year,month,0).getDate();
   const syncBtn=state.gcalKey?`<button class="btn btn-ghost btn-sm" onclick="fetchGoogleCalendarEvents()">🔄 Sync GCal</button>`:'';
   let html=`<div class="gcal-banner"><svg width="20" height="20" viewBox="0 0 24 24"><rect width="24" height="24" rx="3" fill="#1a7fe8"/><rect x="3" y="11" width="18" height="10" rx="1" fill="white" opacity=".2"/><text x="12" y="19" font-size="8" fill="white" text-anchor="middle" font-family="sans-serif" font-weight="bold">CAL</text></svg><p>${state.gcalKey?`✅ Google Calendar linked — ${state.gcalEvents.length} events loaded. ${syncBtn}`:'🔗 <a href="#" onclick="navTo(\'settings\')">Link Google Calendar in Settings →</a>'}</p></div>
+  <div style="font-size:.78rem;color:var(--text3);margin-bottom:12px">💡 Tap a task to open it · tap an empty day to add a new task</div>
   <div class="cal-nav"><button class="icon-btn" onclick="calPrev()">‹</button><h3>${monthName}</h3><button class="icon-btn" onclick="calNext()">›</button><button class="btn btn-ghost btn-sm" onclick="calToday()">Today</button></div>
   <div class="cal-grid">${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>`<div class="cal-header-cell">${d}</div>`).join('')}`;
   const totalCells=Math.ceil((firstDay+daysInMonth)/7)*7;
@@ -1183,8 +1217,8 @@ function renderCalendar(){
     const gcalEvs=state.gcalEvents.filter(e=>e.date===ds);
     html+=`<div class="cal-cell ${isOther?'other-month':''} ${isToday?'today':''}" onclick="calDayClick('${ds}')">
       <div class="cal-day-num">${day}</div>
-      ${gcalEvs.slice(0,2).map(e=>`<div class="cal-task-dot gcal-event"><span class="dot" style="background:#0f9d58"></span>${escHtml(e.title.substring(0,14))}${e.title.length>14?'…':''}</div>`).join('')}
-      ${ft.slice(0,3-Math.min(gcalEvs.length,2)).map(t=>{const tm=state.members.find(m=>String(m.id)===String(t.member));const c=tm?tm.color:'var(--accent)';return`<div class="cal-task-dot"><span class="dot" style="background:${c}"></span>${escHtml(t.title.substring(0,14))}${t.title.length>14?'…':''}</div>`;}).join('')}
+      ${gcalEvs.slice(0,2).map(e=>`<div class="cal-task-dot gcal-event" onclick="event.stopPropagation()"><span class="dot" style="background:#0f9d58"></span>${escHtml(e.title.substring(0,14))}${e.title.length>14?'…':''}</div>`).join('')}
+      ${ft.slice(0,3-Math.min(gcalEvs.length,2)).map(t=>{const tm=state.members.find(m=>String(m.id)===String(t.member));const c=tm?tm.color:'var(--accent)';return`<div class="cal-task-dot" title="Open task" onclick="calTaskClick(event,'${t.id}')"><span class="dot" style="background:${c}"></span>${escHtml(t.title.substring(0,14))}${t.title.length>14?'…':''}</div>`;}).join('')}
       ${(ft.length+gcalEvs.length)>3?`<div style="font-size:.66rem;color:var(--text3)">+${ft.length+gcalEvs.length-3} more</div>`:''}
     </div>`;
   }
@@ -1194,6 +1228,7 @@ function calPrev(){state.calMonth--;if(state.calMonth<0){state.calMonth=11;state
 function calNext(){state.calMonth++;if(state.calMonth>11){state.calMonth=0;state.calYear++;}renderCalendar();}
 function calToday(){state.calMonth=new Date().getMonth();state.calYear=new Date().getFullYear();renderCalendar();}
 function calDayClick(ds){openAddTask();document.getElementById('t-due').value=ds;}
+function calTaskClick(e,id){if(e)e.stopPropagation();editTask(id,e);}
 // ══════════════════════════════════════
 // DAILY OFFICE (2019 BCP)
 // ══════════════════════════════════════
@@ -1700,9 +1735,11 @@ function renderSettings(){
   document.getElementById('main-content').innerHTML=`
   <div class="settings-section"><h4>🎨 Appearance</h4>
     <div class="settings-row"><div><div class="settings-row-label">Dark Mode</div><div class="settings-row-sub">Toggle between dark and light blue theme</div></div><button class="toggle ${state.theme==='dark'?'on':''}" onclick="toggleTheme();renderSettings()"></button></div>
+    <div class="settings-row"><div><div class="settings-row-label">Fullscreen Mode</div><div class="settings-row-sub">Expand the app to fill the entire screen (also the ⤢ button up top)</div></div><button class="toggle ${isFullscreen()?'on':''}" onclick="toggleFullscreen()"></button></div>
+    <div class="settings-row"><div><div class="settings-row-label">On-Screen Keyboard</div><div class="settings-row-sub">Pops up a touch keyboard when you tap a text field (great for touchscreens)</div></div><button class="toggle ${vkbEnabled?'on':''}" onclick="toggleVkbEnabled();renderSettings()"></button></div>
   </div>
   <div class="settings-section"><h4>🗄️ Firebase</h4>
-    <div style="background:rgba(24,201,122,.08);border:1px solid rgba(24,201,122,.2);border-radius:10px;padding:10px 14px;font-size:.82rem;color:var(--accent3)">✅ Connected to Firebase Realtime Database.</div>
+    <div style="background:rgba(24,201,122,.08);border:1px solid rgba(24,201,122,.2);border-radius:10px;padding:10px 14px;font-size:.82rem;color:var(--accent3)">✅ Connected to Firebase Realtime Database. Your data is shared across every device automatically.</div>
   </div>
   <div class="settings-section"><h4>📅 Google Calendar</h4>
     <div class="form-group"><label>API Key</label><input type="text" id="s-gcal-key" value="${escHtml(state.gcalKey)}" placeholder="AIza..."></div>
@@ -1718,13 +1755,13 @@ function renderSettings(){
     <div style="display:flex;gap:8px;margin-top:12px"><input type="text" id="settings-new-member" placeholder="New member name" maxlength="24" style="flex:1;padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:.88rem;outline:none"><button class="btn btn-ghost btn-sm" onclick="addMemberSetting()">+ Add</button></div>
   </div>
   <div class="settings-section"><h4>⚠️ Danger Zone</h4>
-    <div class="settings-row"><div><div class="settings-row-label">Reset Local Cache</div><div class="settings-row-sub">Forces fresh pull from Firebase</div></div><button class="btn btn-sm" style="background:var(--accent2);color:#fff" onclick="resetAll()">Reset</button></div>
+    <div class="settings-row"><div><div class="settings-row-label">Reset Local Cache</div><div class="settings-row-sub">Forces fresh pull from Firebase (your data is safe in the cloud)</div></div><button class="btn btn-sm" style="background:var(--accent2);color:#fff" onclick="resetAll()">Reset</button></div>
   </div>`;
 }
 function saveGcal(){state.gcalKey=document.getElementById('s-gcal-key').value.trim();state.gcalId=document.getElementById('s-gcal-id').value.trim();saveConfigToFirebase();toast('Saved','success');if(state.gcalKey&&state.gcalId)fetchGoogleCalendarEvents();}
 function addMemberSetting(){const name=document.getElementById('settings-new-member').value.trim();if(!name||state.members.length>=9)return;state.members.push({name,color:COLORS[state.members.length%COLORS.length],id:genId(),avatar:null});saveConfigToFirebase();renderSidebar();renderSettings();toast(`${name} added!`,'success');}
 function removeMemberSetting(i){if(!confirm(`Remove ${state.members[i].name}?`))return;state.members.splice(i,1);saveConfigToFirebase();renderSidebar();renderSettings();}
-function resetAll(){if(!confirm('Reset local data and reload?'))return;localStorage.removeItem('familyhub_v2');window.location.reload();}
+function resetAll(){if(!confirm('Reset local data and reload? (Your tasks and family stay safe in the cloud and will re-download.)'))return;localStorage.removeItem('familyhub_v2');window.location.reload();}
 // ══════════════════════════════════════
 // FIREBASE SYNC
 // ══════════════════════════════════════
@@ -1848,16 +1885,139 @@ function renderView(){
   else renderTasksView();
 }
 // ══════════════════════════════════════
+// ON-SCREEN KEYBOARD (slick, built-in)
+// ══════════════════════════════════════
+var vkbTarget=null, vkbShift=false, vkbLayer='abc';
+var vkbEnabled=localStorage.getItem('familyhub_vkb')!=='0';
+const VKB_ABC=[
+  ['1','2','3','4','5','6','7','8','9','0'],
+  ['q','w','e','r','t','y','u','i','o','p'],
+  ['a','s','d','f','g','h','j','k','l'],
+  ['shift','z','x','c','v','b','n','m','back'],
+  ['sym','space','@','.','enter','hide']
+];
+const VKB_SYM=[
+  ['1','2','3','4','5','6','7','8','9','0'],
+  ['!','@','#','$','%','&','*','(',')'],
+  ['-','_','+','=','/',':',';','"'],
+  ['abc',',','?','!','~','back'],
+  ['abc','space','.','enter','hide']
+];
+function vkbIsTypeable(el){
+  if(!vkbEnabled||!el)return false;
+  if(el.tagName==='TEXTAREA')return true;
+  if(el.tagName==='INPUT'){const t=(el.getAttribute('type')||'text').toLowerCase();return ['text','search','url','email','tel','password','number'].includes(t);}
+  return false;
+}
+function vkbRender(){
+  const rows=vkbLayer==='sym'?VKB_SYM:VKB_ABC;
+  let h='';
+  rows.forEach(r=>{
+    h+='<div class="vkb-row">';
+    r.forEach(k=>{
+      const special=['shift','back','enter','space','sym','abc','hide'].includes(k);
+      let label=k;
+      if(k==='shift')label='⇧';
+      else if(k==='back')label='⌫';
+      else if(k==='enter')label='⏎';
+      else if(k==='space')label='␣';
+      else if(k==='sym')label='?123';
+      else if(k==='abc')label='ABC';
+      else if(k==='hide')label='⌄';
+      else if(vkbLayer==='abc'&&vkbShift&&/^[a-z]$/.test(k))label=k.toUpperCase();
+      let cls='vkb-key';
+      if(special)cls+=' vkb-sp';
+      if(k==='space')cls+=' vkb-space';
+      if(k==='shift'&&vkbShift)cls+=' vkb-active-key';
+      h+=`<button type="button" class="${cls}" data-k="${escHtml(k)}">${escHtml(label)}</button>`;
+    });
+    h+='</div>';
+  });
+  document.getElementById('vkb').innerHTML=h;
+}
+function vkbShow(){if(!vkbEnabled)return;vkbRender();const kb=document.getElementById('vkb');kb.classList.add('open');kb.setAttribute('aria-hidden','false');document.body.classList.add('vkb-active');}
+function vkbHide(){const kb=document.getElementById('vkb');if(kb){kb.classList.remove('open');kb.setAttribute('aria-hidden','true');}document.body.classList.remove('vkb-active');vkbTarget=null;vkbShift=false;vkbLayer='abc';}
+function vkbInsert(el,ch){
+  let s=null,e2=null;try{s=el.selectionStart;e2=el.selectionEnd;}catch(_){}
+  if(s===null||s===undefined){el.value=(el.value||'')+ch;}
+  else{el.value=el.value.slice(0,s)+ch+el.value.slice(e2);const p=s+ch.length;try{el.setSelectionRange(p,p);}catch(_){}}
+  el.dispatchEvent(new Event('input',{bubbles:true}));
+}
+function vkbBackspace(el){
+  let s=null,e2=null;try{s=el.selectionStart;e2=el.selectionEnd;}catch(_){}
+  if(s===null||s===undefined){el.value=(el.value||'').slice(0,-1);}
+  else if(s!==e2){el.value=el.value.slice(0,s)+el.value.slice(e2);try{el.setSelectionRange(s,s);}catch(_){}}
+  else if(s>0){el.value=el.value.slice(0,s-1)+el.value.slice(e2);try{el.setSelectionRange(s-1,s-1);}catch(_){}}
+  el.dispatchEvent(new Event('input',{bubbles:true}));
+}
+function vkbEnter(el){
+  if(el.tagName==='TEXTAREA'){vkbInsert(el,'\n');return;}
+  el.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',code:'Enter',keyCode:13,which:13,bubbles:true}));
+  el.dispatchEvent(new KeyboardEvent('keyup',{key:'Enter',code:'Enter',keyCode:13,which:13,bubbles:true}));
+}
+function vkbKey(k){
+  if(k==='hide'){const t=vkbTarget;vkbHide();if(t)try{t.blur();}catch(_){}return;}
+  if(k==='shift'){vkbShift=!vkbShift;vkbRender();return;}
+  if(k==='sym'){vkbLayer='sym';vkbRender();return;}
+  if(k==='abc'){vkbLayer='abc';vkbRender();return;}
+  const el=vkbTarget;if(!el)return;
+  if(k==='back'){vkbBackspace(el);return;}
+  if(k==='enter'){vkbEnter(el);return;}
+  let ch=(k==='space')?' ':k;
+  if(vkbLayer==='abc'&&vkbShift&&/^[a-z]$/.test(ch))ch=ch.toUpperCase();
+  vkbInsert(el,ch);
+  if(vkbShift&&vkbLayer==='abc'){vkbShift=false;vkbRender();}
+}
+function vkbInit(){
+  const kb=document.getElementById('vkb');if(!kb)return;
+  // mousedown keeps focus on the field (preventDefault); also handle touch
+  const onPress=e=>{const btn=e.target.closest&&e.target.closest('.vkb-key');if(!btn)return;e.preventDefault();vkbKey(btn.dataset.k);};
+  kb.addEventListener('mousedown',onPress);
+  kb.addEventListener('touchstart',onPress,{passive:false});
+  document.addEventListener('focusin',e=>{if(vkbIsTypeable(e.target)){vkbTarget=e.target;vkbShow();}});
+  document.addEventListener('focusout',()=>{setTimeout(()=>{if(!vkbIsTypeable(document.activeElement))vkbHide();},120);});
+}
+function toggleVkbEnabled(){vkbEnabled=!vkbEnabled;localStorage.setItem('familyhub_vkb',vkbEnabled?'1':'0');if(!vkbEnabled)vkbHide();else if(vkbIsTypeable(document.activeElement)){vkbTarget=document.activeElement;vkbShow();}toast(vkbEnabled?'On-screen keyboard enabled':'On-screen keyboard disabled','info');}
+// ══════════════════════════════════════
 // BOOT
 // ══════════════════════════════════════
+function showSetupScreen(){document.getElementById('setup-screen').style.display='flex';document.getElementById('app').style.display='none';setupRenderMembers();}
 function _boot(){
   document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
+  vkbInit();
+  document.addEventListener('fullscreenchange',()=>{updateFsIcon();if(state.mainView==='settings'&&document.getElementById('app').style.display!=='none')renderSettings();});
+  document.addEventListener('webkitfullscreenchange',updateFsIcon);
+  // Hide everything until we know whether this family already exists in Firebase.
+  document.getElementById('setup-screen').style.display='none';
+  document.getElementById('app').style.display='none';
+  // Warm up from the local cache (instant paint after the check) — does NOT decide setup.
   const saved=localStorage.getItem('familyhub_v2');
-  if(!saved){document.getElementById('setup-screen').style.display='flex';document.getElementById('app').style.display='none';}
-  else{
-    try{const c=JSON.parse(saved);if(c.theme)state.theme=c.theme;if(c.members)state.members=c.members;if(c.lists)state.lists=c.lists;if(c.gcalKey)state.gcalKey=c.gcalKey;if(c.gcalId)state.gcalId=c.gcalId;}catch(e){}
-    startApp();
-  }
+  if(saved){try{const c=JSON.parse(saved);if(c.theme)state.theme=c.theme;if(c.members)state.members=c.members;if(c.lists)state.lists=c.lists;if(c.gcalKey)state.gcalKey=c.gcalKey;if(c.gcalId)state.gcalId=c.gcalId;}catch(e){}}
+  applyTheme(state.theme);
+  const haveLocal=!!(saved&&state.members&&state.members.length);
+  const db=getDb();
+  if(!db){ if(haveLocal)startApp(); else showSetupScreen(); return; }
+  // KEY FIX: always check the cloud for an existing family before showing setup,
+  // so logging in on a brand-new device pulls the saved data instead of resetting it.
+  db.ref('config').once('value').then(snap=>{
+    const data=snap.val();
+    if(data&&data.members&&data.members.length){
+      state.members=data.members;
+      if(data.lists)state.lists=data.lists;
+      if(data.gcalKey!==undefined)state.gcalKey=data.gcalKey;
+      if(data.gcalId!==undefined)state.gcalId=data.gcalId;
+      if(data.theme)state.theme=data.theme;
+      localStorage.setItem('familyhub_v2',JSON.stringify({theme:state.theme,members:state.members,lists:state.lists,gcalKey:state.gcalKey,gcalId:state.gcalId}));
+      startApp();
+    } else if(haveLocal){
+      startApp();
+    } else {
+      showSetupScreen();
+    }
+  }).catch(e=>{
+    console.error('Boot config check failed:',e);
+    if(haveLocal)startApp(); else showSetupScreen();
+  });
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',_boot);
 else setTimeout(_boot,0);
