@@ -2,7 +2,7 @@
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Boyle Family Hub — To-Do</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="shortcut icon" type="image/png" href="favicon.png">
@@ -51,7 +51,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'DM Sans', 'Noto Color Emoji', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; transition: background .25s, color .25s; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
 /* Crisp, full-color emoji on Linux / Raspberry Pi where the system emoji font may be missing or monochrome */
-.emoji, .celeb-emoji, .tasks-empty .emoji, .import-icon, .m-avatar, .list-icon, .cal-task-dot, .task-tag, .filter-chip, .kfilter-chip, .office-btn, .view-toggle-btn, .theme-toggle-btn, .btn, .nav-btn, .member-btn, .v-label, .vkb-key { font-family: 'DM Sans', var(--emoji); }
+.emoji, .celeb-emoji, .tasks-empty .emoji, .import-icon, .m-avatar, .list-icon, .cal-task-dot, .task-tag, .filter-chip, .kfilter-chip, .office-btn, .view-toggle-btn, .theme-toggle-btn, .btn, .nav-btn, .member-btn, .v-label, .vkb-key, .link-emoji { font-family: 'DM Sans', var(--emoji); }
 #setup-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: var(--setup-bg); }
 .setup-card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 48px; width: 540px; max-width: 95vw; box-shadow: var(--shadow); }
 .setup-card h1 { font-family: 'DM Serif Display', serif; font-size: 2.2rem; margin-bottom: 8px; background: linear-gradient(135deg, #5ab4ff, #1a7fe8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -71,40 +71,41 @@ body { font-family: 'DM Sans', 'Noto Color Emoji', sans-serif; background: var(-
 .step-label { font-size: .75rem; font-weight: 700; color: var(--accent5); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 16px; }
 #app { display: none; min-height: 100vh; }
 /* SIDEBAR */
-.sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 268px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 100; transition: transform .25s ease, background .25s; }
+.sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 300px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 100; transition: transform .25s ease, background .25s; }
 .sidebar-header { padding: 18px 18px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
-.sidebar-header .app-name { font-family: 'DM Serif Display', serif; font-size: 1.25rem; background: linear-gradient(135deg, #5ab4ff, #1a7fe8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; flex: 1; }
-.sidebar-header .app-sub { font-size: .72rem; color: var(--text3); margin-top: 1px; }
+.sidebar-header .app-name { font-family: 'DM Serif Display', serif; font-size: 1.5rem; background: linear-gradient(135deg, #5ab4ff, #1a7fe8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; flex: 1; }
+.sidebar-header .app-sub { font-size: .85rem; color: var(--text3); margin-top: 2px; }
 .theme-toggle-btn { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: .9rem; transition: all .15s; flex-shrink: 0; }
 .theme-toggle-btn:hover { background: var(--surface3); border-color: var(--accent); }
 .family-list { padding: 10px 8px; flex: 1; overflow-y: auto; }
-.family-list-label { font-size: .68rem; font-weight: 700; color: var(--text3); letter-spacing: .1em; text-transform: uppercase; padding: 6px 8px 8px; }
-.member-btn { width: 100%; display: flex; align-items: center; gap: 9px; padding: 8px 9px; border-radius: 10px; border: none; background: transparent; color: var(--text2); font-family: inherit; font-size: .88rem; cursor: pointer; transition: all .15s; text-align: left; }
+.family-list-label { font-size: .82rem; font-weight: 700; color: var(--text3); letter-spacing: .08em; text-transform: uppercase; padding: 8px 8px 8px; }
+.member-btn { width: 100%; display: flex; align-items: center; gap: 11px; padding: 11px 10px; border-radius: 10px; border: none; background: transparent; color: var(--text2); font-family: inherit; font-size: 1.08rem; cursor: pointer; transition: all .15s; text-align: left; }
 .member-btn:hover { background: var(--surface2); color: var(--text); }
 .member-btn.active { background: rgba(26,127,232,.15); color: var(--text); border-left: 3px solid var(--accent); padding-left: 6px; }
-.member-btn .m-avatar { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 700; flex-shrink: 0; overflow: hidden; }
+.member-btn .m-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .95rem; font-weight: 700; flex-shrink: 0; overflow: hidden; }
 .member-btn .m-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-.member-btn .m-count { margin-left: auto; background: var(--surface3); color: var(--text3); font-size: .7rem; font-weight: 600; padding: 2px 7px; border-radius: 20px; }
+.member-btn .m-count { margin-left: auto; background: var(--surface3); color: var(--text3); font-size: .85rem; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
 .member-btn.active .m-count { background: var(--accent); color: #fff; }
 .lists-section { padding: 6px 8px; border-top: 1px solid var(--border); }
 .lists-section-header { display: flex; align-items: center; justify-content: space-between; padding: 6px 8px 8px; }
-.lists-section-label { font-size: .68rem; font-weight: 700; color: var(--text3); letter-spacing: .1em; text-transform: uppercase; }
+.lists-section-label { font-size: .82rem; font-weight: 700; color: var(--text3); letter-spacing: .08em; text-transform: uppercase; }
 .add-list-btn { background: none; border: none; cursor: pointer; color: var(--text3); font-size: 1.1rem; line-height: 1; padding: 0 2px; transition: color .15s; }
 .add-list-btn:hover { color: var(--accent); }
-.list-btn { width: 100%; display: flex; align-items: center; gap: 9px; padding: 7px 9px; border-radius: 10px; border: none; background: transparent; color: var(--text2); font-family: inherit; font-size: .86rem; cursor: pointer; transition: all .15s; text-align: left; }
+.list-btn { width: 100%; display: flex; align-items: center; gap: 11px; padding: 10px 10px; border-radius: 10px; border: none; background: transparent; color: var(--text2); font-family: inherit; font-size: 1.05rem; cursor: pointer; transition: all .15s; text-align: left; }
 .list-btn:hover { background: var(--surface2); color: var(--text); }
 .list-btn.active { background: rgba(26,127,232,.1); color: var(--text); }
-.list-btn .list-icon { width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: .8rem; flex-shrink: 0; }
-.list-btn .list-count { margin-left: auto; font-size: .7rem; color: var(--text3); }
+.list-btn .list-icon { width: 27px; height: 27px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+.list-btn .list-count { margin-left: auto; font-size: .85rem; color: var(--text3); }
 .list-btn .list-del { opacity: 0; background: none; border: none; cursor: pointer; color: var(--text3); font-size: .85rem; padding: 0 2px; transition: color .1s; }
 .list-btn:hover .list-del { opacity: 1; }
 .list-btn .list-del:hover { color: var(--accent2); }
 .sidebar-section { padding: 8px; border-top: 1px solid var(--border); }
-.nav-btn { width: 100%; display: flex; align-items: center; gap: 9px; padding: 8px 9px; border-radius: 10px; border: none; background: transparent; color: var(--text2); font-family: inherit; font-size: .86rem; cursor: pointer; transition: all .15s; text-align: left; }
+.nav-btn { width: 100%; display: flex; align-items: center; gap: 11px; padding: 11px 10px; border-radius: 10px; border: none; background: transparent; color: var(--text2); font-family: inherit; font-size: 1.05rem; cursor: pointer; transition: all .15s; text-align: left; }
+.nav-btn svg { width: 19px; height: 19px; }
 .nav-btn:hover { background: var(--surface2); color: var(--text); }
 .nav-btn.active { background: rgba(26,127,232,.12); color: var(--text); border-left: 3px solid var(--accent); padding-left: 6px; }
 .nav-btn svg { flex-shrink: 0; }
-.sync-status { padding: 9px 18px; font-size: .7rem; color: var(--text3); border-top: 1px solid var(--border); display: flex; align-items: center; gap: 6px; }
+.sync-status { padding: 11px 18px; font-size: .82rem; color: var(--text3); border-top: 1px solid var(--border); display: flex; align-items: center; gap: 7px; }
 .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent3); flex-shrink: 0; animation: pulse 2s infinite; }
 .sync-dot.syncing { background: var(--accent4); }
 .sync-dot.error { background: var(--accent2); animation: none; }
@@ -112,7 +113,7 @@ body { font-family: 'DM Sans', 'Noto Color Emoji', sans-serif; background: var(-
 .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 99; }
 .sidebar-overlay.visible { display: block; }
 /* MAIN */
-.main { margin-left: 268px; min-height: 100vh; display: flex; flex-direction: column; }
+.main { margin-left: 300px; min-height: 100vh; display: flex; flex-direction: column; }
 .topbar { padding: 18px 30px; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid var(--border); background: var(--surface); position: sticky; top: 0; z-index: 50; transition: background .25s; box-shadow: 0 2px 12px rgba(0,60,140,.10); }
 .topbar h2 { font-family: 'DM Serif Display', serif; font-size: 1.55rem; flex: 1; }
 .topbar .member-color-bar { width: 5px; height: 26px; border-radius: 3px; flex-shrink: 0; }
@@ -313,7 +314,7 @@ select.lv-input { cursor: pointer; }
 .office-content h2 { font-family: 'DM Serif Display', serif; font-size: 1.8rem; margin-bottom: 6px; }
 .office-content .office-subtitle { font-size: .85rem; color: var(--text3); margin-bottom: 28px; letter-spacing: .05em; text-transform: uppercase; }
 .office-section { margin-bottom: 26px; text-align: center; }
-.office-section h3 { font-family: 'DM Serif Display', var(--emoji); font-size: 1.15rem; color: var(--accent5); margin-bottom: 10px; }
+.office-section h3 { font-family: 'DM Serif Display', var(--emoji), serif; font-size: 1.15rem; color: var(--accent5); margin-bottom: 10px; }
 .office-section p { font-size: .92rem; line-height: 1.85; color: var(--text2); margin-bottom: 8px; }
 .office-section .rubric { font-size: .8rem; color: var(--text3); font-style: italic; margin-bottom: 10px; }
 .office-section .versicle { font-size: .92rem; line-height: 2; }
@@ -355,6 +356,23 @@ select.lv-input { cursor: pointer; }
 .vkb-key.vkb-active-key { background: var(--accent); color: #fff; border-color: var(--accent); }
 body.vkb-active { padding-bottom: 320px; }
 @media (max-width: 768px) { .vkb-key { height: 44px; font-size: 1rem; border-radius: 9px; } body.vkb-active { padding-bottom: 290px; } }
+/* QUICK LINKS */
+.links-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+.links-head .links-title { font-family: 'DM Serif Display', serif; font-size: 1.45rem; display: flex; align-items: center; gap: 8px; }
+.links-head .links-sub { font-size: .8rem; color: var(--text3); margin-top: 2px; }
+.link-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(142px, 1fr)); gap: 14px; }
+.link-tile { position: relative; display: flex; flex-direction: column; align-items: center; gap: 9px; padding: 22px 14px 15px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); cursor: pointer; transition: all .15s; box-shadow: 0 1px 4px rgba(0,60,140,.06); text-align: center; }
+.link-tile:hover { transform: translateY(-2px); border-color: var(--lc, var(--accent)); box-shadow: 0 8px 22px rgba(26,127,232,.16); }
+.link-tile .link-ico { width: 54px; height: 54px; border-radius: 15px; display: flex; align-items: center; justify-content: center; background: var(--surface2); overflow: hidden; }
+.link-tile .link-ico img { width: 34px; height: 34px; object-fit: contain; }
+.link-tile .link-emoji { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 1.95rem; }
+.link-tile .link-name { font-size: .87rem; font-weight: 600; line-height: 1.25; word-break: break-word; }
+.link-tile .link-host { font-size: .68rem; color: var(--text3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.link-tile .link-actions { position: absolute; top: 6px; right: 6px; display: flex; gap: 3px; opacity: 0; transition: opacity .15s; }
+.link-tile:hover .link-actions { opacity: 1; }
+.link-act { width: 25px; height: 25px; border: none; border-radius: 7px; background: var(--surface3); color: var(--text2); cursor: pointer; font-size: .72rem; display: flex; align-items: center; justify-content: center; padding: 0; }
+.link-act:hover { background: var(--accent); color: #fff; }
+.link-act.del:hover { background: var(--accent2); }
 @media (max-width: 768px) {
   .sidebar { transform: translateX(-100%); }
   .sidebar.open { transform: translateX(0); box-shadow: 4px 0 24px rgba(0,0,0,.4); }
@@ -428,6 +446,10 @@ body.vkb-active { padding-bottom: 320px; }
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
         Daily Office
       </button>
+      <button class="nav-btn" id="nav-links" onclick="navTo('links')">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+        Family Links
+      </button>
       <button class="nav-btn" id="nav-import" onclick="navTo('import')">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         Import Tasks
@@ -459,6 +481,7 @@ body.vkb-active { padding-bottom: 320px; }
       <button class="view-tab" onclick="setMemberView('planned',this)">Planned</button>
       <button class="view-tab" onclick="setMemberView('all',this)">All Tasks</button>
       <button class="view-tab" onclick="setMemberView('completed',this)">Completed</button>
+      <button class="view-tab" onclick="setMemberView('links',this)">🔗 Links</button>
     </div>
     <div class="content" id="main-content"></div>
   </div>
@@ -543,6 +566,19 @@ body.vkb-active { padding-bottom: 320px; }
     </div>
   </div>
 </div>
+<!-- LINK MODAL -->
+<div class="modal-overlay" id="link-modal">
+  <div class="modal" style="max-width:420px">
+    <h3 id="link-modal-title">Add Link</h3>
+    <div class="form-group"><label>Name</label><input type="text" id="lk-name" placeholder="e.g. Gmail, YouTube, School Portal…" maxlength="40"></div>
+    <div class="form-group"><label>Web Address (URL)</label><input type="url" id="lk-url" placeholder="https://mail.google.com"></div>
+    <div class="form-group"><label>Icon (used if the site's own icon can't be found)</label><div class="avatar-emoji-grid" id="link-emoji-grid"></div></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('link-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveLink()">Save Link</button>
+    </div>
+  </div>
+</div>
 <div class="toast-container" id="toasts"></div>
 <div class="vkb" id="vkb" aria-hidden="true"></div>
 <script>
@@ -577,7 +613,7 @@ function setupDoLaunch(){
   state.gcalKey=document.getElementById('setup-gcal-key').value.trim();
   state.gcalId=document.getElementById('setup-gcal-id').value.trim();
   saveConfigToFirebase();
-  localStorage.setItem('familyhub_v2',JSON.stringify({theme:state.theme,members:state.members,lists:state.lists,gcalKey:state.gcalKey,gcalId:state.gcalId}));
+  localStorage.setItem('familyhub_v2',JSON.stringify({theme:state.theme,members:state.members,lists:state.lists,gcalKey:state.gcalKey,gcalId:state.gcalId,familyLinks:state.familyLinks||[]}));
   document.getElementById('setup-screen').style.display='none';
   document.getElementById('app').style.display='block';
   startApp();
@@ -590,12 +626,13 @@ const COLORS=['#1a7fe8','#e84a6f','#18c97a','#f0960a','#38b2ac','#8b5cf6','#5ab4
 const LIST_EMOJIS=['📋','🛒','🏠','💼','📚','🎯','💡','🔧','✈️','🎮','🏋️','🍕','💊','🎓','🔑','🌿','🎨','🎵'];
 const MEMBER_EMOJIS=['😊','👨','👩','👦','👧','🧒','👴','👵','🧑','👶','🧔','👱','🧕','👮','👷','🧑‍🍳','🧑‍🎓','🦸'];
 const LIST_COLORS=['#1a7fe8','#e84a6f','#18c97a','#f0960a','#38b2ac','#8b5cf6','#5ab4ff','#f6ad55','#a78bfa'];
+const LINK_EMOJIS=['🔗','🌐','📧','📺','🎮','🎵','🛒','🏦','📰','📚','💼','📅','☁️','💬','📷','🎬','⚽','🍔','✈️','🗺️','💡','🧑‍💻'];
 const DURATIONS=[{v:'5m',label:'5 min'},{v:'10m',label:'10 min'},{v:'15m',label:'15 min'},{v:'30m',label:'30 min'},{v:'1h',label:'1 hour'},{v:'2h',label:'2 hour'},{v:'3h',label:'3 hour'}];
 const STARTONS=[{v:'today',label:'Today'},{v:'week',label:'This Week'},{v:'month',label:'This Month'}];
 function durationLabel(v){const d=DURATIONS.find(x=>x.v===v);return d?d.label:'';}
 function startOnLabel(v){const s=STARTONS.find(x=>x.v===v);return s?s.label:'';}
 let state={
-  members:[],tasks:[],lists:[],gcalKey:'',gcalId:'',theme:'dark',gcalEvents:[],
+  members:[],tasks:[],lists:[],gcalKey:'',gcalId:'',theme:'dark',gcalEvents:[],familyLinks:[],
   currentMember:'family',currentView:'myday',mainView:'tasks',currentListId:null,
   listView:'kanban',kanbanFilters:{members:[],priorities:[],durations:[],startOns:[]},
   kanbanGroupBy:'status',filterOpen:false,dragTaskId:null,kanbanDragging:false,
@@ -708,9 +745,10 @@ function setView(v){
   else if(v==='settings')renderSettings();
   else if(v==='import')renderImport();
   else if(v==='office')renderOffice();
+  else if(v==='links')renderFamilyLinksHub();
   else renderTasksView();
 }
-function setMemberView(v,btn){state.currentView=v;document.querySelectorAll('.view-tab').forEach(t=>t.classList.remove('active'));if(btn)btn.classList.add('active');renderTasksView();}
+function setMemberView(v,btn){state.currentView=v;document.querySelectorAll('.view-tab').forEach(t=>t.classList.remove('active'));if(btn)btn.classList.add('active');if(v==='links')renderLinks(state.currentMember);else renderTasksView();}
 function openList(listId){
   state.mainView='list';state.currentListId=listId;state.currentMember='family';
   document.querySelectorAll('.member-btn,.nav-btn,.list-btn').forEach(b=>b.classList.remove('active'));
@@ -1772,7 +1810,7 @@ async function pushTask(task,action){
 }
 function saveConfigToFirebase(){
   const db=getDb();if(!db)return;
-  db.ref('config').set({members:state.members.map(m=>({id:m.id,name:m.name,color:m.color,avatar:m.avatar||null})),lists:state.lists,gcalKey:state.gcalKey,gcalId:state.gcalId,theme:state.theme}).catch(e=>console.error('Config sync:',e));
+  db.ref('config').set({members:state.members.map(m=>({id:m.id,name:m.name,color:m.color,avatar:m.avatar||null,links:m.links||[]})),lists:state.lists,gcalKey:state.gcalKey,gcalId:state.gcalId,theme:state.theme,familyLinks:state.familyLinks||[]}).catch(e=>console.error('Config sync:',e));
 }
 function startFirebaseListener(){
   if(_fbListening)return;const db=getDb();if(!db)return;_fbListening=true;setSyncStatus('syncing');
@@ -1787,9 +1825,10 @@ function startFirebaseListener(){
       let changed=false;
       if(data.members&&JSON.stringify(data.members)!==JSON.stringify(state.members)){state.members=data.members;changed=true;}
       if(data.lists&&JSON.stringify(data.lists)!==JSON.stringify(state.lists)){state.lists=data.lists;changed=true;}
+      if(JSON.stringify(data.familyLinks||[])!==JSON.stringify(state.familyLinks||[])){state.familyLinks=data.familyLinks||[];changed=true;}
       if(data.gcalKey!==undefined)state.gcalKey=data.gcalKey;if(data.gcalId!==undefined)state.gcalId=data.gcalId;
       if(data.theme&&data.theme!==state.theme){state.theme=data.theme;applyTheme(state.theme);}
-      localStorage.setItem('familyhub_v2',JSON.stringify({theme:state.theme,members:state.members,lists:state.lists,gcalKey:state.gcalKey,gcalId:state.gcalId}));
+      localStorage.setItem('familyhub_v2',JSON.stringify({theme:state.theme,members:state.members,lists:state.lists,gcalKey:state.gcalKey,gcalId:state.gcalId,familyLinks:state.familyLinks||[]}));
       if(changed){renderSidebar();renderSidebarLists();renderView();}
     }else saveConfigToFirebase();
   });
@@ -1881,9 +1920,94 @@ function renderView(){
   else if(state.mainView==='settings')renderSettings();
   else if(state.mainView==='import')renderImport();
   else if(state.mainView==='office')renderOffice();
+  else if(state.mainView==='links')renderFamilyLinksHub();
   else if(state.mainView==='list'&&state.currentListId)renderListView(state.currentListId);
+  else if(state.mainView==='tasks'&&state.currentView==='links')renderLinks(state.currentMember);
   else renderTasksView();
 }
+// ══════════════════════════════════════
+// QUICK LINKS (per-member + family)
+// ══════════════════════════════════════
+function getLinks(scope){
+  if(scope==='family')return state.familyLinks||[];
+  const m=state.members.find(x=>String(x.id)===String(scope));
+  return m?(m.links||[]):[];
+}
+function linksArrayRef(scope){
+  if(scope==='family'){if(!Array.isArray(state.familyLinks))state.familyLinks=[];return state.familyLinks;}
+  const m=state.members.find(x=>String(x.id)===String(scope));if(!m)return null;if(!Array.isArray(m.links))m.links=[];return m.links;
+}
+function linkHost(url){try{return new URL(url).hostname.replace(/^www\./,'');}catch(_){return'';}}
+function linkTileHtml(scope,l,color){
+  const host=linkHost(l.url);
+  const fav=host?`https://www.google.com/s2/favicons?domain=${encodeURIComponent(host)}&sz=64`:'';
+  const icoInner=fav?`<img src="${escHtml(fav)}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="link-emoji" style="display:none">${l.icon||'🔗'}</span>`:`<span class="link-emoji">${l.icon||'🔗'}</span>`;
+  return `<div class="link-tile" style="--lc:${color}" onclick="openLink('${scope}','${l.id}')">
+    <div class="link-actions">
+      <button class="link-act" onclick="event.stopPropagation();editLink('${scope}','${l.id}')" title="Edit">✏️</button>
+      <button class="link-act del" onclick="event.stopPropagation();deleteLink('${scope}','${l.id}')" title="Remove">🗑️</button>
+    </div>
+    <div class="link-ico">${icoInner}</div>
+    <div class="link-name">${escHtml(l.title)}</div>
+    ${host?`<div class="link-host">${escHtml(host)}</div>`:''}
+  </div>`;
+}
+function linkGridHtml(scope,links,color){
+  return '<div class="link-grid">'+links.map(l=>linkTileHtml(scope,l,color)).join('')+'</div>';
+}
+function renderLinks(scope){
+  state.linkScope=scope;
+  const isFamily=scope==='family';
+  const m=isFamily?null:state.members.find(x=>String(x.id)===String(scope));
+  if(!isFamily&&!m){selectMember('family',document.querySelector('[data-member="family"]'));return;}
+  const links=getLinks(scope);
+  const color=isFamily?'var(--accent)':m.color;
+  const heading=isFamily?'Household Links':escHtml(m.name)+"’s Links";
+  document.getElementById('topbar-title').textContent=isFamily?'All Family':escHtml(m.name);
+  document.getElementById('topbar-color').style.background=color;
+  let html=`<div class="links-head"><div><div class="links-title">🔗 ${heading}</div><div class="links-sub">${links.length} link${links.length!==1?'s':''} · tap to open in a new tab</div></div><button class="btn btn-primary btn-sm" onclick="openAddLink('${scope}')">+ Add Link</button></div>`;
+  if(!links.length)html+=`<div class="tasks-empty"><span class="emoji">🔗</span><div style="font-weight:600">No links yet</div><div style="font-size:.8rem;margin-top:5px">Add the sites ${isFamily?'your family':escHtml(m.name)} use${isFamily?'':'s'} most</div></div>`;
+  else html+=linkGridHtml(scope,links,color);
+  document.getElementById('main-content').innerHTML=html;
+}
+function linkSectionHtml(scope,labelHtml,color){
+  const links=getLinks(scope);
+  let h=`<div style="margin:24px 0 12px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:9px;font-family:'DM Serif Display',serif;font-size:1.18rem"><span style="width:6px;height:24px;border-radius:3px;background:${color};flex-shrink:0"></span>${labelHtml}<span style="font-family:'DM Sans',var(--emoji);font-size:.74rem;font-weight:600;color:var(--text3)">${links.length}</span></div>
+    <button class="btn btn-ghost btn-sm" onclick="openAddLink('${scope}')">+ Add Link</button>
+  </div>`;
+  if(!links.length)h+=`<div style="font-size:.8rem;color:var(--text3);padding:2px 0 4px">No links yet — tap “+ Add Link”.</div>`;
+  else h+=linkGridHtml(scope,links,color);
+  return h;
+}
+function renderFamilyLinksHub(){
+  document.getElementById('view-tabs').style.display='none';
+  document.getElementById('topbar-title').textContent='Family Links';
+  document.getElementById('topbar-color').style.background='var(--accent)';
+  let html=`<div class="links-head"><div><div class="links-title">🔗 Family Links</div><div class="links-sub">Each person’s own links, plus shared household links · tap any tile to open</div></div></div>`;
+  html+=linkSectionHtml('family','🏠 Household (shared)','var(--accent)');
+  state.members.forEach(m=>{
+    const av=`<span class="m-avatar" style="width:26px;height:26px;border-radius:50%;background:${m.color}22;color:${m.color};display:inline-flex;align-items:center;justify-content:center;overflow:hidden;font-size:.72rem;font-weight:700">${memberAvatarHtml(m,26)}</span>`;
+    html+=linkSectionHtml(String(m.id), av+escHtml(m.name), m.color);
+  });
+  document.getElementById('main-content').innerHTML=html;
+}
+function openLink(scope,id){const l=getLinks(scope).find(x=>String(x.id)===String(id));if(l&&l.url)window.open(l.url,'_blank','noopener');}
+var linkScope='family',editingLinkId=null,linkIconSelected='🔗';
+function buildLinkEmojiGrid(){document.getElementById('link-emoji-grid').innerHTML=LINK_EMOJIS.map(e=>`<button type="button" class="avatar-emoji-btn ${e===linkIconSelected?'selected':''}" onclick="linkIconSelected='${e}';buildLinkEmojiGrid()">${e}</button>`).join('');}
+function openAddLink(scope){linkScope=scope;editingLinkId=null;linkIconSelected='🔗';document.getElementById('link-modal-title').textContent='Add Link';document.getElementById('lk-name').value='';document.getElementById('lk-url').value='';buildLinkEmojiGrid();document.getElementById('link-modal').classList.add('open');}
+function editLink(scope,id){const l=getLinks(scope).find(x=>String(x.id)===String(id));if(!l)return;linkScope=scope;editingLinkId=id;linkIconSelected=l.icon||'🔗';document.getElementById('link-modal-title').textContent='Edit Link';document.getElementById('lk-name').value=l.title;document.getElementById('lk-url').value=l.url;buildLinkEmojiGrid();document.getElementById('link-modal').classList.add('open');}
+function saveLink(){
+  const name=document.getElementById('lk-name').value.trim();let url=document.getElementById('lk-url').value.trim();
+  if(!name){toast('Enter a name','error');return;}
+  if(!url){toast('Enter a web address','error');return;}
+  if(!/^https?:\/\//i.test(url))url='https://'+url;
+  const arr=linksArrayRef(linkScope);if(!arr){toast('Could not save link','error');return;}
+  if(editingLinkId){const l=arr.find(x=>String(x.id)===String(editingLinkId));if(l){l.title=name;l.url=url;l.icon=linkIconSelected;}}
+  else arr.push({id:genId(),title:name,url,icon:linkIconSelected});
+  saveConfigToFirebase();closeModal('link-modal');renderLinks(linkScope);toast('Link saved!','success');
+}
+function deleteLink(scope,id){if(!confirm('Remove this link?'))return;const arr=linksArrayRef(scope);if(!arr)return;const i=arr.findIndex(x=>String(x.id)===String(id));if(i>-1)arr.splice(i,1);saveConfigToFirebase();renderLinks(scope);toast('Link removed','info');}
 // ══════════════════════════════════════
 // ON-SCREEN KEYBOARD (slick, built-in)
 // ══════════════════════════════════════
@@ -1974,8 +2098,8 @@ function vkbInit(){
   const onPress=e=>{const btn=e.target.closest&&e.target.closest('.vkb-key');if(!btn)return;e.preventDefault();vkbKey(btn.dataset.k);};
   kb.addEventListener('mousedown',onPress);
   kb.addEventListener('touchstart',onPress,{passive:false});
-  document.addEventListener('focusin',e=>{if(vkbIsTypeable(e.target)){vkbTarget=e.target;vkbShow();}});
-  document.addEventListener('focusout',()=>{setTimeout(()=>{if(!vkbIsTypeable(document.activeElement))vkbHide();},120);});
+  document.addEventListener('focusin',e=>{if(vkbIsTypeable(e.target)){vkbTarget=e.target;try{e.target.setAttribute('inputmode','none');}catch(_){}vkbShow();}});
+  document.addEventListener('focusout',e=>{if(e&&e.target&&e.target.removeAttribute)try{e.target.removeAttribute('inputmode');}catch(_){}setTimeout(()=>{if(!vkbIsTypeable(document.activeElement))vkbHide();},120);});
 }
 function toggleVkbEnabled(){vkbEnabled=!vkbEnabled;localStorage.setItem('familyhub_vkb',vkbEnabled?'1':'0');if(!vkbEnabled)vkbHide();else if(vkbIsTypeable(document.activeElement)){vkbTarget=document.activeElement;vkbShow();}toast(vkbEnabled?'On-screen keyboard enabled':'On-screen keyboard disabled','info');}
 // ══════════════════════════════════════
@@ -1992,7 +2116,7 @@ function _boot(){
   document.getElementById('app').style.display='none';
   // Warm up from the local cache (instant paint after the check) — does NOT decide setup.
   const saved=localStorage.getItem('familyhub_v2');
-  if(saved){try{const c=JSON.parse(saved);if(c.theme)state.theme=c.theme;if(c.members)state.members=c.members;if(c.lists)state.lists=c.lists;if(c.gcalKey)state.gcalKey=c.gcalKey;if(c.gcalId)state.gcalId=c.gcalId;}catch(e){}}
+  if(saved){try{const c=JSON.parse(saved);if(c.theme)state.theme=c.theme;if(c.members)state.members=c.members;if(c.lists)state.lists=c.lists;if(c.gcalKey)state.gcalKey=c.gcalKey;if(c.gcalId)state.gcalId=c.gcalId;if(c.familyLinks)state.familyLinks=c.familyLinks;}catch(e){}}
   applyTheme(state.theme);
   const haveLocal=!!(saved&&state.members&&state.members.length);
   const db=getDb();
@@ -2004,10 +2128,11 @@ function _boot(){
     if(data&&data.members&&data.members.length){
       state.members=data.members;
       if(data.lists)state.lists=data.lists;
+      if(data.familyLinks)state.familyLinks=data.familyLinks;
       if(data.gcalKey!==undefined)state.gcalKey=data.gcalKey;
       if(data.gcalId!==undefined)state.gcalId=data.gcalId;
       if(data.theme)state.theme=data.theme;
-      localStorage.setItem('familyhub_v2',JSON.stringify({theme:state.theme,members:state.members,lists:state.lists,gcalKey:state.gcalKey,gcalId:state.gcalId}));
+      localStorage.setItem('familyhub_v2',JSON.stringify({theme:state.theme,members:state.members,lists:state.lists,gcalKey:state.gcalKey,gcalId:state.gcalId,familyLinks:state.familyLinks||[]}));
       startApp();
     } else if(haveLocal){
       startApp();
