@@ -373,6 +373,28 @@ body.vkb-active { padding-bottom: 320px; }
 .link-act { width: 25px; height: 25px; border: none; border-radius: 7px; background: var(--surface3); color: var(--text2); cursor: pointer; font-size: .72rem; display: flex; align-items: center; justify-content: center; padding: 0; }
 .link-act:hover { background: var(--accent); color: #fff; }
 .link-act.del:hover { background: var(--accent2); }
+.workout-tile .link-ico { background: rgba(26,127,232,.16); }
+/* WORKOUT */
+.wk-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,60,140,.06); }
+.wk-card-h { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-family: 'DM Serif Display', serif; font-size: 1.2rem; margin-bottom: 12px; }
+.wk-badge { font-family: 'DM Sans', var(--emoji); font-size: .72rem; font-weight: 700; color: #fff; background: var(--accent); padding: 3px 10px; border-radius: 20px; }
+.wk-form { display: flex; flex-wrap: wrap; gap: 12px; align-items: start; }
+.wk-field { display: flex; flex-direction: column; gap: 5px; }
+.wk-field label { font-size: .72rem; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: .04em; }
+.wk-field input, .wk-field select { padding: 9px 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 9px; color: var(--text); font-family: inherit; font-size: .95rem; outline: none; min-width: 130px; }
+.wk-field input:focus, .wk-field select:focus { border-color: var(--accent); }
+.wk-field.amf-active input { border-color: var(--accent); background: rgba(26,127,232,.14); font-weight: 700; }
+.wk-stats { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.wk-stat { flex: 1; min-width: 96px; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 12px; text-align: center; }
+.wk-stat-n { font-family: 'DM Serif Display', serif; font-size: 1.5rem; color: var(--accent5); }
+.wk-stat-l { font-size: .68rem; color: var(--text3); text-transform: uppercase; letter-spacing: .05em; margin-top: 2px; }
+.wk-chart { margin-top: 16px; }
+.amrap-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; padding: 18px; margin-bottom: 14px; text-align: center; }
+.amrap-phase { font-size: 1.1rem; font-weight: 700; color: var(--accent5); }
+.amrap-time { font-family: 'DM Serif Display', serif; font-size: 3.4rem; line-height: 1.1; margin: 4px 0 10px; }
+.amrap-controls { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.wk-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.wk-row:last-child { border-bottom: none; }
 @media (max-width: 768px) {
   .sidebar { transform: translateX(-100%); }
   .sidebar.open { transform: translateX(0); box-shadow: 4px 0 24px rgba(0,0,0,.4); }
@@ -632,7 +654,7 @@ const STARTONS=[{v:'today',label:'Today'},{v:'week',label:'This Week'},{v:'month
 function durationLabel(v){const d=DURATIONS.find(x=>x.v===v);return d?d.label:'';}
 function startOnLabel(v){const s=STARTONS.find(x=>x.v===v);return s?s.label:'';}
 let state={
-  members:[],tasks:[],lists:[],gcalKey:'',gcalId:'',theme:'dark',gcalEvents:[],familyLinks:[],
+  members:[],tasks:[],lists:[],gcalKey:'',gcalId:'',theme:'dark',gcalEvents:[],familyLinks:[],weights:[],sessions:[],workoutMeta:{},
   currentMember:'family',currentView:'myday',mainView:'tasks',currentListId:null,
   listView:'kanban',kanbanFilters:{members:[],priorities:[],durations:[],startOns:[]},
   kanbanGroupBy:'status',filterOpen:false,dragTaskId:null,kanbanDragging:false,
@@ -1832,6 +1854,9 @@ function startFirebaseListener(){
       if(changed){renderSidebar();renderSidebarLists();renderView();}
     }else saveConfigToFirebase();
   });
+  db.ref('workout/weights').on('value',snap=>{const d=snap.val();state.weights=d?Object.values(d):[];if(state.mainView==='workout'&&!amrap)renderWorkout();},e=>console.error('weights',e));
+  db.ref('workout/sessions').on('value',snap=>{const d=snap.val();state.sessions=d?Object.values(d):[];if(state.mainView==='workout'&&!amrap)renderWorkout();},e=>console.error('sessions',e));
+  db.ref('workout/meta').on('value',snap=>{state.workoutMeta=snap.val()||{};if(state.mainView==='workout'&&!amrap)renderWorkout();},e=>console.error('wmeta',e));
 }
 function setSyncStatus(s){const dot=document.getElementById('sync-dot'),txt=document.getElementById('sync-text');if(!dot)return;dot.className='sync-dot'+(s==='syncing'?' syncing':s==='error'?' error':'');txt.textContent=s==='syncing'?'Syncing…':s==='error'?'Sync error':state.lastSync?'Synced '+timeAgo(state.lastSync):'Connected';}
 // ══════════════════════════════════════
@@ -1921,6 +1946,7 @@ function renderView(){
   else if(state.mainView==='import')renderImport();
   else if(state.mainView==='office')renderOffice();
   else if(state.mainView==='links')renderFamilyLinksHub();
+  else if(state.mainView==='workout'&&!amrap)renderWorkout();
   else if(state.mainView==='list'&&state.currentListId)renderListView(state.currentListId);
   else if(state.mainView==='tasks'&&state.currentView==='links')renderLinks(state.currentMember);
   else renderTasksView();
@@ -1952,8 +1978,8 @@ function linkTileHtml(scope,l,color){
     ${host?`<div class="link-host">${escHtml(host)}</div>`:''}
   </div>`;
 }
-function linkGridHtml(scope,links,color){
-  return '<div class="link-grid">'+links.map(l=>linkTileHtml(scope,l,color)).join('')+'</div>';
+function linkGridHtml(scope,links,color,prefix){
+  return '<div class="link-grid">'+(prefix||'')+links.map(l=>linkTileHtml(scope,l,color)).join('')+'</div>';
 }
 function renderLinks(scope){
   state.linkScope=scope;
@@ -1962,22 +1988,24 @@ function renderLinks(scope){
   if(!isFamily&&!m){selectMember('family',document.querySelector('[data-member="family"]'));return;}
   const links=getLinks(scope);
   const color=isFamily?'var(--accent)':m.color;
+  const isDad=!isFamily&&(m.name||'').trim().toLowerCase()==='dad';
+  const prefix=isDad?workoutTileHtml():'';
   const heading=isFamily?'Household Links':escHtml(m.name)+"’s Links";
   document.getElementById('topbar-title').textContent=isFamily?'All Family':escHtml(m.name);
   document.getElementById('topbar-color').style.background=color;
   let html=`<div class="links-head"><div><div class="links-title">🔗 ${heading}</div><div class="links-sub">${links.length} link${links.length!==1?'s':''} · tap to open in a new tab</div></div><button class="btn btn-primary btn-sm" onclick="openAddLink('${scope}')">+ Add Link</button></div>`;
-  if(!links.length)html+=`<div class="tasks-empty"><span class="emoji">🔗</span><div style="font-weight:600">No links yet</div><div style="font-size:.8rem;margin-top:5px">Add the sites ${isFamily?'your family':escHtml(m.name)} use${isFamily?'':'s'} most</div></div>`;
-  else html+=linkGridHtml(scope,links,color);
+  if(!links.length&&!prefix)html+=`<div class="tasks-empty"><span class="emoji">🔗</span><div style="font-weight:600">No links yet</div><div style="font-size:.8rem;margin-top:5px">Add the sites ${isFamily?'your family':escHtml(m.name)} use${isFamily?'':'s'} most</div></div>`;
+  else html+=linkGridHtml(scope,links,color,prefix);
   document.getElementById('main-content').innerHTML=html;
 }
-function linkSectionHtml(scope,labelHtml,color){
+function linkSectionHtml(scope,labelHtml,color,prefix){
   const links=getLinks(scope);
   let h=`<div style="margin:24px 0 12px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
     <div style="display:flex;align-items:center;gap:9px;font-family:'DM Serif Display',serif;font-size:1.18rem"><span style="width:6px;height:24px;border-radius:3px;background:${color};flex-shrink:0"></span>${labelHtml}<span style="font-family:'DM Sans',var(--emoji);font-size:.74rem;font-weight:600;color:var(--text3)">${links.length}</span></div>
     <button class="btn btn-ghost btn-sm" onclick="openAddLink('${scope}')">+ Add Link</button>
   </div>`;
-  if(!links.length)h+=`<div style="font-size:.8rem;color:var(--text3);padding:2px 0 4px">No links yet — tap “+ Add Link”.</div>`;
-  else h+=linkGridHtml(scope,links,color);
+  if(!links.length&&!prefix)h+=`<div style="font-size:.8rem;color:var(--text3);padding:2px 0 4px">No links yet — tap “+ Add Link”.</div>`;
+  else h+=linkGridHtml(scope,links,color,prefix||'');
   return h;
 }
 function renderFamilyLinksHub(){
@@ -1988,7 +2016,8 @@ function renderFamilyLinksHub(){
   html+=linkSectionHtml('family','🏠 Household (shared)','var(--accent)');
   state.members.forEach(m=>{
     const av=`<span class="m-avatar" style="width:26px;height:26px;border-radius:50%;background:${m.color}22;color:${m.color};display:inline-flex;align-items:center;justify-content:center;overflow:hidden;font-size:.72rem;font-weight:700">${memberAvatarHtml(m,26)}</span>`;
-    html+=linkSectionHtml(String(m.id), av+escHtml(m.name), m.color);
+    const isDad=(m.name||'').trim().toLowerCase()==='dad';
+    html+=linkSectionHtml(String(m.id), av+escHtml(m.name), m.color, isDad?workoutTileHtml():'');
   });
   document.getElementById('main-content').innerHTML=html;
 }
@@ -2009,6 +2038,136 @@ function saveLink(){
 }
 function deleteLink(scope,id){if(!confirm('Remove this link?'))return;const arr=linksArrayRef(scope);if(!arr)return;const i=arr.findIndex(x=>String(x.id)===String(id));if(i>-1)arr.splice(i,1);saveConfigToFirebase();renderLinks(scope);toast('Link removed','info');}
 // ══════════════════════════════════════
+// ══════════════════════════════════════
+// DAD'S WORKOUT
+// ══════════════════════════════════════
+function dadMember(){return state.members.find(m=>(m.name||'').trim().toLowerCase()==='dad');}
+function workoutTileHtml(){return `<div class="link-tile workout-tile" style="--lc:var(--accent)" onclick="openWorkout()"><div class="link-ico"><span class="link-emoji">🏋️</span></div><div class="link-name">Dad's Workout Routine</div><div class="link-host">Tap to open</div></div>`;}
+function openWorkout(){state.mainView='workout';state.currentListId=null;if(window.innerWidth<=768)closeSidebarMobile();renderWorkout();}
+function openWorkoutBack(){const d=dadMember();if(!d){setView('links');return;}const btn=document.querySelector(`[data-member="${d.id}"]`);selectMember(String(d.id),btn);state.currentView='links';document.querySelectorAll('.view-tab').forEach(t=>t.classList.toggle('active',(t.textContent||'').indexOf('Links')>=0));renderLinks(String(d.id));}
+const WK_SCHED={0:'rest',1:'bikeCommute',2:'amrap',3:'bikeCommute',4:'amrap',5:'amrap',6:'bikeHome'};
+const WK_DAYNAMES=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const AMRAP_PHASES=[{key:'jacks',label:'Jumping Jacks',sec:240,work:true},{key:'rest',label:'Rest',sec:60,work:false},{key:'burpees',label:'Burpees',sec:240,work:true},{key:'rest',label:'Rest',sec:60,work:false},{key:'squats',label:'Air Squats',sec:240,work:true},{key:'rest',label:'Rest',sec:60,work:false}];
+function wkSecs(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+function mphCalc(mi,min){mi=parseFloat(mi);min=parseFloat(min);if(!mi||!min)return 0;return mi/(min/60);}
+function pushWeight(o,action){const db=getDb();if(!db)return;try{if(action==='delete')db.ref('workout/weights/'+o.id).remove();else db.ref('workout/weights/'+o.id).set(o);}catch(e){console.error(e);toast('Save failed','error');}}
+function pushSession(o,action){const db=getDb();if(!db)return;try{if(action==='delete')db.ref('workout/sessions/'+o.id).remove();else db.ref('workout/sessions/'+o.id).set(o);}catch(e){console.error(e);toast('Save failed','error');}}
+function saveWorkoutMeta(){const db=getDb();if(!db)return;db.ref('workout/meta').set(state.workoutMeta||{}).catch(e=>console.error('meta',e));}
+function logWeight(){const v=parseFloat(document.getElementById('wk-weight').value);const d=document.getElementById('wk-weight-date').value||todayStr();if(!v||v<=0){toast('Enter a weight','error');return;}pushWeight({id:genId(),date:d,lbs:Math.round(v*10)/10,ts:new Date().toISOString()},'add');toast('Weight logged!','success');}
+function delWeight(id){if(!confirm('Delete this weigh-in?'))return;pushWeight({id},'delete');}
+function setGoal(){const v=parseFloat(document.getElementById('wk-goal').value);state.workoutMeta=Object.assign({},state.workoutMeta,{goalLbs:(v>0?Math.round(v*10)/10:'')});saveWorkoutMeta();toast('Goal saved','success');}
+function delSession(id){if(!confirm('Delete this session?'))return;pushSession({id},'delete');}
+function renderWorkout(){
+  state.mainView='workout';
+  document.getElementById('view-tabs').style.display='none';
+  document.querySelectorAll('.member-btn,.nav-btn,.list-btn').forEach(b=>b.classList.remove('active'));
+  const dad=dadMember();
+  document.getElementById('topbar-title').textContent="Dad's Workout Routine";
+  document.getElementById('topbar-color').style.background=dad?dad.color:'var(--accent)';
+  let html=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap"><button class="btn btn-ghost btn-sm" onclick="openWorkoutBack()">← Back</button><div style="font-family:'DM Serif Display',serif;font-size:1.5rem">🏋️ Dad's Workout Routine</div></div>`;
+  html+=wkTodayHtml()+wkWeightHtml()+wkWeekHtml()+wkHistoryHtml();
+  document.getElementById('main-content').innerHTML=html;
+  drawWeightChart();
+}
+function wkTodayHtml(){
+  const dow=new Date().getDay();const plan=WK_SCHED[dow];let inner;
+  if(plan==='amrap'){
+    inner=`<div style="font-size:.9rem;color:var(--text2);margin-bottom:12px">15-minute AMRAP — 4 min each move, 1 min rest between. Record your reps as you go.</div><div id="amrap-panel"></div><div style="margin-top:4px"><button class="btn btn-primary" onclick="amrapStart()">▶ Start 15-min AMRAP</button><button class="btn btn-ghost" style="margin-left:8px" onclick="amrapManual()">Log manually</button></div>`;
+  }else if(plan==='bikeCommute'||plan==='bikeHome'){
+    const label=plan==='bikeCommute'?'Bike to work &amp; back (30 mi round trip)':'Bike around home';
+    inner=`<div style="font-size:.9rem;color:var(--text2);margin-bottom:12px">${label} — log your ride below.</div>`+bikeFormHtml(plan==='bikeCommute'?'commute':'home',plan==='bikeCommute'?30:'');
+  }else{
+    inner=`<div style="font-size:.95rem;color:var(--text2)">😌 Rest day — nothing scheduled. You can still log a ride or AMRAP below.</div><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-ghost btn-sm" onclick="amrapManual()">+ Log AMRAP</button><button class="btn btn-ghost btn-sm" onclick="wkShowBike()">+ Log Bike Ride</button></div><div id="amrap-panel"></div><div id="wk-extra"></div>`;
+  }
+  return `<div class="wk-card"><div class="wk-card-h"><span>Today · ${WK_DAYNAMES[dow]}</span><span class="wk-badge">${plan==='amrap'?'AMRAP':plan==='rest'?'Rest':'Bike'}</span></div>${inner}</div>`;
+}
+function bikeFormHtml(route,defMiles){
+  return `<div class="wk-form"><div class="wk-field"><label>Route</label><select id="bk-route"><option value="commute"${route==='commute'?' selected':''}>Commute (to work &amp; back)</option><option value="home"${route==='home'?' selected':''}>Around home</option></select></div><div class="wk-field"><label>Miles</label><input type="number" id="bk-miles" step="0.1" value="${defMiles||''}" placeholder="30" oninput="bkUpdateMph()"></div><div class="wk-field"><label>Total time (min)</label><input type="number" id="bk-min" step="0.1" placeholder="95" oninput="bkUpdateMph()"></div><div class="wk-field"><label>Avg MPH</label><input type="text" id="bk-mph" readonly placeholder="auto"></div><div class="wk-field"><label>Date</label><input type="date" id="bk-date" value="${todayStr()}"></div><div class="wk-field" style="align-self:end"><button class="btn btn-primary" onclick="saveBike()">Save Ride</button></div></div>`;
+}
+function bkUpdateMph(){const el=document.getElementById('bk-mph');if(!el)return;const v=mphCalc(document.getElementById('bk-miles').value,document.getElementById('bk-min').value);el.value=v?v.toFixed(1):'';}
+function wkShowBike(){const ex=document.getElementById('wk-extra');if(ex)ex.innerHTML=bikeFormHtml('home','');}
+function saveBike(){const miles=parseFloat(document.getElementById('bk-miles').value);const min=parseFloat(document.getElementById('bk-min').value);const route=document.getElementById('bk-route').value;const date=document.getElementById('bk-date').value||todayStr();if(!miles||!min){toast('Enter miles and time','error');return;}const mph=Math.round(mphCalc(miles,min)*10)/10;pushSession({id:genId(),type:'bike',route,date,miles:Math.round(miles*10)/10,minutes:Math.round(min*10)/10,mph,ts:new Date().toISOString()},'add');confettiTask();toast('Ride saved!','success');}
+var amrap=null;
+function amrapBeep(f,d){try{const a=amrap&&amrap.ac?amrap.ac:new (window.AudioContext||window.webkitAudioContext)();if(amrap)amrap.ac=a;const o=a.createOscillator(),g=a.createGain();o.frequency.value=f||880;o.connect(g);g.connect(a.destination);g.gain.setValueAtTime(.16,a.currentTime);o.start();o.stop(a.currentTime+(d||.18));}catch(e){}}
+function amrapStart(){amrap={i:0,left:AMRAP_PHASES[0].sec,running:true,reps:{jacks:0,burpees:0,squats:0},ac:null};amrapRenderPanel();amrapBeep(660,.25);amrap.timer=setInterval(amrapTick,1000);}
+function amrapManual(){if(amrap){clearInterval(amrap.timer);amrap=null;}const el=document.getElementById('amrap-panel');if(!el)return;el.innerHTML=`<div class="amrap-box"><div class="wk-form"><div class="wk-field"><label>Jumping Jacks</label><input type="number" id="am-jacks" placeholder="reps"></div><div class="wk-field"><label>Burpees</label><input type="number" id="am-burpees" placeholder="reps"></div><div class="wk-field"><label>Air Squats</label><input type="number" id="am-squats" placeholder="reps"></div><div class="wk-field"><label>Date</label><input type="date" id="am-date" value="${todayStr()}"></div><div class="wk-field" style="align-self:end"><button class="btn btn-primary" onclick="amrapSaveManual()">Save AMRAP</button></div></div></div>`;}
+function amrapSaveManual(){const j=+document.getElementById('am-jacks').value||0,b=+document.getElementById('am-burpees').value||0,s=+document.getElementById('am-squats').value||0;const date=document.getElementById('am-date').value||todayStr();if(!j&&!b&&!s){toast('Enter at least one count','error');return;}pushSession({id:genId(),type:'amrap',date,jacks:j,burpees:b,squats:s,ts:new Date().toISOString()},'add');confettiTask();toast('AMRAP logged!','success');document.getElementById('amrap-panel').innerHTML='';}
+function amrapTick(){if(!amrap||!amrap.running)return;amrap.left--;if(amrap.left<=0){if(amrap.i>=AMRAP_PHASES.length-1){amrapFinish();return;}amrap.i++;amrap.left=AMRAP_PHASES[amrap.i].sec;amrapBeep(AMRAP_PHASES[amrap.i].work?900:440,.3);}else if(amrap.left<=3){amrapBeep(520,.08);}amrapUpdate();}
+function amrapPauseResume(){if(!amrap)return;amrap.running=!amrap.running;amrapUpdate();}
+function amrapSkip(){if(!amrap)return;amrap.left=1;}
+function amrapStop(){if(!amrap)return;if(!confirm('Stop and discard this AMRAP?'))return;clearInterval(amrap.timer);amrap=null;const el=document.getElementById('amrap-panel');if(el)el.innerHTML='';}
+function amrapRenderPanel(){
+  let h=`<div class="amrap-box"><div class="amrap-phase" id="amrap-phase"></div><div class="amrap-time" id="amrap-time"></div><div class="amrap-controls"><button class="btn btn-ghost btn-sm" onclick="amrapPauseResume()" id="amrap-pp">⏸ Pause</button><button class="btn btn-ghost btn-sm" onclick="amrapSkip()">⏭ Skip</button><button class="btn btn-ghost btn-sm" onclick="amrapStop()">✕ Stop</button></div><div class="wk-form" style="margin-top:14px;justify-content:center">`;
+  h+=`<div class="wk-field" id="amf-jacks"><label>Jumping Jacks</label><input type="number" id="amrep-jacks" value="0" min="0" oninput="if(amrap)amrap.reps.jacks=+this.value||0"></div>`;
+  h+=`<div class="wk-field" id="amf-burpees"><label>Burpees</label><input type="number" id="amrep-burpees" value="0" min="0" oninput="if(amrap)amrap.reps.burpees=+this.value||0"></div>`;
+  h+=`<div class="wk-field" id="amf-squats"><label>Air Squats</label><input type="number" id="amrep-squats" value="0" min="0" oninput="if(amrap)amrap.reps.squats=+this.value||0"></div>`;
+  h+=`</div></div>`;
+  const el=document.getElementById('amrap-panel');if(el)el.innerHTML=h;amrapUpdate();
+}
+function amrapUpdate(){
+  if(!amrap)return;const p=AMRAP_PHASES[amrap.i];
+  const ph=document.getElementById('amrap-phase'),tm=document.getElementById('amrap-time'),pp=document.getElementById('amrap-pp');
+  if(ph)ph.textContent=(p.work?'💪 ':'😮‍💨 ')+p.label+'  ('+(amrap.i+1)+'/'+AMRAP_PHASES.length+')';
+  if(tm)tm.textContent=wkSecs(Math.max(0,amrap.left));
+  if(pp)pp.textContent=amrap.running?'⏸ Pause':'▶ Resume';
+  ['jacks','burpees','squats'].forEach(k=>{const f=document.getElementById('amf-'+k);if(f)f.classList.toggle('amf-active',p.key===k&&p.work);});
+}
+function amrapFinish(){clearInterval(amrap.timer);const r=amrap.reps;amrap=null;pushSession({id:genId(),type:'amrap',date:todayStr(),jacks:r.jacks||0,burpees:r.burpees||0,squats:r.squats||0,ts:new Date().toISOString()},'add');confettiTask();toast('AMRAP complete! Logged 🎉','success');const el=document.getElementById('amrap-panel');if(el)el.innerHTML=`<div class="amrap-box"><div style="font-size:1.3rem;font-family:'DM Serif Display',serif">Workout complete! 🎉</div><div style="color:var(--text3);font-size:.85rem;margin-top:4px">Saved to your history below (Jacks ${r.jacks||0} · Burpees ${r.burpees||0} · Squats ${r.squats||0}).</div></div>`;}
+function wkWeightHtml(){
+  const ws=[...state.weights].sort((a,b)=>a.date<b.date?-1:1);
+  const cur=ws.length?ws[ws.length-1].lbs:null;
+  const start=ws.length?ws[0].lbs:null;
+  const goal=(state.workoutMeta&&state.workoutMeta.goalLbs)?state.workoutMeta.goalLbs:'';
+  const lost=(cur!=null&&start!=null)?Math.round((start-cur)*10)/10:null;
+  const stat=(lbl,val,col)=>`<div class="wk-stat"><div class="wk-stat-n" style="${col?'color:'+col:''}">${val}</div><div class="wk-stat-l">${lbl}</div></div>`;
+  let stats='';
+  if(cur!=null){
+    stats=`<div class="wk-stats">`+stat('Current',cur+' lb')+stat('Start',start+' lb')+stat(lost>=0?'Lost':'Gained',Math.abs(lost||0)+' lb',(lost>=0?'var(--accent3)':'var(--accent2)'))+(goal?stat('To goal',(Math.round((cur-goal)*10)/10)+' lb'):'')+`</div>`;
+  }
+  return `<div class="wk-card"><div class="wk-card-h"><span>⚖️ Weight Tracker</span></div><div class="wk-form"><div class="wk-field"><label>Today's weight (lb)</label><input type="number" id="wk-weight" step="0.1" placeholder="e.g. 198.4"></div><div class="wk-field"><label>Date</label><input type="date" id="wk-weight-date" value="${todayStr()}"></div><div class="wk-field" style="align-self:end"><button class="btn btn-primary" onclick="logWeight()">Log Weight</button></div><div class="wk-field"><label>Goal (lb)</label><input type="number" id="wk-goal" step="0.1" value="${goal}" placeholder="optional"></div><div class="wk-field" style="align-self:end"><button class="btn btn-ghost" onclick="setGoal()">Set Goal</button></div></div>${stats}<div id="weight-chart" class="wk-chart"></div></div>`;
+}
+function drawWeightChart(){
+  const el=document.getElementById('weight-chart');if(!el)return;
+  const ws=[...state.weights].sort((a,b)=>a.date<b.date?-1:1);
+  if(ws.length<2){el.innerHTML='<div style="color:var(--text3);font-size:.85rem;padding:24px;text-align:center">Log at least two weigh-ins to see your trend graph.</div>';return;}
+  const W=680,H=240,pad=40;
+  const vals=ws.map(w=>w.lbs);
+  const goal=(state.workoutMeta&&state.workoutMeta.goalLbs)?state.workoutMeta.goalLbs:null;
+  let lo=Math.min.apply(null,vals.concat(goal!=null?[goal]:[]));
+  let hi=Math.max.apply(null,vals.concat(goal!=null?[goal]:[]));
+  lo=Math.floor(lo-1);hi=Math.ceil(hi+1);const span=(hi-lo)||1;
+  const X=i=>pad+(W-2*pad)*(i/(ws.length-1));
+  const Y=v=>pad+(H-2*pad)*(1-(v-lo)/span);
+  const pts=ws.map((w,i)=>X(i).toFixed(1)+','+Y(w.lbs).toFixed(1)).join(' ');
+  const area=pad+','+(H-pad)+' '+pts+' '+(W-pad)+','+(H-pad);
+  const dots=ws.map((w,i)=>`<circle cx="${X(i).toFixed(1)}" cy="${Y(w.lbs).toFixed(1)}" r="3.5" fill="var(--accent)"></circle>`).join('');
+  let grid='';for(let g=0;g<=3;g++){const v=lo+span*g/3;const y=Y(v).toFixed(1);grid+=`<line x1="${pad}" y1="${y}" x2="${W-pad}" y2="${y}" stroke="var(--border)" stroke-width="1"></line><text x="6" y="${(+y+4)}" fill="var(--text3)" font-size="11">${Math.round(v)}</text>`;}
+  let goalLine='';if(goal!=null){const gy=Y(goal).toFixed(1);goalLine=`<line x1="${pad}" y1="${gy}" x2="${W-pad}" y2="${gy}" stroke="var(--accent3)" stroke-width="1.5" stroke-dasharray="5 4"></line><text x="${W-pad}" y="${(+gy-5)}" fill="var(--accent3)" font-size="11" text-anchor="end">Goal ${goal}</text>`;}
+  const first=formatDate(ws[0].date),last=formatDate(ws[ws.length-1].date);
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto" preserveAspectRatio="xMidYMid meet"><defs><linearGradient id="wkg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent)" stop-opacity=".28"></stop><stop offset="1" stop-color="var(--accent)" stop-opacity="0"></stop></linearGradient></defs>${grid}<polygon points="${area}" fill="url(#wkg)"></polygon><polyline points="${pts}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"></polyline>${goalLine}${dots}<text x="${pad}" y="${H-12}" fill="var(--text3)" font-size="11">${first}</text><text x="${W-pad}" y="${H-12}" fill="var(--text3)" font-size="11" text-anchor="end">${last}</text></svg>`;
+}
+function wkWeekHtml(){
+  const since=new Date();since.setDate(since.getDate()-6);const sStr=since.getFullYear()+'-'+pad(since.getMonth()+1)+'-'+pad(since.getDate());
+  const wk=state.sessions.filter(s=>s.date>=sStr);
+  const bikes=wk.filter(s=>s.type==='bike');const amraps=wk.filter(s=>s.type==='amrap');
+  const miles=Math.round(bikes.reduce((a,b)=>a+(+b.miles||0),0)*10)/10;
+  const mins=bikes.reduce((a,b)=>a+(+b.minutes||0),0);
+  const bestMph=bikes.length?Math.max.apply(null,bikes.map(b=>+b.mph||0)):0;
+  const totReps=amraps.reduce((a,b)=>a+(+b.jacks||0)+(+b.burpees||0)+(+b.squats||0),0);
+  const stat=(lbl,val)=>`<div class="wk-stat"><div class="wk-stat-n">${val}</div><div class="wk-stat-l">${lbl}</div></div>`;
+  return `<div class="wk-card"><div class="wk-card-h"><span>📊 This Week</span><span class="wk-badge">${wk.length} session${wk.length!==1?'s':''}</span></div><div class="wk-stats">${stat('Miles biked',miles)}${stat('Bike time',Math.round(mins)+'m')}${stat('Best MPH',bestMph?bestMph.toFixed(1):'—')}${stat('AMRAP reps',totReps)}</div></div>`;
+}
+function wkHistoryHtml(){
+  const ss=[...state.sessions].sort((a,b)=>((b.date||'')+(b.ts||'')).localeCompare((a.date||'')+(a.ts||''))).slice(0,30);
+  if(!ss.length)return `<div class="wk-card"><div class="wk-card-h"><span>📒 History</span></div><div style="color:var(--text3);font-size:.85rem">No sessions logged yet.</div></div>`;
+  const rows=ss.map(s=>{
+    let detail;
+    if(s.type==='amrap')detail=`AMRAP · 🤸 ${s.jacks||0} jacks · 🔥 ${s.burpees||0} burpees · 🦵 ${s.squats||0} squats`;
+    else detail=`🚴 ${s.route==='commute'?'Commute':'Home'} · ${s.miles} mi · ${s.mph} mph · ${Math.round(s.minutes)}m`;
+    return `<div class="wk-row"><div><div style="font-weight:600;font-size:.9rem">${detail}</div><div style="font-size:.72rem;color:var(--text3)">${formatDate(s.date)}</div></div><button class="task-action-btn del" onclick="delSession('${s.id}')"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6"/></svg></button></div>`;
+  }).join('');
+  return `<div class="wk-card"><div class="wk-card-h"><span>📒 History</span><span class="wk-badge">${state.sessions.length} total</span></div>${rows}</div>`;
+}
 // ON-SCREEN KEYBOARD (slick, built-in)
 // ══════════════════════════════════════
 var vkbTarget=null, vkbShift=false, vkbLayer='abc';
