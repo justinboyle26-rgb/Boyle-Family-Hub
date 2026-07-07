@@ -239,6 +239,8 @@ select.lv-input { cursor: pointer; }
 .cal-task-dot:hover { background: rgba(26,127,232,.28); color: var(--text); }
 .cal-task-dot .dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
 .cal-task-dot.gcal-event { background: rgba(15,157,88,.12); color: #0f9d58; cursor: default; }
+.cal-task-dot.recur-occ { background: rgba(138,92,246,.14); color: #8b5cf6; border: 1px dashed rgba(138,92,246,.5); }
+.cal-task-dot.recur-occ:hover { background: rgba(138,92,246,.28); color: var(--text); }
 .cal-nav { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
 .cal-nav h3 { font-family: 'DM Serif Display', serif; font-size: 1.25rem; flex: 1; }
 /* FAMILY OVERVIEW */
@@ -384,6 +386,11 @@ body.vkb-active { padding-bottom: 320px; }
 .wk-field input, .wk-field select { padding: 9px 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 9px; color: var(--text); font-family: inherit; font-size: .95rem; outline: none; min-width: 130px; }
 .wk-field input:focus, .wk-field select:focus { border-color: var(--accent); }
 .wk-field.amf-active input { border-color: var(--accent); background: rgba(26,127,232,.14); font-weight: 700; }
+.wk-mode-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 14px; }
+.wk-mode-lbl { font-size: .72rem; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .04em; }
+.wk-mode-btn { padding: 7px 14px; border-radius: 9px; border: 1px solid var(--border); background: var(--surface2); color: var(--text2); font-family: 'DM Sans', var(--emoji); font-size: .82rem; font-weight: 600; cursor: pointer; transition: all .15s; }
+.wk-mode-btn:hover { color: var(--text); border-color: var(--accent5); }
+.wk-mode-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
 .wk-stats { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
 .wk-stat { flex: 1; min-width: 96px; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 12px; text-align: center; }
 .wk-stat-n { font-family: 'DM Serif Display', serif; font-size: 1.5rem; color: var(--accent5); }
@@ -651,6 +658,10 @@ const LIST_COLORS=['#1a7fe8','#e84a6f','#18c97a','#f0960a','#38b2ac','#8b5cf6','
 const LINK_EMOJIS=['🔗','🌐','📧','📺','🎮','🎵','🛒','🏦','📰','📚','💼','📅','☁️','💬','📷','🎬','⚽','🍔','✈️','🗺️','💡','🧑‍💻'];
 const DURATIONS=[{v:'5m',label:'5 min'},{v:'10m',label:'10 min'},{v:'15m',label:'15 min'},{v:'30m',label:'30 min'},{v:'1h',label:'1 hour'},{v:'2h',label:'2 hour'},{v:'3h',label:'3 hour'}];
 const STARTONS=[{v:'today',label:'Today'},{v:'week',label:'This Week'},{v:'month',label:'This Month'}];
+// Groceries — a special "person" you can assign any task to.
+const GROCERIES={id:'groceries',name:'Groceries',color:'#18c97a',avatar:'🛒'};
+function findMember(id){if(String(id)==='groceries')return GROCERIES;return state.members.find(m=>String(m.id)===String(id));}
+function assignees(){return state.members.concat([GROCERIES]);}
 function durationLabel(v){const d=DURATIONS.find(x=>x.v===v);return d?d.label:'';}
 function startOnLabel(v){const s=STARTONS.find(x=>x.v===v);return s?s.label:'';}
 let state={
@@ -691,7 +702,7 @@ function formatTime(t){if(!t)return'';try{const[h,m]=t.split(':');const hr=parse
 function recurLabel(r){return{daily:'Daily',weekdays:'Weekdays',weekly:'Weekly',biweekly:'Every 2 wks',monthly:'Monthly',yearly:'Yearly'}[r]||r;}
 function timeAgo(d){const diff=Math.round((new Date()-d)/1000);if(diff<60)return'just now';if(diff<3600)return Math.round(diff/60)+'m ago';return Math.round(diff/3600)+'h ago';}
 function toast(msg,type='info'){const c=document.getElementById('toasts'),el=document.createElement('div');el.className=`toast ${type}`;el.innerHTML=`<span class="toast-icon">${{success:'✅',error:'❌',info:'ℹ️'}[type]||'ℹ️'}</span><span>${msg}</span>`;c.appendChild(el);setTimeout(()=>{el.classList.add('out');setTimeout(()=>el.remove(),250);},3500);}
-function memberOptionsHtml(sel,includeFamily){let h=includeFamily?`<option value="family"${String(sel)==='family'?' selected':''}>All Family</option>`:'';return h+state.members.map(m=>`<option value="${m.id}"${String(sel)===String(m.id)?' selected':''}>${escHtml(m.name)}</option>`).join('');}
+function memberOptionsHtml(sel,includeFamily){let h=includeFamily?`<option value="family"${String(sel)==='family'?' selected':''}>All Family</option>`:'';return h+assignees().map(m=>`<option value="${m.id}"${String(sel)===String(m.id)?' selected':''}>${escHtml(m.name)}</option>`).join('');}
 function durationOptionsHtml(sel){return'<option value="">—</option>'+DURATIONS.map(d=>`<option value="${d.v}"${sel===d.v?' selected':''}>${d.label}</option>`).join('');}
 function startOnOptionsHtml(sel){return'<option value="">—</option>'+STARTONS.map(s=>`<option value="${s.v}"${sel===s.v?' selected':''}>${s.label}</option>`).join('');}
 function priorityOptionsHtml(sel){return[['none','None'],['low','🟢 Low'],['medium','🟡 Medium'],['high','🔴 High']].map(([v,l])=>`<option value="${v}"${(sel||'none')===v?' selected':''}>${l}</option>`).join('');}
@@ -721,11 +732,15 @@ function startApp(){
   renderSidebar();renderSidebarLists();setView('tasks');startFirebaseListener();
   if(state.gcalKey&&state.gcalId)fetchGoogleCalendarEvents();
 }
+function groceriesSidebarBtnHtml(){
+  const count=state.tasks.filter(t=>!t.completed&&String(t.member)==='groceries').length;
+  return`<button class="member-btn ${state.currentMember==='groceries'?'active':''}" data-member="groceries" onclick="selectMember('groceries',this)"><span class="m-avatar" style="background:${GROCERIES.color}22;color:${GROCERIES.color}">🛒</span><span>${GROCERIES.name}</span><span class="m-count" id="count-groceries">${count}</span></button>`;
+}
 function renderSidebar(){
-  document.getElementById('sidebar-members').innerHTML=state.members.map(m=>`<button class="member-btn" data-member="${m.id}" onclick="selectMember('${m.id}',this)"><span class="m-avatar" style="background:${m.color}22;color:${m.color}">${memberAvatarHtml(m,30)}</span><span>${escHtml(m.name)}</span><span class="m-count" id="count-${m.id}">0</span></button>`).join('');
+  document.getElementById('sidebar-members').innerHTML=state.members.map(m=>`<button class="member-btn" data-member="${m.id}" onclick="selectMember('${m.id}',this)"><span class="m-avatar" style="background:${m.color}22;color:${m.color}">${memberAvatarHtml(m,30)}</span><span>${escHtml(m.name)}</span><span class="m-count" id="count-${m.id}">0</span></button>`).join('')+groceriesSidebarBtnHtml();
   updateCounts();
   const sel=document.getElementById('t-member');
-  if(sel)sel.innerHTML='<option value="family">All Family</option>'+state.members.map(m=>`<option value="${m.id}">${escHtml(m.name)}</option>`).join('');
+  if(sel)sel.innerHTML='<option value="family">All Family</option>'+assignees().map(m=>`<option value="${m.id}">${escHtml(m.name)}</option>`).join('');
   renderTaskListSelect();
 }
 function memberAvatarHtml(m,size){
@@ -741,12 +756,12 @@ function renderSidebarLists(){
   renderTaskListSelect();
 }
 function renderTaskListSelect(){const sel=document.getElementById('t-list-sel');if(!sel)return;sel.innerHTML='<option value="">No list</option>'+state.lists.map(l=>`<option value="${l.id}">${l.emoji} ${escHtml(l.name)}</option>`).join('');}
-function updateCounts(){const active=state.tasks.filter(t=>!t.completed);const fe=document.getElementById('count-family');if(fe)fe.textContent=active.length;state.members.forEach(m=>{const el=document.getElementById('count-'+m.id);if(el)el.textContent=active.filter(t=>t.member===String(m.id)).length;});}
+function updateCounts(){const active=state.tasks.filter(t=>!t.completed);const fe=document.getElementById('count-family');if(fe)fe.textContent=active.length;state.members.forEach(m=>{const el=document.getElementById('count-'+m.id);if(el)el.textContent=active.filter(t=>t.member===String(m.id)).length;});const ge=document.getElementById('count-groceries');if(ge)ge.textContent=active.filter(t=>String(t.member)==='groceries').length;}
 function navTo(v){setView(v);if(window.innerWidth<=768)closeSidebarMobile();}
 function selectMember(id,btn){
   state.currentMember=id;state.currentView='myday';state.mainView='tasks';state.currentListId=null;
   document.querySelectorAll('.member-btn').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');
-  const m=state.members.find(m=>String(m.id)===String(id));
+  const m=findMember(id);
   document.getElementById('topbar-title').textContent=m?m.name:'All Family';
   document.getElementById('topbar-color').style.background=m?m.color:'var(--accent)';
   document.getElementById('view-tabs').style.display=id==='family'?'none':'flex';
@@ -839,7 +854,7 @@ function renderTasksView(){
   document.getElementById('main-content').innerHTML=html;
 }
 function renderTaskItem(t,today){
-  const member=state.members.find(m=>String(m.id)===String(t.member));const color=member?member.color:'var(--accent)';
+  const member=findMember(t.member);const color=member?member.color:'var(--accent)';
   const list=t.listId?state.lists.find(l=>l.id===t.listId):null;
   const dueClass=t.dueDate?(t.dueDate<today?'overdue':t.dueDate===today?'today':''):'';
   const dueLabel=t.dueDate?(t.dueDate<today?'⚠ Overdue':t.dueDate===today?'📅 Today':'📅 '+formatDate(t.dueDate)):'';
@@ -930,7 +945,7 @@ function kanbanFilterPanelHtml(){
   const f=state.kanbanFilters;
   const chip=(cat,val,label)=>`<button class="kfilter-chip ${f[cat].includes(val)?'active':''}" onclick="toggleKanbanFilter('${cat}','${val}',event)">${label}</button>`;
   let h='<div class="kfilter-panel" id="kfilter-panel" onclick="event.stopPropagation()">';
-  h+='<div class="kfilter-group"><span class="kfilter-label">Who</span><div class="kfilter-chip-wrap">'+(state.members.map(m=>chip('members',String(m.id),escHtml(m.name))).join('')||'<span style="font-size:.74rem;color:var(--text3)">No members</span>')+'</div></div>';
+  h+='<div class="kfilter-group"><span class="kfilter-label">Who</span><div class="kfilter-chip-wrap">'+(assignees().map(m=>chip('members',String(m.id),escHtml(m.name))).join('')||'<span style="font-size:.74rem;color:var(--text3)">No members</span>')+'</div></div>';
   h+='<div class="kfilter-group"><span class="kfilter-label">Priority</span><div class="kfilter-chip-wrap">'+[['high','🔴 High'],['medium','🟡 Med'],['low','🟢 Low'],['none','None']].map(([v,l])=>chip('priorities',v,l)).join('')+'</div></div>';
   h+='<div class="kfilter-group"><span class="kfilter-label">Duration</span><div class="kfilter-chip-wrap">'+DURATIONS.map(d=>chip('durations',d.v,d.label)).join('')+'</div></div>';
   h+='<div class="kfilter-group"><span class="kfilter-label">Start On</span><div class="kfilter-chip-wrap">'+STARTONS.map(s=>chip('startOns',s.v,s.label)).join('')+'</div></div>';
@@ -957,7 +972,7 @@ function kanbanControlsHtml(){
 function kanbanColumns(){
   const g=state.kanbanGroupBy;
   if(g==='member'){
-    const cols=state.members.map(m=>({label:escHtml(m.name),color:m.color,bg:m.color+'22',icon:'',field:'member',val:String(m.id)}));
+    const cols=assignees().map(m=>({label:escHtml(m.name),color:m.color,bg:m.color+'22',icon:m.id==='groceries'?'🛒':'',field:'member',val:String(m.id)}));
     cols.push({label:'Unassigned / All Family',color:'#5ab4ff',bg:'rgba(90,180,255,.12)',icon:'🏠',field:'member',val:'family'});
     return cols;
   }
@@ -1039,7 +1054,7 @@ function renderKanban(listId){
       <div class="kanban-cards" ondragover="kanbanDragOver(event,this)" ondragleave="kanbanDragLeave(event,this)" ondrop="kanbanDrop(event,'${colKey}',this)">`;
     if(!colTasks.length)html+=`<div class="kanban-drag-hint">Drop here</div>`;
     colTasks.forEach(t=>{
-      const member=state.members.find(m=>String(m.id)===String(t.member));const color=member?member.color:'var(--accent)';
+      const member=findMember(t.member);const color=member?member.color:'var(--accent)';
       const overdue=!t.completed&&t.dueDate&&t.dueDate<today;
       html+=`<div class="kanban-card" draggable="true" ondragstart="kanbanDragStart(event,'${t.id}')" ondragend="kanbanDragEnd()" onclick="kanbanCardClick(event,'${t.id}')">
         <div class="kanban-card-actions">
@@ -1247,12 +1262,37 @@ function renderOverview(){
     else pg=`<div class="card-progress-wrap"><div class="card-progress-label"><span class="card-progress-pct" style="color:${pct>=70?'#18c97a':pct>=40?m.color:'var(--accent2)'}">${pct}% complete</span><span class="card-progress-done">${done.length} of ${total} done</span></div><div class="card-progress-track"><div class="card-progress-fill" style="width:${pct}%;background:${barColor}"></div></div></div>`;
     html+=`<div class="family-card" onclick="selectMemberFromCard('${m.id}')"><div class="family-card-header"><div class="family-card-avatar" style="background:${m.color}22;color:${m.color}">${memberAvatarHtml(m,44)}</div><div><div class="family-card-name">${escHtml(m.name)}</div><div class="family-card-role">${active.length} active task${active.length!==1?'s':''}</div></div><button class="icon-btn" style="margin-left:auto;width:28px;height:28px;font-size:.8rem" onclick="event.stopPropagation();openEditMember(${state.members.indexOf(m)})" title="Edit">✏️</button></div><div class="family-card-stats"><div class="stat"><div class="stat-num">${active.length}</div><div class="stat-lbl">Active</div></div><div class="stat"><div class="stat-num">${done.length}</div><div class="stat-lbl">Done</div></div><div class="stat"><div class="stat-num" style="color:${overdue.length?'var(--accent2)':'inherit'}">${overdue.length}</div><div class="stat-lbl">Overdue</div></div></div>${pg}</div>`;
   });
+  // Groceries card
+  {
+    const gt=state.tasks.filter(t=>String(t.member)==='groceries');const gActive=gt.filter(t=>!t.completed);const gDone=gt.filter(t=>t.completed);
+    const total=gActive.length+gDone.length;const pct=total===0?0:Math.round(gDone.length/total*100);const allDone=total>0&&pct===100;
+    let pg;if(allDone)pg=`<div class="card-complete-badge" style="color:#18c97a">🎉 All picked up!</div>`;
+    else if(total===0)pg=`<div class="card-progress-wrap"><div class="card-progress-label"><span class="card-progress-pct" style="color:var(--text3)">No groceries yet</span></div><div class="card-progress-track"><div class="card-progress-fill" style="width:0%;background:${GROCERIES.color}"></div></div></div>`;
+    else pg=`<div class="card-progress-wrap"><div class="card-progress-label"><span class="card-progress-pct" style="color:${GROCERIES.color}">${pct}% picked up</span><span class="card-progress-done">${gDone.length} of ${total} done</span></div><div class="card-progress-track"><div class="card-progress-fill" style="width:${pct}%;background:${GROCERIES.color}"></div></div></div>`;
+    html+=`<div class="family-card" onclick="selectMemberFromCard('groceries')"><div class="family-card-header"><div class="family-card-avatar" style="background:${GROCERIES.color}22;color:${GROCERIES.color}">🛒</div><div><div class="family-card-name">Groceries</div><div class="family-card-role">${gActive.length} item${gActive.length!==1?'s':''} to get</div></div></div><div class="family-card-stats"><div class="stat"><div class="stat-num">${gActive.length}</div><div class="stat-lbl">To Get</div></div><div class="stat"><div class="stat-num">${gDone.length}</div><div class="stat-lbl">Got</div></div><div class="stat"><div class="stat-num">${total}</div><div class="stat-lbl">Total</div></div></div>${pg}</div>`;
+  }
   html+='</div>';document.getElementById('main-content').innerHTML=html;
 }
-function selectMemberFromCard(id){const btn=document.querySelector(`[data-member="${id}"]`);if(btn)selectMember(id,btn);}
+function selectMemberFromCard(id){const btn=document.querySelector(`[data-member="${id}"]`);if(btn)selectMember(id,btn);else selectMember(id,null);}
 // ══════════════════════════════════════
 // CALENDAR
 // ══════════════════════════════════════
+function occursOnDate(task,ds){
+  if(!task.recurrence||!task.dueDate)return false;
+  if(ds===task.dueDate)return false;
+  const a=new Date(task.dueDate+'T12:00:00');
+  const d=new Date(ds+'T12:00:00');
+  if(isNaN(a)||isNaN(d)||d<a)return false;
+  switch(task.recurrence){
+    case'daily':return true;
+    case'weekdays':{const w=d.getDay();return w>=1&&w<=5;}
+    case'weekly':return d.getDay()===a.getDay();
+    case'biweekly':{const diff=Math.round((d-a)/86400000);return diff%14===0;}
+    case'monthly':return d.getDate()===a.getDate();
+    case'yearly':return d.getDate()===a.getDate()&&d.getMonth()===a.getMonth();
+  }
+  return false;
+}
 function renderCalendar(){
   document.getElementById('view-tabs').style.display='none';
   const{calMonth:month,calYear:year}=state;
@@ -1261,10 +1301,12 @@ function renderCalendar(){
   const daysInMonth=new Date(year,month+1,0).getDate();const daysInPrev=new Date(year,month,0).getDate();
   const syncBtn=state.gcalKey?`<button class="btn btn-ghost btn-sm" onclick="fetchGoogleCalendarEvents()">🔄 Sync GCal</button>`:'';
   let html=`<div class="gcal-banner"><svg width="20" height="20" viewBox="0 0 24 24"><rect width="24" height="24" rx="3" fill="#1a7fe8"/><rect x="3" y="11" width="18" height="10" rx="1" fill="white" opacity=".2"/><text x="12" y="19" font-size="8" fill="white" text-anchor="middle" font-family="sans-serif" font-weight="bold">CAL</text></svg><p>${state.gcalKey?`✅ Google Calendar linked — ${state.gcalEvents.length} events loaded. ${syncBtn}`:'🔗 <a href="#" onclick="navTo(\'settings\')">Link Google Calendar in Settings →</a>'}</p></div>
-  <div style="font-size:.78rem;color:var(--text3);margin-bottom:12px">💡 Tap a task to open it · tap an empty day to add a new task</div>
+  <div style="font-size:.78rem;color:var(--text3);margin-bottom:12px">💡 Tap a task to open it · tap an empty day to add a new task · <span style="color:#8b5cf6">↻ dashed = recurring</span></div>
   <div class="cal-nav"><button class="icon-btn" onclick="calPrev()">‹</button><h3>${monthName}</h3><button class="icon-btn" onclick="calNext()">›</button><button class="btn btn-ghost btn-sm" onclick="calToday()">Today</button></div>
   <div class="cal-grid">${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>`<div class="cal-header-cell">${d}</div>`).join('')}`;
   const totalCells=Math.ceil((firstDay+daysInMonth)/7)*7;
+  const m2=state.currentMember!=='family'?findMember(state.currentMember):null;
+  const recurBase=state.tasks.filter(t=>t.recurrence&&t.dueDate&&!t.completed);
   for(let i=0;i<totalCells;i++){
     let day,isOther=false,ds;
     if(i<firstDay){day=daysInPrev-firstDay+i+1;isOther=true;const pm=month===0?12:month;const py=month===0?year-1:year;ds=`${py}-${pad(pm)}-${pad(day)}`;}
@@ -1272,14 +1314,23 @@ function renderCalendar(){
     else{day=i-firstDay+1;ds=`${year}-${pad(month+1)}-${pad(day)}`;}
     const isToday=ds===todayStr2;
     const dayTasks=state.tasks.filter(t=>t.dueDate===ds&&!t.completed);
-    const m2=state.currentMember!=='family'?state.members.find(m=>String(m.id)===String(state.currentMember)):null;
     const ft=m2?dayTasks.filter(t=>String(t.member)===String(m2.id)):dayTasks;
+    let recurOccs=recurBase.filter(t=>occursOnDate(t,ds));
+    if(m2)recurOccs=recurOccs.filter(t=>String(t.member)===String(m2.id));
     const gcalEvs=state.gcalEvents.filter(e=>e.date===ds);
+    const taskCap=3-Math.min(gcalEvs.length,2);
+    const realDots=ft.slice(0,taskCap).map(t=>{const tm=findMember(t.member);const c=tm?tm.color:'var(--accent)';return`<div class="cal-task-dot" title="Open task" onclick="calTaskClick(event,'${t.id}')"><span class="dot" style="background:${c}"></span>${escHtml(t.title.substring(0,14))}${t.title.length>14?'…':''}</div>`;});
+    const remaining=taskCap-realDots.length;
+    const recurDots=remaining>0?recurOccs.slice(0,remaining).map(t=>{const tm=findMember(t.member);const c=tm?tm.color:'#8b5cf6';return`<div class="cal-task-dot recur-occ" title="Recurring: ${escHtml(t.title)}" onclick="calTaskClick(event,'${t.id}')"><span class="dot" style="background:${c}"></span>↻ ${escHtml(t.title.substring(0,12))}${t.title.length>12?'…':''}</div>`;}):[];
+    const shownTasks=realDots.length+recurDots.length;
+    const totalItems=ft.length+recurOccs.length+gcalEvs.length;
+    const shownTotal=shownTasks+Math.min(gcalEvs.length,2);
     html+=`<div class="cal-cell ${isOther?'other-month':''} ${isToday?'today':''}" onclick="calDayClick('${ds}')">
       <div class="cal-day-num">${day}</div>
       ${gcalEvs.slice(0,2).map(e=>`<div class="cal-task-dot gcal-event" onclick="event.stopPropagation()"><span class="dot" style="background:#0f9d58"></span>${escHtml(e.title.substring(0,14))}${e.title.length>14?'…':''}</div>`).join('')}
-      ${ft.slice(0,3-Math.min(gcalEvs.length,2)).map(t=>{const tm=state.members.find(m=>String(m.id)===String(t.member));const c=tm?tm.color:'var(--accent)';return`<div class="cal-task-dot" title="Open task" onclick="calTaskClick(event,'${t.id}')"><span class="dot" style="background:${c}"></span>${escHtml(t.title.substring(0,14))}${t.title.length>14?'…':''}</div>`;}).join('')}
-      ${(ft.length+gcalEvs.length)>3?`<div style="font-size:.66rem;color:var(--text3)">+${ft.length+gcalEvs.length-3} more</div>`:''}
+      ${realDots.join('')}
+      ${recurDots.join('')}
+      ${totalItems>shownTotal?`<div style="font-size:.66rem;color:var(--text3)">+${totalItems-shownTotal} more</div>`:''}
     </div>`;
   }
   html+='</div>';document.getElementById('main-content').innerHTML=html;
@@ -1691,7 +1742,7 @@ function renderImport(){
   document.getElementById('view-tabs').style.display='none';
   document.getElementById('topbar-title').textContent='Import Tasks';
   document.getElementById('topbar-color').style.background='var(--accent)';
-  const memberOpts='<option value="family">All Family</option>'+state.members.map(m=>`<option value="${m.id}">${escHtml(m.name)}</option>`).join('');
+  const memberOpts='<option value="family">All Family</option>'+assignees().map(m=>`<option value="${m.id}">${escHtml(m.name)}</option>`).join('');
   const listOpts='<option value="">No list</option>'+state.lists.map(l=>`<option value="${l.id}">${l.emoji} ${escHtml(l.name)}</option>`).join('');
   document.getElementById('main-content').innerHTML=`<div style="max-width:720px">
   <div style="font-family:'DM Serif Display',serif;font-size:1.45rem;margin-bottom:4px">Import Tasks</div>
@@ -1778,7 +1829,7 @@ async function importExecute(){
   const pc=getCol('priority')!==''?parseInt(getCol('priority')):-1;const mc=getCol('member')!==''?parseInt(getCol('member')):-1;const lc=getCol('listId')!==''?parseInt(getCol('listId')):-1;
   function normP(v){if(!v)return dp;const s=v.toLowerCase().trim();if(s==='high'||s==='h'||s==='urgent')return'high';if(s==='medium'||s==='med'||s==='m'||s==='normal')return'medium';if(s==='low'||s==='l')return'low';return dp;}
   function normD(v){if(!v||!v.trim())return'';if(/^\d{4}-\d{2}-\d{2}$/.test(v.trim()))return v.trim();const d=new Date(v);return isNaN(d.getTime())?'':d.toISOString().split('T')[0];}
-  function resolveM(v){if(!v||!v.trim())return dm;const f=state.members.find(m=>m.name.toLowerCase()===v.trim().toLowerCase());return f?f.id:dm;}
+  function resolveM(v){if(!v||!v.trim())return dm;if(v.trim().toLowerCase()==='groceries')return'groceries';const f=state.members.find(m=>m.name.toLowerCase()===v.trim().toLowerCase());return f?f.id:dm;}
   function resolveL(v){if(!v||!v.trim())return dl;const f=state.lists.find(l=>l.name.toLowerCase()===v.trim().toLowerCase());return f?f.id:dl;}
   let imported=0,skipped=0;const tci=parseInt(tc);
   for(const row of importParsedRows){const title=(row[tci]||'').trim();if(!title){skipped++;continue;}await pushTask(makeTask(title,{notes:nc>=0?(row[nc]||'').trim():'',dueDate:dc>=0?normD(row[dc]):'',priority:pc>=0?normP(row[pc]):dp,member:mc>=0?resolveM(row[mc]):dm,listId:lc>=0?resolveL(row[lc]):dl}),'add');imported++;}
@@ -1812,6 +1863,7 @@ function renderSettings(){
   </div>
   <div class="settings-section"><h4>👨‍👩‍👧‍👦 Family Members</h4>
     ${state.members.map((m,i)=>`<div class="settings-row"><div style="display:flex;align-items:center;gap:10px"><span style="width:32px;height:32px;border-radius:50%;background:${m.color}22;color:${m.color};display:flex;align-items:center;justify-content:center;overflow:hidden">${memberAvatarHtml(m,32)}</span><div><div class="settings-row-label">${escHtml(m.name)}</div><div class="settings-row-sub">${state.tasks.filter(t=>String(t.member)===String(m.id)&&!t.completed).length} active tasks</div></div></div><div style="display:flex;gap:7px"><button class="btn btn-ghost btn-sm" onclick="openEditMember(${i})">Edit</button><button class="btn btn-ghost btn-sm" style="color:var(--accent2)" onclick="removeMemberSetting(${i})">Remove</button></div></div>`).join('')}
+    <div class="settings-row"><div style="display:flex;align-items:center;gap:10px"><span style="width:32px;height:32px;border-radius:50%;background:${GROCERIES.color}22;color:${GROCERIES.color};display:flex;align-items:center;justify-content:center">🛒</span><div><div class="settings-row-label">Groceries</div><div class="settings-row-sub">Built-in assignee · ${state.tasks.filter(t=>String(t.member)==='groceries'&&!t.completed).length} items to get</div></div></div><span style="font-size:.72rem;color:var(--text3)">Always available</span></div>
     <div style="display:flex;gap:8px;margin-top:12px"><input type="text" id="settings-new-member" placeholder="New member name" maxlength="24" style="flex:1;padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:.88rem;outline:none"><button class="btn btn-ghost btn-sm" onclick="addMemberSetting()">+ Add</button></div>
   </div>
   <div class="settings-section"><h4>⚠️ Danger Zone</h4>
@@ -1864,7 +1916,7 @@ function setSyncStatus(s){const dot=document.getElementById('sync-dot'),txt=docu
 // ══════════════════════════════════════
 function openMassUpdate(){
   const ex=document.getElementById('mass-update-modal');if(ex)ex.remove();
-  const mo='<option value="">— Any member —</option>'+state.members.map(m=>`<option value="${m.id}">${escHtml(m.name)}</option>`).join('');
+  const mo='<option value="">— Any member —</option>'+assignees().map(m=>`<option value="${m.id}">${escHtml(m.name)}</option>`).join('');
   const lo='<option value="">— Any list —</option>'+state.lists.map(l=>`<option value="${l.id}">${l.emoji} ${escHtml(l.name)}</option>`).join('');
   document.body.insertAdjacentHTML('beforeend',`<div class="modal-overlay open" id="mass-update-modal" style="z-index:2000"><div class="modal" style="width:600px;max-width:96vw">
   <h3>⚡ Mass Update Tasks</h3>
@@ -1899,7 +1951,7 @@ function massUpdateRunFilter(){
   let tasks=[...state.tasks];if(fm)tasks=tasks.filter(t=>String(t.member)===fm);if(fp)tasks=tasks.filter(t=>(t.priority||'none')===fp);if(fl)tasks=tasks.filter(t=>(t.listId||'')===fl);if(fs==='active')tasks=tasks.filter(t=>!t.completed);if(fs==='completed')tasks=tasks.filter(t=>t.completed);if(fq)tasks=tasks.filter(t=>t.title.toLowerCase().includes(fq));
   const container=document.getElementById('mu-task-list');if(!tasks.length){container.innerHTML='<div style="padding:20px;text-align:center;color:var(--text3);font-size:.84rem">No tasks match</div>';massUpdateSelectedCount();return;}
   const today=todayStr();
-  container.innerHTML=tasks.map(t=>{const m=state.members.find(x=>String(x.id)===String(t.member));const lst=t.listId?state.lists.find(l=>l.id===t.listId):null;const ov=!t.completed&&t.dueDate&&t.dueDate<today;
+  container.innerHTML=tasks.map(t=>{const m=findMember(t.member);const lst=t.listId?state.lists.find(l=>l.id===t.listId):null;const ov=!t.completed&&t.dueDate&&t.dueDate<today;
   return`<label style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-bottom:1px solid var(--border);cursor:pointer" onmouseover="this.style.background='var(--surface3)'" onmouseout="this.style.background=''">
     <input type="checkbox" class="mu-task-cb" data-id="${t.id}" style="width:15px;height:15px;cursor:pointer;flex-shrink:0" onchange="massUpdateSelectedCount()">
     <span style="flex:1;min-width:0">
@@ -1920,7 +1972,7 @@ function massSelectAll(){document.querySelectorAll('.mu-task-cb').forEach(cb=>cb
 function massSelectNone(){document.querySelectorAll('.mu-task-cb').forEach(cb=>cb.checked=false);massUpdateSelectedCount();}
 function massUpdateToggleActionFields(){
   const type=document.getElementById('mu-action-type')?.value;const wrap=document.getElementById('mu-action-value-wrap');if(!wrap)return;
-  const mo=state.members.map(m=>`<option value="${m.id}">${escHtml(m.name)}</option>`).join('');
+  const mo=assignees().map(m=>`<option value="${m.id}">${escHtml(m.name)}</option>`).join('');
   const lo='<option value="">No list</option>'+state.lists.map(l=>`<option value="${l.id}">${l.emoji} ${escHtml(l.name)}</option>`).join('');
   const dro=DURATIONS.map(d=>`<option value="${d.v}">${d.label}</option>`).join('');
   const sto=STARTONS.map(s=>`<option value="${s.v}">${s.label}</option>`).join('');
@@ -2038,7 +2090,6 @@ function saveLink(){
 }
 function deleteLink(scope,id){if(!confirm('Remove this link?'))return;const arr=linksArrayRef(scope);if(!arr)return;const i=arr.findIndex(x=>String(x.id)===String(id));if(i>-1)arr.splice(i,1);saveConfigToFirebase();renderLinks(scope);toast('Link removed','info');}
 // ══════════════════════════════════════
-// ══════════════════════════════════════
 // DAD'S WORKOUT
 // ══════════════════════════════════════
 function dadMember(){return state.members.find(m=>(m.name||'').trim().toLowerCase()==='dad');}
@@ -2057,6 +2108,8 @@ function logWeight(){const v=parseFloat(document.getElementById('wk-weight').val
 function delWeight(id){if(!confirm('Delete this weigh-in?'))return;pushWeight({id},'delete');}
 function setGoal(){const v=parseFloat(document.getElementById('wk-goal').value);state.workoutMeta=Object.assign({},state.workoutMeta,{goalLbs:(v>0?Math.round(v*10)/10:'')});saveWorkoutMeta();toast('Goal saved','success');}
 function delSession(id){if(!confirm('Delete this session?'))return;pushSession({id},'delete');}
+var wkModeOverride=null;
+function wkSetMode(m){wkModeOverride=m;renderWorkout();}
 function renderWorkout(){
   state.mainView='workout';
   document.getElementById('view-tabs').style.display='none';
@@ -2070,16 +2123,31 @@ function renderWorkout(){
   drawWeightChart();
 }
 function wkTodayHtml(){
-  const dow=new Date().getDay();const plan=WK_SCHED[dow];let inner;
-  if(plan==='amrap'){
+  const dow=new Date().getDay();const scheduled=WK_SCHED[dow];
+  const eff=wkModeOverride||scheduled;
+  const isAmrap=eff==='amrap';
+  const isBike=eff==='bike'||eff==='bikeCommute'||eff==='bikeHome';
+  const bikeActive=wkModeOverride==='bike'||(wkModeOverride===null&&isBike);
+  const toggle=`<div class="wk-mode-row"><span class="wk-mode-lbl">Choose today:</span>
+    <button class="wk-mode-btn${wkModeOverride===null?' active':''}" onclick="wkSetMode(null)">📅 Scheduled</button>
+    <button class="wk-mode-btn${wkModeOverride==='amrap'?' active':''}" onclick="wkSetMode('amrap')">💪 AMRAP</button>
+    <button class="wk-mode-btn${wkModeOverride==='bike'?' active':''}" onclick="wkSetMode('bike')">🚴 Bike</button>
+    ${wkModeOverride!==null?`<span style="font-size:.72rem;color:var(--text3)">(overriding ${scheduled==='amrap'?'AMRAP':scheduled==='rest'?'rest':'bike'} day)</span>`:''}
+  </div>`;
+  let inner,badge;
+  if(isAmrap){
+    badge='AMRAP';
     inner=`<div style="font-size:.9rem;color:var(--text2);margin-bottom:12px">15-minute AMRAP — 4 min each move, 1 min rest between. Record your reps as you go.</div><div id="amrap-panel"></div><div style="margin-top:4px"><button class="btn btn-primary" onclick="amrapStart()">▶ Start 15-min AMRAP</button><button class="btn btn-ghost" style="margin-left:8px" onclick="amrapManual()">Log manually</button></div>`;
-  }else if(plan==='bikeCommute'||plan==='bikeHome'){
-    const label=plan==='bikeCommute'?'Bike to work &amp; back (30 mi round trip)':'Bike around home';
-    inner=`<div style="font-size:.9rem;color:var(--text2);margin-bottom:12px">${label} — log your ride below.</div>`+bikeFormHtml(plan==='bikeCommute'?'commute':'home',plan==='bikeCommute'?30:'');
+  }else if(isBike){
+    badge='Bike';
+    const route=eff==='bikeCommute'?'commute':'home';
+    const label=eff==='bikeCommute'?'Bike to work &amp; back (30 mi round trip)':'Bike ride';
+    inner=`<div style="font-size:.9rem;color:var(--text2);margin-bottom:12px">${label} — log your ride below.</div>`+bikeFormHtml(route,eff==='bikeCommute'?30:'');
   }else{
-    inner=`<div style="font-size:.95rem;color:var(--text2)">😌 Rest day — nothing scheduled. You can still log a ride or AMRAP below.</div><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-ghost btn-sm" onclick="amrapManual()">+ Log AMRAP</button><button class="btn btn-ghost btn-sm" onclick="wkShowBike()">+ Log Bike Ride</button></div><div id="amrap-panel"></div><div id="wk-extra"></div>`;
+    badge='Rest';
+    inner=`<div style="font-size:.95rem;color:var(--text2)">😌 Rest day — nothing scheduled. Use the buttons above to do a Bike ride or AMRAP instead, or log one below.</div><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-ghost btn-sm" onclick="amrapManual()">+ Log AMRAP</button><button class="btn btn-ghost btn-sm" onclick="wkShowBike()">+ Log Bike Ride</button></div><div id="amrap-panel"></div><div id="wk-extra"></div>`;
   }
-  return `<div class="wk-card"><div class="wk-card-h"><span>Today · ${WK_DAYNAMES[dow]}</span><span class="wk-badge">${plan==='amrap'?'AMRAP':plan==='rest'?'Rest':'Bike'}</span></div>${inner}</div>`;
+  return `<div class="wk-card"><div class="wk-card-h"><span>Today · ${WK_DAYNAMES[dow]}</span><span class="wk-badge">${badge}</span></div>${toggle}${inner}</div>`;
 }
 function bikeFormHtml(route,defMiles){
   return `<div class="wk-form"><div class="wk-field"><label>Route</label><select id="bk-route"><option value="commute"${route==='commute'?' selected':''}>Commute (to work &amp; back)</option><option value="home"${route==='home'?' selected':''}>Around home</option></select></div><div class="wk-field"><label>Miles</label><input type="number" id="bk-miles" step="0.1" value="${defMiles||''}" placeholder="30" oninput="bkUpdateMph()"></div><div class="wk-field"><label>Total time (min)</label><input type="number" id="bk-min" step="0.1" placeholder="95" oninput="bkUpdateMph()"></div><div class="wk-field"><label>Avg MPH</label><input type="text" id="bk-mph" readonly placeholder="auto"></div><div class="wk-field"><label>Date</label><input type="date" id="bk-date" value="${todayStr()}"></div><div class="wk-field" style="align-self:end"><button class="btn btn-primary" onclick="saveBike()">Save Ride</button></div></div>`;
@@ -2168,6 +2236,7 @@ function wkHistoryHtml(){
   }).join('');
   return `<div class="wk-card"><div class="wk-card-h"><span>📒 History</span><span class="wk-badge">${state.sessions.length} total</span></div>${rows}</div>`;
 }
+// ══════════════════════════════════════
 // ON-SCREEN KEYBOARD (slick, built-in)
 // ══════════════════════════════════════
 var vkbTarget=null, vkbShift=false, vkbLayer='abc';
@@ -2253,7 +2322,6 @@ function vkbKey(k){
 }
 function vkbInit(){
   const kb=document.getElementById('vkb');if(!kb)return;
-  // mousedown keeps focus on the field (preventDefault); also handle touch
   const onPress=e=>{const btn=e.target.closest&&e.target.closest('.vkb-key');if(!btn)return;e.preventDefault();vkbKey(btn.dataset.k);};
   kb.addEventListener('mousedown',onPress);
   kb.addEventListener('touchstart',onPress,{passive:false});
@@ -2270,18 +2338,14 @@ function _boot(){
   vkbInit();
   document.addEventListener('fullscreenchange',()=>{updateFsIcon();if(state.mainView==='settings'&&document.getElementById('app').style.display!=='none')renderSettings();});
   document.addEventListener('webkitfullscreenchange',updateFsIcon);
-  // Hide everything until we know whether this family already exists in Firebase.
   document.getElementById('setup-screen').style.display='none';
   document.getElementById('app').style.display='none';
-  // Warm up from the local cache (instant paint after the check) — does NOT decide setup.
   const saved=localStorage.getItem('familyhub_v2');
   if(saved){try{const c=JSON.parse(saved);if(c.theme)state.theme=c.theme;if(c.members)state.members=c.members;if(c.lists)state.lists=c.lists;if(c.gcalKey)state.gcalKey=c.gcalKey;if(c.gcalId)state.gcalId=c.gcalId;if(c.familyLinks)state.familyLinks=c.familyLinks;}catch(e){}}
   applyTheme(state.theme);
   const haveLocal=!!(saved&&state.members&&state.members.length);
   const db=getDb();
   if(!db){ if(haveLocal)startApp(); else showSetupScreen(); return; }
-  // KEY FIX: always check the cloud for an existing family before showing setup,
-  // so logging in on a brand-new device pulls the saved data instead of resetting it.
   db.ref('config').once('value').then(snap=>{
     const data=snap.val();
     if(data&&data.members&&data.members.length){
