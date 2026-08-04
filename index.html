@@ -243,6 +243,32 @@ select.lv-input { cursor: pointer; }
 .cal-task-dot.recur-occ:hover { background: rgba(138,92,246,.28); color: var(--text); }
 .cal-nav { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
 .cal-nav h3 { font-family: 'DM Serif Display', serif; font-size: 1.25rem; flex: 1; }
+.cal-cell.sel-day { background: rgba(26,127,232,.14); box-shadow: inset 0 0 0 2px var(--accent); }
+.cal-cell.sel-day:hover { background: rgba(26,127,232,.2); }
+/* DAILY BREAKOUT (below the calendar) */
+.cal-breakout { margin-top: 18px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: 0 2px 8px rgba(0,60,140,.06); overflow: hidden; }
+.brk-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 18px; border-bottom: 1px solid var(--border); background: var(--surface2); flex-wrap: wrap; }
+.brk-date { font-family: 'DM Serif Display', serif; font-size: 1.12rem; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.brk-today-badge { font-family: 'DM Sans', var(--emoji); font-size: .62rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; background: var(--accent); color: #fff; padding: 2px 8px; border-radius: 20px; }
+.brk-count { font-size: .74rem; color: var(--text3); margin-top: 3px; }
+.brk-list { padding: 10px 12px; display: flex; flex-direction: column; gap: 7px; }
+.brk-item { display: flex; align-items: flex-start; gap: 11px; background: var(--surface2); border: 1px solid var(--border); border-radius: 11px; padding: 11px 13px; cursor: pointer; transition: all .15s; }
+.brk-item:hover { border-color: rgba(26,127,232,.4); background: var(--surface3); }
+.brk-item.brk-gcal { cursor: default; }
+.brk-item.brk-recur { border-style: dashed; }
+.brk-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+.brk-body { flex: 1; min-width: 0; }
+.brk-title { font-size: .9rem; font-weight: 500; margin-bottom: 5px; }
+.brk-meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.brk-tag { font-size: .68rem; padding: 2px 8px; border-radius: 12px; font-weight: 600; background: var(--surface3); color: var(--text2); }
+.brk-time { font-size: .72rem; color: var(--text3); }
+.brk-prio-high { background: rgba(232,74,111,.15); color: var(--accent2); }
+.brk-prio-medium { background: rgba(240,150,10,.15); color: var(--accent4); }
+.brk-prio-low { background: rgba(24,201,122,.15); color: var(--accent3); }
+.brk-status { background: rgba(26,127,232,.12); color: var(--accent5); }
+.brk-check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border); background: transparent; cursor: pointer; flex-shrink: 0; margin-top: 2px; transition: all .15s; }
+.brk-check:hover { border-color: var(--accent3); background: rgba(24,201,122,.12); }
+.brk-empty { text-align: center; padding: 26px 16px; color: var(--text3); font-size: .85rem; }
 /* FAMILY OVERVIEW */
 .family-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(255px, 1fr)); gap: 14px; }
 .family-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: all .2s; cursor: pointer; box-shadow: 0 2px 8px rgba(0,60,140,.07); }
@@ -412,6 +438,24 @@ body.vkb-active { padding-bottom: 320px; }
   .view-tabs { padding: 10px 16px 0; }
   .family-grid { grid-template-columns: 1fr; }
   .row-2 { grid-template-columns: 1fr; }
+  /* Keep the entire month grid on screen — compact cells, smaller type */
+  .cal-grid { gap: 1px; }
+  .cal-cell { min-height: 56px; padding: 4px 3px; }
+  .cal-header-cell { padding: 6px 2px; font-size: .6rem; }
+  .cal-day-num { width: 19px; height: 19px; font-size: .7rem; margin-bottom: 2px; }
+  .cal-task-dot { font-size: .6rem; padding: 1px 4px; gap: 2px; }
+  .cal-nav h3 { font-size: 1.05rem; }
+}
+@media (max-width: 560px) {
+  /* On phones, collapse in-cell labels to colored pips so all six weeks stay visible.
+     Full per-item detail lives in the daily breakout below the grid. */
+  .cal-cell { min-height: 46px; padding: 3px 2px; }
+  .cal-day-num { width: 18px; height: 18px; font-size: .66rem; }
+  .cal-cell .cal-task-dot { font-size: 0; padding: 0; background: transparent !important; border: none !important; width: auto; margin: 0 2px 1px 0; display: inline-flex; }
+  .cal-cell .cal-task-dot .dot { width: 8px; height: 8px; }
+  .cal-cell .cal-more { display: none; }
+  .cal-breakout { margin-top: 14px; }
+  .brk-head { padding: 12px 14px; }
 }
 </style>
 </head>
@@ -670,7 +714,7 @@ let state={
   listView:'kanban',kanbanFilters:{members:[],priorities:[],durations:[],startOns:[]},
   kanbanGroupBy:'status',filterOpen:false,dragTaskId:null,kanbanDragging:false,
   lvTaskIds:[],
-  calMonth:new Date().getMonth(),calYear:new Date().getFullYear(),
+  calMonth:new Date().getMonth(),calYear:new Date().getFullYear(),calSelectedDate:null,
   editingTaskId:null,editingListId:null,syncing:false,lastSync:null,
 };
 // ══════════════════════════════════════
@@ -1299,9 +1343,14 @@ function renderCalendar(){
   const monthName=new Date(year,month,1).toLocaleDateString('en-US',{month:'long',year:'numeric'});
   const todayStr2=todayStr();const firstDay=new Date(year,month,1).getDay();
   const daysInMonth=new Date(year,month+1,0).getDate();const daysInPrev=new Date(year,month,0).getDate();
+  const inThisMonth=s=>{const dd=new Date(s+'T12:00:00');return dd.getFullYear()===year&&dd.getMonth()===month;};
+  const now=new Date();const todayInView=now.getFullYear()===year&&now.getMonth()===month;
+  let selDate=state.calSelectedDate;
+  if(!selDate||!inThisMonth(selDate))selDate=todayInView?todayStr2:`${year}-${pad(month+1)}-01`;
+  state.calSelectedDate=selDate;
   const syncBtn=state.gcalKey?`<button class="btn btn-ghost btn-sm" onclick="fetchGoogleCalendarEvents()">🔄 Sync GCal</button>`:'';
   let html=`<div class="gcal-banner"><svg width="20" height="20" viewBox="0 0 24 24"><rect width="24" height="24" rx="3" fill="#1a7fe8"/><rect x="3" y="11" width="18" height="10" rx="1" fill="white" opacity=".2"/><text x="12" y="19" font-size="8" fill="white" text-anchor="middle" font-family="sans-serif" font-weight="bold">CAL</text></svg><p>${state.gcalKey?`✅ Google Calendar linked — ${state.gcalEvents.length} events loaded. ${syncBtn}`:'🔗 <a href="#" onclick="navTo(\'settings\')">Link Google Calendar in Settings →</a>'}</p></div>
-  <div style="font-size:.78rem;color:var(--text3);margin-bottom:12px">💡 Tap a task to open it · tap an empty day to add a new task · <span style="color:#8b5cf6">↻ dashed = recurring</span></div>
+  <div style="font-size:.78rem;color:var(--text3);margin-bottom:12px">💡 Tap any day to see its breakout below · tap a task to open it · <span style="color:#8b5cf6">↻ dashed = recurring</span></div>
   <div class="cal-nav"><button class="icon-btn" onclick="calPrev()">‹</button><h3>${monthName}</h3><button class="icon-btn" onclick="calNext()">›</button><button class="btn btn-ghost btn-sm" onclick="calToday()">Today</button></div>
   <div class="cal-grid">${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>`<div class="cal-header-cell">${d}</div>`).join('')}`;
   const totalCells=Math.ceil((firstDay+daysInMonth)/7)*7;
@@ -1325,20 +1374,49 @@ function renderCalendar(){
     const shownTasks=realDots.length+recurDots.length;
     const totalItems=ft.length+recurOccs.length+gcalEvs.length;
     const shownTotal=shownTasks+Math.min(gcalEvs.length,2);
-    html+=`<div class="cal-cell ${isOther?'other-month':''} ${isToday?'today':''}" onclick="calDayClick('${ds}')">
+    html+=`<div class="cal-cell ${isOther?'other-month':''} ${isToday?'today':''} ${ds===selDate?'sel-day':''}" onclick="calDayClick('${ds}')">
       <div class="cal-day-num">${day}</div>
       ${gcalEvs.slice(0,2).map(e=>`<div class="cal-task-dot gcal-event" onclick="event.stopPropagation()"><span class="dot" style="background:#0f9d58"></span>${escHtml(e.title.substring(0,14))}${e.title.length>14?'…':''}</div>`).join('')}
       ${realDots.join('')}
       ${recurDots.join('')}
-      ${totalItems>shownTotal?`<div style="font-size:.66rem;color:var(--text3)">+${totalItems-shownTotal} more</div>`:''}
+      ${totalItems>shownTotal?`<div class="cal-more" style="font-size:.66rem;color:var(--text3)">+${totalItems-shownTotal} more</div>`:''}
     </div>`;
   }
-  html+='</div>';document.getElementById('main-content').innerHTML=html;
+  html+='</div>';
+  html+=renderDailyBreakout(selDate);
+  document.getElementById('main-content').innerHTML=html;
 }
+// ── Daily breakout: everything happening on the selected day ──
+function calDailyItems(ds){
+  const m2=state.currentMember!=='family'?findMember(state.currentMember):null;
+  let tasks=state.tasks.filter(t=>t.dueDate===ds&&!t.completed);
+  if(m2)tasks=tasks.filter(t=>String(t.member)===String(m2.id));
+  let recur=state.tasks.filter(t=>t.recurrence&&t.dueDate&&!t.completed&&occursOnDate(t,ds));
+  if(m2)recur=recur.filter(t=>String(t.member)===String(m2.id));
+  const gcal=state.gcalEvents.filter(e=>e.date===ds);
+  return{tasks,recur,gcal};
+}
+function renderDailyBreakout(ds){
+  const d=new Date(ds+'T12:00:00');
+  const label=isNaN(d)?ds:d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  const isToday=ds===todayStr();
+  const{tasks,recur,gcal}=calDailyItems(ds);
+  const prioMap={high:'🔴 High',medium:'🟡 Med',low:'🟢 Low'};
+  const statusMap={inprogress:'🔵 In Progress',complete:'✅ Complete'};
+  const rows=[];
+  gcal.forEach(e=>rows.push({sort:(e.time||'zz')+'_g',html:`<div class="brk-item brk-gcal"><span class="brk-dot" style="background:#0f9d58"></span><div class="brk-body"><div class="brk-title">${escHtml(e.title)}</div><div class="brk-meta"><span class="brk-tag" style="background:rgba(15,157,88,.14);color:#0f9d58">📅 Google Cal</span><span class="brk-time">${e.time?'🕑 '+e.time:'All day'}</span></div></div></div>`}));
+  tasks.forEach(t=>{const tm=findMember(t.member);const c=tm&&tm.color?tm.color:'var(--accent)';rows.push({sort:(t.dueTime||'zy')+'_t',html:`<div class="brk-item" onclick="editTask('${t.id}')"><span class="brk-dot" style="background:${c}"></span><div class="brk-body"><div class="brk-title">${escHtml(t.title)}</div><div class="brk-meta">${tm?`<span class="brk-tag">${escHtml(tm.name)}</span>`:''}${t.dueTime?`<span class="brk-time">🕑 ${escHtml(t.dueTime)}</span>`:''}${t.priority&&t.priority!=='none'?`<span class="brk-tag brk-prio-${t.priority}">${prioMap[t.priority]||''}</span>`:''}${t.status&&t.status!=='notstarted'?`<span class="brk-tag brk-status">${statusMap[t.status]||''}</span>`:''}${t.duration?`<span class="brk-time">⏱ ${escHtml(t.duration)}</span>`:''}</div></div><button class="brk-check" title="Mark complete" onclick="event.stopPropagation();toggleTask('${t.id}',event)"></button></div>`});});
+  recur.forEach(t=>{const tm=findMember(t.member);const c=tm&&tm.color?tm.color:'#8b5cf6';rows.push({sort:(t.dueTime||'zx')+'_r',html:`<div class="brk-item brk-recur" onclick="editTask('${t.id}')"><span class="brk-dot" style="background:${c}"></span><div class="brk-body"><div class="brk-title">↻ ${escHtml(t.title)}</div><div class="brk-meta"><span class="brk-tag" style="background:rgba(138,92,246,.14);color:#8b5cf6">↻ Recurring</span>${tm?`<span class="brk-tag">${escHtml(tm.name)}</span>`:''}${t.dueTime?`<span class="brk-time">🕑 ${escHtml(t.dueTime)}</span>`:''}</div></div></div>`});});
+  rows.sort((a,b)=>String(a.sort).localeCompare(String(b.sort)));
+  const total=rows.length;
+  const body=total?rows.map(r=>r.html).join(''):'<div class="brk-empty">Nothing scheduled for this day. Tap “+ Add task” to plan something.</div>';
+  return`<div class="cal-breakout"><div class="brk-head"><div><div class="brk-date">${escHtml(label)}${isToday?'<span class="brk-today-badge">Today</span>':''}</div><div class="brk-count">${total} item${total===1?'':'s'}</div></div><button class="btn btn-primary btn-sm" onclick="calAddForDay('${ds}')">+ Add task</button></div><div class="brk-list">${body}</div></div>`;
+}
+function calAddForDay(ds){openAddTask();const el=document.getElementById('t-due');if(el)el.value=ds;}
 function calPrev(){state.calMonth--;if(state.calMonth<0){state.calMonth=11;state.calYear--;}renderCalendar();}
 function calNext(){state.calMonth++;if(state.calMonth>11){state.calMonth=0;state.calYear++;}renderCalendar();}
 function calToday(){state.calMonth=new Date().getMonth();state.calYear=new Date().getFullYear();renderCalendar();}
-function calDayClick(ds){openAddTask();document.getElementById('t-due').value=ds;}
+function calDayClick(ds){state.calSelectedDate=ds;renderCalendar();}
 function calTaskClick(e,id){if(e)e.stopPropagation();editTask(id,e);}
 // ══════════════════════════════════════
 // DAILY OFFICE (2019 BCP)
