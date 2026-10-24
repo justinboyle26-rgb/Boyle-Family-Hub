@@ -1,0 +1,59 @@
+name: Update news headlines
+
+on:
+  schedule:
+    - cron: '17 */2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: news
+  cancel-in-progress: true
+
+jobs:
+  news:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch Daily Wire headlines
+        run: |
+          python3 - <<'PY'
+          import json, re, html, urllib.request
+          import xml.etree.ElementTree as ET
+          from email.utils import parsedate_to_datetime
+          url = 'https://www.dailywire.com/feeds/rss.xml'
+          req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (BoyleFamilyHub headline fetcher)'})
+          root = ET.fromstring(urllib.request.urlopen(req, timeout=30).read())
+          items = []
+          for it in root.iter('item'):
+              title = html.unescape((it.findtext('title') or '').strip())
+              link = (it.findtext('link') or '').strip()
+              desc = html.unescape(re.sub(r'<[^>]+>', ' ', it.findtext('description') or ''))
+              desc = re.sub(r'\s+', ' ', desc).strip()
+              if len(desc) > 200:
+                  desc = desc[:197].rsplit(' ', 1)[0] + '…'
+              pub = (it.findtext('pubDate') or '').strip()
+              try:
+                  pub = parsedate_to_datetime(pub).isoformat()
+              except Exception:
+                  pass
+              if title and link.startswith('https://'):
+                  items.append({'title': title, 'link': link, 'summary': desc, 'published': pub})
+              if len(items) >= 12:
+                  break
+          if not items:
+              raise SystemExit('No headlines found; keeping the previous news.json')
+          with open('news.json', 'w', encoding='utf-8') as f:
+              json.dump({'source': 'Daily Wire', 'items': items}, f, ensure_ascii=False, indent=1)
+          print(len(items), 'headlines')
+          PY
+
+      - name: Commit if headlines changed
+        run: |
+          git config user.name "news-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add news.json
+          git diff --cached --quiet || (git commit -m "Update news headlines" && git push)
