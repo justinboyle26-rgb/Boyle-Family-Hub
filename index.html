@@ -613,6 +613,213 @@ body::before { content: ''; position: fixed; inset: 0; z-index: -1; pointer-even
 .meal-pick button:hover { border-color: var(--accent); color: var(--accent); }
 @media (max-width: 1100px) { .meal-week { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 @media (max-width: 640px) { .meal-week { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* ══════════ v2: same look on every page ══════════ */
+/* Family Overview */
+.ov-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+.ov-date { font-size: .82rem; font-weight: 600; color: var(--text3); }
+.ov-greet { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 2.1rem; letter-spacing: -.02em; margin-top: 2px; }
+.ov-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 18px; }
+.ov-stat { background: rgba(255,255,255,.86); border: 1px solid var(--border); border-radius: 18px; padding: 14px 18px; }
+.ov-stat .l { font-size: .76rem; font-weight: 600; color: var(--text2); }
+.ov-stat .n { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 2rem; margin-top: 2px; }
+.ov-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+.ov-card { background: rgba(255,255,255,.88); border: 1px solid var(--border); border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px; cursor: pointer; transition: border-color .15s, box-shadow .15s, transform .15s; box-shadow: 0 1px 2px rgba(20,40,80,.04); min-width: 0; }
+.ov-card:hover { border-color: rgba(10,114,209,.3); box-shadow: 0 8px 24px rgba(10,114,209,.10); transform: translateY(-1px); }
+.ov-card-top { display: flex; align-items: center; gap: 12px; }
+.ov-av-wrap { position: relative; width: 64px; height: 64px; flex-shrink: 0; }
+.ov-av-wrap .ov-ring { position: absolute; inset: 0; }
+.ov-av { position: absolute; inset: 8px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Outfit', var(--emoji); font-weight: 700; font-size: 1.2rem; overflow: hidden; }
+.ov-av img { width: 100% !important; height: 100% !important; object-fit: cover; }
+.ov-who { flex: 1; min-width: 0; }
+.ov-name { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 1.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ov-sub { font-size: .76rem; color: var(--text3); }
+.ov-edit { width: 34px; height: 34px; font-size: .85rem; flex-shrink: 0; }
+.ov-nums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.ov-nums > div { background: var(--surface2); border-radius: 12px; padding: 8px 10px; }
+.ov-nums b { display: block; font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 1.2rem; }
+.ov-nums span { font-size: .68rem; color: var(--text3); font-weight: 600; }
+.ov-next { border-top: 1px solid var(--border); padding-top: 10px; font-size: .86rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ov-next span { display: block; font-size: .64rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); margin-bottom: 2px; }
+.ov-section { margin-top: 18px; background: rgba(255,255,255,.7); border: 1px solid var(--border); border-radius: 20px; padding: 16px 18px; }
+.ov-section-h { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+.ov-section-h h2 { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 1.15rem; }
+.ov-up { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+.ov-up-item { background: rgba(255,255,255,.9); border: 1px solid var(--border); border-radius: 14px; padding: 10px 12px; min-width: 0; }
+.ov-up-item .d { font-size: .66rem; font-weight: 700; color: var(--text3); letter-spacing: .04em; }
+.ov-up-item .t { font-size: .86rem; font-weight: 600; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ov-up-item .w { font-size: .74rem; font-weight: 600; }
+.ov-empty { font-size: .85rem; color: var(--text3); }
+@media (max-width: 768px) { .ov-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ov-greet { font-size: 1.6rem; } }
+
+/* Glance: family overview strip + fit on short screens */
+.gl-fam { display: flex; flex-direction: column; gap: 10px; }
+.gl-fam-h { display: flex; align-items: center; justify-content: space-between; }
+.gl-fam-h .gl-hint { margin-left: 0; }
+.gl-fgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 10px; }
+.gl-fcard { display: flex; align-items: center; gap: 10px; padding: 8px 12px 8px 8px; border-radius: 18px; background: rgba(255,255,255,.8); border: 1px solid var(--border); min-width: 0; }
+.gl-fav { position: relative; width: 44px; height: 44px; flex-shrink: 0; }
+.gl-fav .ov-ring { position: absolute; inset: 0; }
+.gl-fav .gl-av { position: absolute; inset: 6px; width: auto; height: auto; font-size: .8rem; }
+.gl-fwho { min-width: 0; }
+.gl-fname { font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gl-fsub { font-size: 12.5px; color: var(--text2); white-space: nowrap; }
+@media (max-height: 820px) and (min-width: 769px) {
+  .glance { padding: 26px 36px 22px; gap: 16px; }
+  .gl-time { font-size: clamp(64px, 15vh, 120px); }
+  .gl-date { font-size: 22px; margin-top: 6px; }
+  .gl-chip { padding: 7px 13px; font-size: 14px; }
+  .gl-card { padding: 16px 20px; gap: 8px; }
+  .gl-row .bar { height: 28px; }
+  .gl-row .ttl { font-size: 19px; }
+  .gl-fgrid { gap: 8px; }
+  .gl-fcard { padding: 6px 10px 6px 6px; }
+}
+
+/* Settings: grouped glass cards */
+.settings-section { background: rgba(255,255,255,.86); border: 1px solid var(--border); border-radius: 20px; padding: 16px 20px; margin-bottom: 16px; box-shadow: 0 1px 2px rgba(20,40,80,.04); max-width: 900px; }
+.settings-section h4 { font-family: 'Outfit', var(--emoji), sans-serif; font-weight: 600; font-size: 1.1rem; color: var(--text); margin-bottom: 6px; }
+.settings-row-label { font-weight: 600; }
+.toggle { width: 46px; height: 26px; border-radius: 13px; }
+.toggle::after { width: 20px; height: 20px; }
+.toggle.on::after { transform: translateX(20px); }
+
+/* Daily Office: reading card */
+.office-btn { border-radius: 14px; border-width: 1px; background: rgba(255,255,255,.8); min-height: 46px; }
+.office-btn.active { box-shadow: 0 4px 14px rgba(10,114,209,.22); }
+.office-content { background: rgba(255,255,255,.86); border: 1px solid var(--border); border-radius: 24px; padding: 32px 36px; box-shadow: 0 1px 2px rgba(20,40,80,.04); }
+.office-section h3 { color: var(--accent); }
+.office-psalm { background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; }
+.office-section p, .office-psalm p { color: var(--text2); }
+@media (max-width: 768px) { .office-content { padding: 22px 18px; } }
+
+/* Import */
+.import-zone { border-radius: 18px; background: rgba(255,255,255,.75); border-width: 1.5px; }
+#imp-panel-csv textarea, #imp-panel-sheets input { border-radius: 12px !important; }
+
+/* Kanban + list view */
+.kanban-col { background: rgba(255,255,255,.55); }
+.kanban-col-header { background: rgba(255,255,255,.6); }
+.kanban-card { border-radius: 14px; background: #fff; }
+.view-toggle-btn.active, .kfilter-dd-btn.has-active, .filter-chip.active, .kfilter-chip.active { background: var(--accent); border-color: var(--accent); }
+.lv-wrap { background: rgba(255,255,255,.9); }
+.lv-table th { background: var(--surface2); color: var(--text3); }
+
+/* Links, workout, modals */
+.link-tile { background: rgba(255,255,255,.88); }
+.link-tile .link-ico { background: var(--surface2); }
+.wk-card { background: rgba(255,255,255,.88); border-radius: 20px; }
+.wk-stat, .amrap-box { background: var(--surface2); }
+.form-group input, .form-group select, .form-group textarea { border-radius: 12px; }
+.modal h3 { font-size: 1.4rem; }
+.setup-card { border-radius: 26px; background: rgba(255,255,255,.9); }
+@media (max-width: 768px) { .gl-cols { flex: none; grid-template-columns: minmax(0, 1fr); } .gl-card { overflow: visible; } .gl-fgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .topbar h2 { font-size: 1.1rem; line-height: 1.2; } .topbar-actions .btn-ghost { display: none; } }
+/* Members live on the Family page and Glance screen, not in the sidebar */
+.sidebar .family-list { display: none; }
+/* ══════════ v3 GLANCE: 5-day view, weather, portrait-friendly ══════════ */
+.glance { gap: 16px; padding: 30px 36px 24px; }
+.gl-top { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+.gl-clock { flex: 1; min-width: 240px; }
+.gl-time { font-size: clamp(64px, min(12vw, 14vh), 150px); }
+.gl-date { margin-top: 8px; font-size: clamp(18px, 2.4vh, 28px); }
+.gl-wx { display: flex; align-items: center; gap: 14px; padding: 12px 18px; border-radius: 22px; background: rgba(255,255,255,.8); border: 1px solid var(--border); }
+.gl-wx-ico { font-size: clamp(40px, 6vh, 64px); line-height: 1; font-family: var(--emoji); }
+.gl-wx-temp { font-family: 'Outfit', sans-serif; font-weight: 500; font-size: clamp(34px, 5vh, 54px); line-height: 1; }
+.gl-wx-sub { font-size: 14px; font-weight: 600; color: var(--text2); margin-top: 4px; }
+.gl-wx-loc { font-size: 12px; color: var(--text3); }
+.gl-chips { flex-direction: row; flex-wrap: wrap; align-items: center; margin-left: 0; gap: 8px; }
+.gl-chip { padding: 8px 14px; font-size: 14.5px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gl-chip.gl-next { background: rgba(10,114,209,.09); border-color: rgba(10,114,209,.22); color: var(--text); }
+.gl-days { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+.gl-day { background: rgba(255,255,255,.8); border: 1px solid var(--border); border-radius: 20px; padding: 14px 14px 10px; display: flex; flex-direction: column; gap: 8px; min-height: 0; min-width: 0; overflow: hidden; box-shadow: 0 6px 20px rgba(20,40,80,.05); }
+.gl-day.today { background: rgba(255,255,255,.94); box-shadow: inset 0 0 0 2px var(--accent), 0 8px 24px rgba(10,114,209,.10); border-color: transparent; }
+.gl-day-h { display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; flex-shrink: 0; }
+.gl-day-name { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 19px; line-height: 1.1; }
+.gl-day.today .gl-day-name { color: var(--accent); }
+.gl-day-date { font-size: 12px; font-weight: 600; color: var(--text3); margin-top: 2px; }
+.gl-day-wx { display: flex; align-items: center; gap: 4px; font-size: 20px; font-family: var(--emoji); flex-shrink: 0; }
+.gl-day-wx span { font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700; color: var(--text); }
+.gl-day-wx i { font-style: normal; font-weight: 500; color: var(--text3); }
+.gl-dinner { font-size: 13px; font-weight: 600; color: var(--accent3); background: rgba(14,159,110,.08); border-radius: 9px; padding: 4px 8px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: 'Inter', var(--emoji); }
+.gl-day-items { flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; gap: 7px; }
+.gl-it { display: flex; gap: 9px; min-width: 0; flex-shrink: 0; }
+.gl-it .bar { width: 4px; border-radius: 2px; flex-shrink: 0; align-self: stretch; }
+.gl-it .tx { min-width: 0; }
+.gl-it .ttl { font-size: 15.5px; font-weight: 600; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.gl-it .sub { font-size: 12.5px; font-weight: 500; color: var(--text3); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gl-day.today .gl-it .ttl { font-size: 17px; }
+.gl-day .gl-empty { font-size: 14px; }
+.gl-day .gl-more { flex-shrink: 0; font-size: 12.5px; }
+.gl-fam { flex-shrink: 0; }
+/* Portrait screens (Pi turned vertically): Today full width, next 4 days in a 2×2 grid */
+@media (orientation: portrait) and (min-width: 560px) {
+  .glance { padding: 34px 30px 26px; gap: 18px; }
+  .gl-time { font-size: clamp(80px, 9vh, 160px); }
+  .gl-days { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, 1fr); }
+  .gl-day.today { grid-column: 1 / -1; }
+  .gl-day.today .gl-day-items { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: min-content; align-content: start; column-gap: 16px; row-gap: 9px; }
+  .gl-day-name { font-size: 22px; }
+  .gl-fgrid { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+}
+/* Phones: scroll instead of fit */
+@media (max-width: 559px) {
+  .glance { overflow-y: auto; padding: 22px 16px; }
+  .gl-days { flex: none; grid-template-columns: minmax(0, 1fr); }
+  .gl-day { overflow: visible; }
+  .gl-day-items { overflow: visible; }
+  .gl-fgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gl-chip { white-space: normal; }
+}
+/* Short landscape (Pi horizontal) */
+@media (max-height: 820px) and (min-width: 769px) and (orientation: landscape) {
+  .glance { padding: 20px 28px 16px; gap: 12px; }
+  .gl-time { font-size: clamp(56px, 13vh, 110px); }
+  .gl-wx { padding: 8px 14px; }
+  .gl-day { padding: 10px 12px 8px; gap: 6px; }
+  .gl-it .ttl { font-size: 14px; }
+  .gl-day.today .gl-it .ttl { font-size: 15px; }
+  .gl-fgrid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; }
+  .gl-fcard { padding: 4px 8px 4px 4px; gap: 8px; }
+  .gl-fav { width: 38px; height: 38px; }
+  .gl-fav .ov-ring { width: 38px; height: 38px; }
+  .gl-fav .gl-av { inset: 5px; }
+  .gl-fname { font-size: 13.5px; } .gl-fsub { font-size: 11.5px; }
+}
+.wx-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.gl-day-h { flex-wrap: wrap; row-gap: 2px; }
+@media (orientation: landscape) { .gl-day-name { font-size: 17px; } .gl-day-wx { font-size: 17px; } .gl-day-wx span { font-size: 13px; } }
+@media (orientation: portrait) and (min-width: 560px) and (max-width: 759px) {
+  .gl-top { flex-wrap: nowrap; gap: 14px; }
+  .gl-clock { min-width: 0; }
+  .gl-time { font-size: clamp(64px, 7.5vh, 110px); }
+  .gl-date { font-size: 18px; }
+  .gl-wx { padding: 10px 14px; gap: 10px; flex-shrink: 0; }
+  .gl-wx-ico { font-size: 40px; } .gl-wx-temp { font-size: 36px; } .gl-wx-sub { font-size: 12.5px; }
+  .gl-days { grid-template-rows: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+  .gl-day { padding: 12px 12px 8px; }
+  .gl-day.today .gl-day-items { column-gap: 12px; }
+  .gl-fgrid { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+  .gl-fcard { flex-direction: column; text-align: center; gap: 4px; padding: 8px 4px; border-radius: 14px; }
+  .gl-fwho { width: 100%; }
+  .gl-fname { font-size: 13px; } .gl-fsub { font-size: 11px; white-space: normal; line-height: 1.2; }
+  .gl-fam-h .gl-hint { display: none; }
+}
+@media (orientation: portrait) and (min-width: 1000px) {
+  .gl-time { font-size: clamp(120px, 9vh, 200px); }
+  .gl-date { font-size: 34px; }
+  .gl-chip { font-size: 19px; padding: 11px 18px; }
+  .gl-day-name { font-size: 30px; } .gl-day-date { font-size: 16px; }
+  .gl-day-wx { font-size: 28px; } .gl-day-wx span { font-size: 19px; }
+  .gl-dinner { font-size: 17px; padding: 6px 10px; }
+  .gl-it .ttl, .gl-day.today .gl-it .ttl { font-size: 22px; } .gl-it .sub { font-size: 16px; }
+  .gl-day { padding: 20px 20px 14px; border-radius: 26px; gap: 12px; }
+  .gl-day-items { gap: 12px; }
+  .gl-wx-ico { font-size: 72px; } .gl-wx-temp { font-size: 64px; } .gl-wx-sub { font-size: 18px; } .gl-wx-loc { font-size: 15px; }
+  .gl-fgrid { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+  .gl-fav { width: 56px; height: 56px; } .gl-fav .ov-ring { width: 56px; height: 56px; }
+  .gl-fname { font-size: 18px; } .gl-fsub { font-size: 14px; }
+  .gl-label, .gl-hint { font-size: 16px; }
+}
 </style>
 </head>
 <body>
@@ -666,7 +873,11 @@ body::before { content: ''; position: fixed; inset: 0; z-index: -1; pointer-even
     <div class="sidebar-section">
       <button class="nav-btn" id="nav-overview" onclick="navTo('overview')">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-        Family Overview
+        Family
+      </button>
+      <button class="nav-btn" id="nav-alltasks" onclick="openAllTasks()">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="m8 12 3 3 5-6"/></svg>
+        All Tasks
       </button>
       <button class="nav-btn" id="nav-calendar" onclick="navTo('calendar')">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
@@ -876,7 +1087,7 @@ function assignees(){return state.members.concat([GROCERIES]);}
 function durationLabel(v){const d=DURATIONS.find(x=>x.v===v);return d?d.label:'';}
 function startOnLabel(v){const s=STARTONS.find(x=>x.v===v);return s?s.label:'';}
 let state={
-  members:[],tasks:[],lists:[],gcalKey:'',gcalId:'',theme:'light',meals:{plan:{},library:{}},mealWeekOffset:0,gcalEvents:[],familyLinks:[],weights:[],sessions:[],workoutMeta:{},
+  members:[],tasks:[],lists:[],gcalKey:'',gcalId:'',theme:'light',meals:{plan:{},library:{}},weatherLoc:null,weather:null,mealWeekOffset:0,gcalEvents:[],familyLinks:[],weights:[],sessions:[],workoutMeta:{},
   currentMember:'family',currentView:'myday',mainView:'tasks',currentListId:null,
   listView:'kanban',kanbanFilters:{members:[],priorities:[],durations:[],startOns:[]},
   kanbanGroupBy:'status',filterOpen:false,dragTaskId:null,kanbanDragging:false,
@@ -940,7 +1151,9 @@ function startApp(){
   document.getElementById('setup-screen').style.display='none';
   document.getElementById('app').style.display='block';
   updateFsIcon();
-  renderSidebar();renderSidebarLists();setView('tasks');startFirebaseListener();
+  renderSidebar();renderSidebarLists();setView('overview');startFirebaseListener();
+  if(typeof glanceCfg!=='undefined'&&glanceCfg.onOpen!==false)setTimeout(showGlance,0);
+  weatherTick();
   if(state.gcalKey&&state.gcalId)fetchGoogleCalendarEvents();
 }
 function groceriesSidebarBtnHtml(){
@@ -979,6 +1192,7 @@ function selectMember(id,btn){
   document.querySelectorAll('.view-tab').forEach((t,i)=>t.classList.toggle('active',i===0));
   setTimeout(()=>{const lt=document.getElementById('tab-late');if(lt&&id!=='family'){const today=todayStr();const lc=state.tasks.filter(t=>String(t.member)===String(id)&&!t.completed&&t.dueDate&&t.dueDate<today).length;lt.textContent=lc>0?`Late Tasks (${lc})`:'Late Tasks';lt.style.color=lc>0?'var(--accent2)':'';}},0);
   document.querySelectorAll('.list-btn,.nav-btn').forEach(b=>b.classList.remove('active'));
+  if(id==='family'){const ab=document.getElementById('nav-alltasks');if(ab)ab.classList.add('active');document.getElementById('topbar-title').textContent='All Tasks';}
   renderTasksView();
   if(window.innerWidth<=768)closeSidebarMobile();
 }
@@ -1463,29 +1677,65 @@ function saveMember(){
 // ══════════════════════════════════════
 // OVERVIEW
 // ══════════════════════════════════════
-function renderOverview(){
-  document.getElementById('view-tabs').style.display='none';const today=todayStr();
-  let html='<div class="family-grid">';
-  state.members.forEach(m=>{
-    const mt=state.tasks.filter(t=>String(t.member)===String(m.id));const active=mt.filter(t=>!t.completed);const done=mt.filter(t=>t.completed);const overdue=active.filter(t=>t.dueDate&&t.dueDate<today);
-    const total=active.length+done.length;const pct=total===0?0:Math.round(done.length/total*100);const allDone=total>0&&pct===100;
-    const barColor=allDone?'#18c97a':overdue.length>0?`linear-gradient(90deg,${m.color},var(--accent2))`:`linear-gradient(90deg,${m.color},${m.color}cc)`;
-    let pg;if(allDone)pg=`<div class="card-complete-badge" style="color:#18c97a">🎉 All tasks complete!</div>`;
-    else if(total===0)pg=`<div class="card-progress-wrap"><div class="card-progress-label"><span class="card-progress-pct" style="color:var(--text3)">No tasks yet</span></div><div class="card-progress-track"><div class="card-progress-fill" style="width:0%;background:${m.color}"></div></div></div>`;
-    else pg=`<div class="card-progress-wrap"><div class="card-progress-label"><span class="card-progress-pct" style="color:${pct>=70?'#18c97a':pct>=40?m.color:'var(--accent2)'}">${pct}% complete</span><span class="card-progress-done">${done.length} of ${total} done</span></div><div class="card-progress-track"><div class="card-progress-fill" style="width:${pct}%;background:${barColor}"></div></div></div>`;
-    html+=`<div class="family-card" onclick="selectMemberFromCard('${m.id}')"><div class="family-card-header"><div class="family-card-avatar" style="background:${m.color}22;color:${m.color}">${memberAvatarHtml(m,44)}</div><div><div class="family-card-name">${escHtml(m.name)}</div><div class="family-card-role">${active.length} active task${active.length!==1?'s':''}</div></div><button class="icon-btn" style="margin-left:auto;width:28px;height:28px;font-size:.8rem" onclick="event.stopPropagation();openEditMember(${state.members.indexOf(m)})" title="Edit">✏️</button></div><div class="family-card-stats"><div class="stat"><div class="stat-num">${active.length}</div><div class="stat-lbl">Active</div></div><div class="stat"><div class="stat-num">${done.length}</div><div class="stat-lbl">Done</div></div><div class="stat"><div class="stat-num" style="color:${overdue.length?'var(--accent2)':'inherit'}">${overdue.length}</div><div class="stat-lbl">Overdue</div></div></div>${pg}</div>`;
-  });
-  // Groceries card
-  {
-    const gt=state.tasks.filter(t=>String(t.member)==='groceries');const gActive=gt.filter(t=>!t.completed);const gDone=gt.filter(t=>t.completed);
-    const total=gActive.length+gDone.length;const pct=total===0?0:Math.round(gDone.length/total*100);const allDone=total>0&&pct===100;
-    let pg;if(allDone)pg=`<div class="card-complete-badge" style="color:#18c97a">🎉 All picked up!</div>`;
-    else if(total===0)pg=`<div class="card-progress-wrap"><div class="card-progress-label"><span class="card-progress-pct" style="color:var(--text3)">No groceries yet</span></div><div class="card-progress-track"><div class="card-progress-fill" style="width:0%;background:${GROCERIES.color}"></div></div></div>`;
-    else pg=`<div class="card-progress-wrap"><div class="card-progress-label"><span class="card-progress-pct" style="color:${GROCERIES.color}">${pct}% picked up</span><span class="card-progress-done">${gDone.length} of ${total} done</span></div><div class="card-progress-track"><div class="card-progress-fill" style="width:${pct}%;background:${GROCERIES.color}"></div></div></div>`;
-    html+=`<div class="family-card" onclick="selectMemberFromCard('groceries')"><div class="family-card-header"><div class="family-card-avatar" style="background:${GROCERIES.color}22;color:${GROCERIES.color}">🛒</div><div><div class="family-card-name">Groceries</div><div class="family-card-role">${gActive.length} item${gActive.length!==1?'s':''} to get</div></div></div><div class="family-card-stats"><div class="stat"><div class="stat-num">${gActive.length}</div><div class="stat-lbl">To Get</div></div><div class="stat"><div class="stat-num">${gDone.length}</div><div class="stat-lbl">Got</div></div><div class="stat"><div class="stat-num">${total}</div><div class="stat-lbl">Total</div></div></div>${pg}</div>`;
-  }
-  html+='</div>';document.getElementById('main-content').innerHTML=html;
+// ══════════════════════════════════════
+// OVERVIEW (new look: greeting, stat tiles, progress rings, coming up)
+// ══════════════════════════════════════
+function ovRingSvg(pct,color,size){
+  const r=size/2-4,c=2*Math.PI*r,off=(c*(1-pct/100)).toFixed(1);
+  return`<svg class="ov-ring" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true"><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="rgba(15,40,80,.09)" stroke-width="4"></circle><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${color}" stroke-width="4" stroke-linecap="round" stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${off}" transform="rotate(-90 ${size/2} ${size/2})"></circle></svg>`;
 }
+function ovMemberStats(id){
+  const today=todayStr();const mt=state.tasks.filter(t=>String(t.member)===String(id));
+  const active=mt.filter(t=>!t.completed),done=mt.filter(t=>t.completed),late=active.filter(t=>t.dueDate&&t.dueDate<today);
+  const leftToday=active.filter(t=>t.dueDate&&t.dueDate<=today).length;
+  const total=active.length+done.length;const pct=total?Math.round(done.length/total*100):0;
+  const next=active.slice().sort((a,b)=>((a.dueDate||'9999')+(a.dueTime||'99')).localeCompare((b.dueDate||'9999')+(b.dueTime||'99')))[0];
+  return{active:active.length,done:done.length,late:late.length,leftToday,total,pct,next};
+}
+function ovGreeting(){const h=new Date().getHours();return h<12?'Good morning':h<17?'Good afternoon':'Good evening';}
+function renderOverview(){
+  document.getElementById('view-tabs').style.display='none';
+  document.getElementById('topbar-title').textContent='Family Overview';
+  document.getElementById('topbar-color').style.background='var(--accent)';
+  const today=todayStr();const weekAgo=Date.now()-7*86400000;
+  const people=state.tasks.filter(t=>String(t.member)!=='groceries');
+  const dueToday=people.filter(t=>!t.completed&&t.dueDate===today).length;
+  const overdue=people.filter(t=>!t.completed&&t.dueDate&&t.dueDate<today).length;
+  const groc=state.tasks.filter(t=>!t.completed&&String(t.member)==='groceries').length;
+  const doneWeek=people.filter(t=>t.completed&&t.completedAt&&new Date(t.completedAt).getTime()>=weekAgo).length;
+  let html=`<div class="ov-head"><div><div class="ov-date">${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</div><h1 class="ov-greet">${ovGreeting()}, Boyle family</h1></div><button class="btn btn-ghost btn-sm" onclick="showGlance()">🖥 Glance screen</button></div>
+  <div class="ov-stats">
+    <div class="ov-stat"><div class="l">Due today</div><div class="n">${dueToday}</div></div>
+    <div class="ov-stat"><div class="l">Overdue</div><div class="n" style="color:${overdue?'var(--accent2)':'inherit'}">${overdue}</div></div>
+    <div class="ov-stat"><div class="l">Groceries to get</div><div class="n" style="color:var(--accent4)">${groc}</div></div>
+    <div class="ov-stat"><div class="l">Done this week</div><div class="n" style="color:var(--accent3)">${doneWeek}</div></div>
+  </div><div class="ov-grid">`;
+  state.members.forEach((m,idx)=>{
+    const s=ovMemberStats(m.id);
+    html+=`<div class="ov-card" onclick="selectMemberFromCard('${m.id}')">
+      <div class="ov-card-top"><div class="ov-av-wrap">${ovRingSvg(s.pct,m.color,64)}<span class="ov-av" style="background:${hexA(m.color,'22')};color:${m.color}">${memberAvatarHtml(m,48)}</span></div>
+        <div class="ov-who"><div class="ov-name">${escHtml(m.name)}</div><div class="ov-sub">${s.total?`${s.pct}% complete`:'No tasks yet'}</div></div>
+        <button class="icon-btn ov-edit" onclick="event.stopPropagation();openEditMember(${idx})" title="Edit ${escHtml(m.name)}" aria-label="Edit ${escHtml(m.name)}">✏️</button></div>
+      <div class="ov-nums"><div><b>${s.active}</b><span>Active</span></div><div><b>${s.done}</b><span>Done</span></div><div><b style="color:${s.late?'var(--accent2)':'inherit'}">${s.late}</b><span>Late</span></div></div>
+      <div class="ov-next"><span>Up next</span>${s.next?escHtml(s.next.title)+(s.next.dueDate?` · ${s.next.dueDate===today?'today':formatDate(s.next.dueDate)}`:''):'All caught up 🎉'}</div>
+    </div>`;
+  });
+  {const g=state.tasks.filter(t=>String(t.member)==='groceries');const ga=g.filter(t=>!t.completed).length,gd=g.length-ga;const pct=g.length?Math.round(gd/g.length*100):0;
+   const items=g.filter(t=>!t.completed).slice(0,4).map(t=>escHtml(t.title)).join(', ');
+   html+=`<div class="ov-card" onclick="selectMemberFromCard('groceries')"><div class="ov-card-top"><div class="ov-av-wrap">${ovRingSvg(pct,GROCERIES.color,64)}<span class="ov-av" style="background:${hexA(GROCERIES.color,'22')};color:${GROCERIES.color}">🛒</span></div><div class="ov-who"><div class="ov-name">Groceries</div><div class="ov-sub">${ga} to get</div></div></div>
+     <div class="ov-nums"><div><b>${ga}</b><span>To get</span></div><div><b>${gd}</b><span>Got</span></div><div><b>${g.length}</b><span>Total</span></div></div>
+     <div class="ov-next"><span>On the list</span>${items||'Nothing to get'}${ga>4?'…':''}</div></div>`;}
+  html+='</div>';
+  // Coming up: the next 7 days
+  const up=[];
+  for(let i=1;i<=7;i++){const d=new Date();d.setDate(d.getDate()+i);const ds=nlDateStr(d);glanceItemsFor(ds).forEach(it=>up.push(Object.assign({ds,d},it)));}
+  html+=`<div class="ov-section"><div class="ov-section-h"><h2>Coming up this week</h2><button class="btn btn-ghost btn-sm" onclick="navTo('calendar')">Open calendar →</button></div>`;
+  if(!up.length)html+=`<div class="ov-empty">Nothing scheduled in the next 7 days.</div>`;
+  else html+=`<div class="ov-up">${up.slice(0,10).map(it=>{const m=it.gcal?null:findMember(it.member);const c=it.gcal?'#0f9d58':(m?m.color:'#7C5CE6');return`<div class="ov-up-item"><div class="d">${it.d.toLocaleDateString('en-US',{weekday:'short',day:'numeric'}).toUpperCase()}${it.time?' · '+formatTime(it.time):''}</div><div class="t">${it.recur?'↻ ':''}${escHtml(it.title)}</div><div class="w" style="color:${c}">${it.gcal?'Google':(m?escHtml(m.name):'Family')}</div></div>`;}).join('')}</div>`;
+  html+='</div>';
+  document.getElementById('main-content').innerHTML=html;
+}
+function openAllTasks(){selectMember('family',null);const b=document.getElementById('nav-alltasks');if(b)b.classList.add('active');}
 function selectMemberFromCard(id){const btn=document.querySelector(`[data-member="${id}"]`);if(btn)selectMember(id,btn);else selectMember(id,null);}
 // ══════════════════════════════════════
 // CALENDAR
@@ -2103,13 +2353,18 @@ function renderSettings(){
   document.getElementById('view-tabs').style.display='none';
   document.getElementById('main-content').innerHTML=`
   <div class="settings-section"><h4>🎨 Appearance</h4>
-    <div class="settings-row"><div><div class="settings-row-label">Glance Screen</div><div class="settings-row-sub">Shows a big today/tomorrow view after the screen sits idle (this device only)</div></div><button class="toggle ${glanceCfg.enabled?'on':''}" onclick="setGlanceEnabled()"></button></div>
+    <div class="settings-row"><div><div class="settings-row-label">Open to Glance Screen</div><div class="settings-row-sub">Show the Glance screen whenever the Hub is opened (this device only)</div></div><button class="toggle ${glanceCfg.onOpen!==false?'on':''}" onclick="glanceCfg.onOpen=glanceCfg.onOpen===false;saveGlanceCfg();renderSettings()"></button></div>
+    <div class="settings-row"><div><div class="settings-row-label">Glance Screen When Idle</div><div class="settings-row-sub">Shows a big today/tomorrow view after the screen sits idle (this device only)</div></div><button class="toggle ${glanceCfg.enabled?'on':''}" onclick="setGlanceEnabled()"></button></div>
     <div class="settings-row"><div><div class="settings-row-label">Glance Screen Delay</div><div class="settings-row-sub">Minutes of no touches before it appears</div></div><div style="display:flex;gap:8px;align-items:center"><select onchange="setGlanceMinutes(this.value)" style="padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-family:inherit">${[1,3,5,10,15,30].map(n=>`<option value="${n}"${+glanceCfg.minutes===n?' selected':''}>${n} min</option>`).join('')}</select><button class="btn btn-ghost btn-sm" onclick="showGlance()">Show now</button></div></div>
     <div class="settings-row"><div><div class="settings-row-label">Fullscreen Mode</div><div class="settings-row-sub">Expand the app to fill the entire screen (also the ⤢ button up top)</div></div><button class="toggle ${isFullscreen()?'on':''}" onclick="toggleFullscreen()"></button></div>
     <div class="settings-row"><div><div class="settings-row-label">On-Screen Keyboard</div><div class="settings-row-sub">Pops up a touch keyboard when you tap a text field (great for touchscreens)</div></div><button class="toggle ${vkbEnabled?'on':''}" onclick="toggleVkbEnabled();renderSettings()"></button></div>
   </div>
   <div class="settings-section"><h4>🗄️ Firebase</h4>
     <div style="background:rgba(24,201,122,.08);border:1px solid rgba(24,201,122,.2);border-radius:10px;padding:10px 14px;font-size:.82rem;color:var(--accent3)">✅ Connected to Firebase Realtime Database. Your data is shared across every device automatically.</div>
+  </div>
+  <div class="settings-section"><h4>🌤️ Weather</h4>
+    <div class="settings-row"><div><div class="settings-row-label">Weather on the Glance screen</div><div class="settings-row-sub">${state.weatherLoc?'Showing weather for <b>'+escHtml(state.weatherLoc.name)+'</b> (shared with every device)':'Enter your city to show today\u2019s weather and a 5-day forecast'}</div></div></div>
+    <div class="wx-row" style="margin-top:8px"><input type="text" id="s-wx-city" placeholder="City, e.g. Siloam Springs" value="" style="flex:1;min-width:200px;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:inherit;font-size:.9rem;outline:none" onkeydown="if(event.key==='Enter')saveWeatherLoc()"><button class="btn btn-primary btn-sm" onclick="saveWeatherLoc()">Set location</button>${state.weatherLoc?'<button class="btn btn-ghost btn-sm" onclick="clearWeatherLoc()">Remove</button>':''}</div>
   </div>
   <div class="settings-section"><h4>📅 Google Calendar</h4>
     <div class="form-group"><label>API Key</label><input type="text" id="s-gcal-key" value="${escHtml(state.gcalKey)}" placeholder="AIza..."></div>
@@ -2143,14 +2398,14 @@ async function pushTask(task,action){
 }
 function saveConfigToFirebase(){
   const db=getDb();if(!db)return;
-  db.ref('config').set({members:state.members.map(m=>({id:m.id,name:m.name,color:m.color,avatar:m.avatar||null,links:m.links||[]})),lists:state.lists,gcalKey:state.gcalKey,gcalId:state.gcalId,theme:state.theme,familyLinks:state.familyLinks||[]}).catch(e=>console.error('Config sync:',e));
+  db.ref('config').set({members:state.members.map(m=>({id:m.id,name:m.name,color:m.color,avatar:m.avatar||null,links:m.links||[]})),lists:state.lists,gcalKey:state.gcalKey,gcalId:state.gcalId,theme:state.theme,familyLinks:state.familyLinks||[],weatherLoc:state.weatherLoc||null}).catch(e=>console.error('Config sync:',e));
 }
 function startFirebaseListener(){
   if(_fbListening)return;const db=getDb();if(!db)return;_fbListening=true;setSyncStatus('syncing');
   db.ref('tasks').on('value',snap=>{
     const data=snap.val();
     state.tasks=data?Object.values(data).map(t=>Object.assign({},t,{completed:t.completed===true||t.completed==='true',addedToCal:t.addedToCal===true||t.addedToCal==='true'})).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)):[];
-    updateCounts();renderView();renderSidebarLists();state.lastSync=new Date();setSyncStatus('ok');
+    updateCounts();renderView();renderSidebarLists();if(typeof glanceOpen==='function'&&glanceOpen())renderGlance();state.lastSync=new Date();setSyncStatus('ok');
   },err=>{console.error(err);setSyncStatus('error');});
   db.ref('config').on('value',snap=>{
     const data=snap.val();
@@ -2160,6 +2415,7 @@ function startFirebaseListener(){
       if(data.lists&&JSON.stringify(data.lists)!==JSON.stringify(state.lists)){state.lists=data.lists;changed=true;}
       if(JSON.stringify(data.familyLinks||[])!==JSON.stringify(state.familyLinks||[])){state.familyLinks=data.familyLinks||[];changed=true;}
       if(data.gcalKey!==undefined)state.gcalKey=data.gcalKey;if(data.gcalId!==undefined)state.gcalId=data.gcalId;
+      {const wl=data.weatherLoc||null;if(JSON.stringify(wl)!==JSON.stringify(state.weatherLoc||null)){state.weatherLoc=wl;weatherTick();}}
       if(data.theme&&data.theme!==state.theme){state.theme=data.theme;applyTheme(state.theme);}
       localStorage.setItem('familyhub_v2',JSON.stringify({theme:state.theme,members:state.members,lists:state.lists,gcalKey:state.gcalKey,gcalId:state.gcalId,familyLinks:state.familyLinks||[]}));
       if(changed){renderSidebar();renderSidebarLists();renderView();}
@@ -2722,7 +2978,7 @@ function spawnRecurringTask(ct){
 // ══════════════════════════════════════
 // GLANCE / IDLE SCREEN
 // ══════════════════════════════════════
-var glanceCfg={enabled:true,minutes:3};
+var glanceCfg={enabled:true,minutes:3,onOpen:true};
 try{const g=JSON.parse(localStorage.getItem('familyhub_glance')||'null');if(g)glanceCfg=Object.assign(glanceCfg,g);}catch(_){}
 var _glanceIdleT=null,_glanceClockT=null;
 function saveGlanceCfg(){try{localStorage.setItem('familyhub_glance',JSON.stringify(glanceCfg));}catch(_){}}
@@ -2743,24 +2999,86 @@ function glanceListHtml(items,empty){
   if(!items.length)return`<div class="gl-empty">${empty}</div>`;
   const max=6;return items.slice(0,max).map(glanceRowHtml).join('')+(items.length>max?`<div class="gl-more">+${items.length-max} more</div>`:'');
 }
+// ── Glance: 5-day view, weather, up-next countdown, dinners, family overview ──
+const GL_BOOT_TS=Date.now();
+const WX_CODES=[[0,'☀️','Clear'],[1,'🌤️','Mostly clear'],[2,'⛅','Partly cloudy'],[3,'☁️','Cloudy'],[48,'🌫️','Fog'],[57,'🌦️','Drizzle'],[67,'🌧️','Rain'],[77,'🌨️','Snow'],[82,'🌦️','Showers'],[86,'🌨️','Snow showers'],[99,'⛈️','Thunderstorms']];
+function wxInfo(code){for(const[c,i,l]of WX_CODES)if(code<=c)return{icon:i,label:l};return{icon:'🌡️',label:''};}
+var _wxT=null;
+async function fetchWeather(){
+  const L=state.weatherLoc;if(!L||L.lat==null){state.weather=null;return;}
+  try{
+    const u=`https://api.open-meteo.com/v1/forecast?latitude=${L.lat}&longitude=${L.lon}&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&timezone=auto&forecast_days=6`;
+    const r=await fetch(u);if(!r.ok)throw new Error('HTTP '+r.status);const d=await r.json();
+    const days={};(d.daily&&d.daily.time||[]).forEach((t,i)=>{days[t]={code:d.daily.weather_code[i],hi:Math.round(d.daily.temperature_2m_max[i]),lo:Math.round(d.daily.temperature_2m_min[i]),rain:d.daily.precipitation_probability_max?d.daily.precipitation_probability_max[i]:null};});
+    state.weather={now:d.current?{temp:Math.round(d.current.temperature_2m),code:d.current.weather_code}:null,days,at:Date.now()};
+    if(glanceOpen())renderGlance();
+  }catch(e){console.error('weather',e);}
+}
+function weatherTick(){clearInterval(_wxT);if(state.weatherLoc&&state.weatherLoc.lat!=null){fetchWeather();_wxT=setInterval(fetchWeather,30*60000);}else state.weather=null;}
+async function saveWeatherLoc(){
+  const q=(document.getElementById('s-wx-city')||{}).value||'';if(!q.trim()){toast('Type a city or ZIP code','error');return;}
+  try{
+    const r=await fetch('https://geocoding-api.open-meteo.com/v1/search?count=1&language=en&format=json&name='+encodeURIComponent(q.trim()));const d=await r.json();
+    const g=d.results&&d.results[0];if(!g){toast('Couldn’t find that place — try "City, State" or just the city','error');return;}
+    state.weatherLoc={name:[g.name,g.admin1].filter(Boolean).join(', '),lat:g.latitude,lon:g.longitude};
+    saveConfigToFirebase();weatherTick();renderSettings();toast('Weather set to '+escHtml(state.weatherLoc.name),'success');
+  }catch(e){console.error(e);toast('Couldn’t look up that place','error');}
+}
+function clearWeatherLoc(){state.weatherLoc=null;state.weather=null;saveConfigToFirebase();weatherTick();renderSettings();}
+function glDur(min){if(min<1)return'now';if(min<60)return`in ${min} min`;const h=Math.floor(min/60),m=min%60;return`in ${h}h${m?` ${m}m`:''}`;}
+function glItemHtml(it){
+  const m=it.gcal?null:findMember(it.member);const c=it.gcal?'#0f9d58':(m?m.color:'#7C5CE6');
+  const who=it.gcal?'Google':(m?m.name:'Family');
+  return`<div class="gl-it"><span class="bar" style="background:${c}"></span><div class="tx"><div class="ttl">${it.recur?'↻ ':''}${escHtml(it.title)}</div><div class="sub">${it.time?formatTime(it.time)+' · ':''}<span style="color:${c}">${escHtml(who)}</span></div></div></div>`;
+}
 function renderGlance(){
   const el=document.getElementById('glance');if(!el)return;
-  const now=new Date();const today=todayStr();const tm=new Date();tm.setDate(tm.getDate()+1);const tomorrow=nlDateStr(tm);
-  const hh=now.getHours(),mm=now.getMinutes();const nowHM=`${pad(hh)}:${pad(mm)}`;
-  const rest=glanceItemsFor(today).filter(it=>!it.time||it.time>=nowHM);
-  const tmrw=glanceItemsFor(tomorrow);
-  const overdue=state.tasks.filter(t=>!t.completed&&t.dueDate&&t.dueDate<today&&String(t.member)!=='groceries').length;
-  const groc=state.tasks.filter(t=>!t.completed&&String(t.member)==='groceries').length;
-  const dinner=state.meals&&state.meals.plan&&state.meals.plan[today];
+  // Kiosk nicety: reload once in the 3 AM hour so the wall screen picks up site updates
+  if(new Date().getHours()===3&&Date.now()-GL_BOOT_TS>6*3600000){location.reload();return;}
+  const now=new Date();const today=todayStr();const hh=now.getHours(),mm=now.getMinutes();const nowHM=`${pad(hh)}:${pad(mm)}`;
+  const plan=(state.meals&&state.meals.plan)||{};const wx=state.weather;
+  // Up next (timed item later today)
+  const todays=glanceItemsFor(today);
+  const nextIt=todays.find(it=>it.time&&it.time>=nowHM);
   let chips='';
-  if(dinner&&dinner.name)chips+=`<span class="gl-chip"><span class="d" style="background:var(--accent)"></span>Dinner: ${escHtml(dinner.name)}</span>`;
+  if(nextIt){const[h,m]=nextIt.time.split(':').map(Number);const mins=h*60+m-(hh*60+mm);chips+=`<span class="gl-chip gl-next"><span class="d" style="background:var(--accent)"></span>Next: <b>${escHtml(nextIt.title)}</b>&nbsp;${formatTime(nextIt.time)} · ${glDur(mins)}</span>`;}
+  const overdue=state.tasks.filter(t=>!t.completed&&t.dueDate&&t.dueDate<today&&String(t.member)!=='groceries').length;
+  const gList=state.tasks.filter(t=>!t.completed&&String(t.member)==='groceries');
   if(overdue)chips+=`<span class="gl-chip" style="color:var(--accent2)"><span class="d" style="background:var(--accent2)"></span>${overdue} overdue task${overdue!==1?'s':''}</span>`;
-  if(groc)chips+=`<span class="gl-chip" style="color:var(--accent4)"><span class="d" style="background:var(--accent4)"></span>${groc} grocer${groc!==1?'ies':'y'} to get</span>`;
-  const people=state.members.map(m=>{const n=state.tasks.filter(t=>!t.completed&&String(t.member)===String(m.id)&&t.dueDate&&t.dueDate<=today).length;return`<span class="gl-person"><span class="gl-av" style="background:${hexA(m.color,'26')};color:${m.color}">${memberAvatarHtml(m,32)}</span>${escHtml(m.name)} · ${n} left</span>`;}).join('');
-  el.innerHTML=`<div class="gl-top"><div><div class="gl-time">${hh%12||12}:${pad(mm)}<span class="gl-ampm">${hh<12?'AM':'PM'}</span></div><div class="gl-date">${now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</div></div><div class="gl-chips">${chips}</div></div>
-  <div class="gl-cols"><section class="gl-card"><div class="gl-label">Rest of today</div>${glanceListHtml(rest,'All clear for the rest of today.')}</section><section class="gl-card tmrw"><div class="gl-label">Tomorrow · ${tm.toLocaleDateString('en-US',{weekday:'long'})}</div>${glanceListHtml(tmrw,'Nothing planned yet.')}</section></div>
-  <div class="gl-foot">${people}<span class="gl-hint">Tap anywhere to open the Hub</span></div>`;
+  if(gList.length)chips+=`<span class="gl-chip" style="color:var(--accent4)"><span class="d" style="background:var(--accent4)"></span>🛒 ${gList.slice(0,4).map(t=>escHtml(t.title)).join(', ')}${gList.length>4?` +${gList.length-4}`:''}</span>`;
+  // Weather now
+  let wxNow='';
+  if(wx&&wx.now){const i=wxInfo(wx.now.code);const td=wx.days[today];wxNow=`<div class="gl-wx"><span class="gl-wx-ico">${i.icon}</span><div><div class="gl-wx-temp">${wx.now.temp}°</div><div class="gl-wx-sub">${i.label}${td?` · H ${td.hi}° L ${td.lo}°`:''}${td&&td.rain!=null&&td.rain>=20?` · ${td.rain}% rain`:''}</div><div class="gl-wx-loc">${escHtml(state.weatherLoc.name||'')}</div></div></div>`;}
+  // Next 5 days
+  let days='';
+  for(let i=0;i<5;i++){
+    const d=new Date();d.setDate(d.getDate()+i);const ds=nlDateStr(d);
+    let items=glanceItemsFor(ds);if(i===0)items=items.filter(it=>!it.time||it.time>=nowHM);
+    const name=i===0?'Today':i===1?'Tomorrow':d.toLocaleDateString('en-US',{weekday:'long'});
+    const w=wx&&wx.days&&wx.days[ds];const dinner=plan[ds]&&plan[ds].name;
+    days+=`<section class="gl-day${i===0?' today':''}"><div class="gl-day-h"><div><div class="gl-day-name">${name}</div><div class="gl-day-date">${d.toLocaleDateString('en-US',{weekday:i<2?'short':undefined,month:'short',day:'numeric'})}</div></div>${w?`<div class="gl-day-wx" title="${wxInfo(w.code).label}">${wxInfo(w.code).icon}<span>${w.hi}°<i>/${w.lo}°</i></span></div>`:''}</div>${dinner?`<div class="gl-dinner">🍽 ${escHtml(dinner)}</div>`:''}<div class="gl-day-items">${items.length?items.map(glItemHtml).join(''):`<div class="gl-empty">${i===0?'All clear for the rest of today.':'Nothing planned'}</div>`}</div><div class="gl-more" hidden></div></section>`;
+  }
+  // Family overview
+  let fam=state.members.map(m=>{const s=ovMemberStats(m.id);return`<div class="gl-fcard" role="button" tabindex="0" onclick="event.stopPropagation();hideGlance();selectMemberFromCard('${m.id}')"><div class="gl-fav">${ovRingSvg(s.pct,m.color,44)}<span class="gl-av" style="background:${hexA(m.color,'22')};color:${m.color}">${memberAvatarHtml(m,32)}</span></div><div class="gl-fwho"><div class="gl-fname">${escHtml(m.name)}</div><div class="gl-fsub">${s.leftToday} left today${s.late?` · <b style="color:var(--accent2)">${s.late} late</b>`:''}</div></div></div>`;}).join('');
+  {const g=state.tasks.filter(t=>String(t.member)==='groceries');const ga=g.filter(t=>!t.completed).length;const pct=g.length?Math.round((g.length-ga)/g.length*100):0;
+   fam+=`<div class="gl-fcard" role="button" tabindex="0" onclick="event.stopPropagation();hideGlance();selectMemberFromCard('groceries')"><div class="gl-fav">${ovRingSvg(pct,GROCERIES.color,44)}<span class="gl-av" style="background:${hexA(GROCERIES.color,'22')};color:${GROCERIES.color}">🛒</span></div><div class="gl-fwho"><div class="gl-fname">Groceries</div><div class="gl-fsub">${ga} to get</div></div></div>`;}
+  el.innerHTML=`<div class="gl-top"><div class="gl-clock"><div class="gl-time">${hh%12||12}:${pad(mm)}<span class="gl-ampm">${hh<12?'AM':'PM'}</span></div><div class="gl-date">${now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</div></div>${wxNow}</div>
+  ${chips?`<div class="gl-chips">${chips}</div>`:''}
+  <div class="gl-days">${days}</div>
+  <section class="gl-fam"><div class="gl-fam-h"><span class="gl-label" style="color:var(--text3)">Family overview</span><span class="gl-hint">Tap a person to open their tasks · tap anywhere else for the Hub</span></div><div class="gl-fgrid">${fam}</div></section>`;
+  glanceFit();
 }
+// Trim each day's list to what fits on screen and show "+N more"
+function glanceFit(){
+  document.querySelectorAll('#glance .gl-day').forEach(day=>{
+    const box=day.querySelector('.gl-day-items');const more=day.querySelector('.gl-more');if(!box||!more)return;
+    let hidden=0;const rows=[...box.querySelectorAll('.gl-it')];
+    while(rows.length>1&&box.scrollHeight>box.clientHeight+1){rows.pop().remove();hidden++;}
+    if(hidden){more.hidden=false;more.textContent=`+${hidden} more`;}
+  });
+}
+var _glFitT=null;
+window.addEventListener('resize',()=>{clearTimeout(_glFitT);_glFitT=setTimeout(()=>{if(glanceOpen())renderGlance();},200);});
 function showGlance(){const el=document.getElementById('glance');if(!el)return;clearTimeout(_glanceIdleT);renderGlance();el.classList.add('open');el.setAttribute('aria-hidden','false');clearInterval(_glanceClockT);_glanceClockT=setInterval(renderGlance,20000);if(typeof vkbHide==='function')vkbHide();if(window.innerWidth<=768)closeSidebarMobile();document.body.classList.remove('rail-open');}
 function hideGlance(){const el=document.getElementById('glance');if(!el)return;el.classList.remove('open');el.setAttribute('aria-hidden','true');clearInterval(_glanceClockT);glanceResetIdle();}
 function glanceBusy(){
@@ -2872,6 +3190,7 @@ function _boot(){
       if(data.familyLinks)state.familyLinks=data.familyLinks;
       if(data.gcalKey!==undefined)state.gcalKey=data.gcalKey;
       if(data.gcalId!==undefined)state.gcalId=data.gcalId;
+      if(data.weatherLoc)state.weatherLoc=data.weatherLoc;
       if(data.theme)state.theme=data.theme;
       localStorage.setItem('familyhub_v2',JSON.stringify({theme:state.theme,members:state.members,lists:state.lists,gcalKey:state.gcalKey,gcalId:state.gcalId,familyLinks:state.familyLinks||[]}));
       startApp();
