@@ -836,6 +836,31 @@ body::before { content: ''; position: fixed; inset: 0; z-index: -1; pointer-even
 .brk-wx-ico { font-size: 1.8rem; line-height: 1; font-family: var(--emoji); }
 .brk-wx-tip { color: var(--accent4); font-weight: 600; margin-top: 2px; font-family: 'Inter', var(--emoji); }
 .brk-wx-sun { color: var(--text3); font-size: .78rem; margin-top: 2px; }
+/* News strip */
+.gl-news { flex-shrink: 0; animation: none !important; background: rgba(255,255,255,.82); border: 1px solid var(--border); border-radius: 18px; padding: 12px 16px 10px; cursor: pointer; display: flex; flex-direction: column; gap: 4px; min-width: 0; animation: gl-in .4s ease; }
+.gl-news-h { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.gl-news-meta { font-size: 12px; color: var(--text3); font-weight: 600; white-space: nowrap; }
+.gl-news-title { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 18px; line-height: 1.25; min-height: 2.5em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.gl-news-sum { font-size: 13.5px; color: var(--text2); line-height: 1.35; min-height: 2.7em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.gl-news-dots { display: flex; gap: 4px; margin-top: 2px; }
+.gl-news-dots span { width: 6px; height: 6px; border-radius: 50%; background: rgba(25,45,35,.16); }
+.gl-news-dots span.on { background: var(--accent); width: 14px; border-radius: 3px; }
+.gl-wx-wait { opacity: .8; }
+@media (max-height: 820px) and (min-width: 769px) and (orientation: landscape) { .gl-news { padding: 8px 14px 6px; } .gl-news-title { font-size: 15px; -webkit-line-clamp: 1; min-height: 1.25em; } .gl-news-sum { -webkit-line-clamp: 1; font-size: 12.5px; min-height: 1.35em; } .gl-news-dots { display: none; } }
+@media (orientation: portrait) and (min-width: 560px) and (max-width: 759px) {
+  .glance { gap: 10px !important; padding: 22px 20px 16px !important; }
+  .gl-time { font-size: clamp(56px, 7vh, 96px) !important; } .gl-date { margin-top: 4px !important; }
+  .gl-chips { flex-wrap: nowrap !important; overflow: hidden; }
+  .gl-chip { flex-shrink: 1; min-width: 0; padding: 6px 11px !important; font-size: 13px !important; }
+  .gl-chip.gl-next { flex-shrink: 0; max-width: 62%; }
+  .gl-fam { gap: 6px !important; }
+  .gl-fcard { padding: 5px 3px !important; gap: 2px !important; }
+  .gl-fav { width: 34px !important; height: 34px !important; } .gl-fav .ov-ring { width: 34px; height: 34px; } .gl-fav .gl-av { inset: 4px !important; font-size: .72rem !important; }
+  .gl-fname { font-size: 12px !important; } .gl-fsub { font-size: 10.5px !important; }
+  .gl-news-title { -webkit-line-clamp: 1; min-height: 1.25em !important; }
+}
+@media (orientation: portrait) and (min-width: 560px) and (max-width: 759px) { .gl-news { padding: 9px 12px 7px; gap: 2px; } .gl-news-title { font-size: 15.5px; } .gl-news-sum { display: none; } .gl-news-dots { display: none; } }
+@media (orientation: portrait) and (min-width: 1000px) { .gl-news { padding: 18px 22px; border-radius: 24px; } .gl-news-title { font-size: 26px; } .gl-news-sum { font-size: 18px; } .gl-news-meta { font-size: 15px; } }
 </style>
 </head>
 <body>
@@ -1170,6 +1195,8 @@ function startApp(){
   renderSidebar();renderSidebarLists();setView('overview');startFirebaseListener();
   if(typeof glanceCfg!=='undefined'&&glanceCfg.onOpen!==false)setTimeout(showGlance,0);
   weatherTick();
+  newsInit();
+  updateInit();
   if(state.gcalKey&&state.gcalId)fetchGoogleCalendarEvents();
 }
 function groceriesSidebarBtnHtml(){
@@ -2382,6 +2409,10 @@ function renderSettings(){
     <div class="settings-row"><div><div class="settings-row-label">Weather on the Glance screen</div><div class="settings-row-sub">${state.weatherLoc?'Showing weather for <b>'+escHtml(state.weatherLoc.name)+'</b> (shared with every device)':'Enter your city to show today\u2019s weather and a 5-day forecast'}</div></div></div>
     <div class="wx-row" style="margin-top:8px"><input type="text" id="s-wx-city" placeholder="City, State — e.g. Bella Vista, AR" value="" style="flex:1;min-width:200px;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:inherit;font-size:.9rem;outline:none" onkeydown="if(event.key==='Enter')saveWeatherLoc()"><button class="btn btn-primary btn-sm" onclick="saveWeatherLoc()">Set location</button>${state.weatherLoc?'<button class="btn btn-ghost btn-sm" onclick="clearWeatherLoc()">Remove</button>':''}</div>
   </div>
+  <div class="settings-section"><h4>📰 News</h4>
+    <div class="settings-row"><div><div class="settings-row-label">Daily Wire headlines on the Glance screen</div><div class="settings-row-sub">Rotates through the latest headlines; tap one to open the story (this device only). Headlines refresh about every 2 hours.</div></div><button class="toggle ${glanceCfg.news!==false?'on':''}" onclick="setNewsEnabled()"></button></div>
+    <div class="settings-row"><div><div class="settings-row-label">Hub version</div><div class="settings-row-sub">${HUB_BUILD} · screens update themselves within ~10 minutes of a new version</div></div></div>
+  </div>
   <div class="settings-section"><h4>📅 Google Calendar</h4>
     <div class="form-group"><label>API Key</label><input type="text" id="s-gcal-key" value="${escHtml(state.gcalKey)}" placeholder="AIza..."></div>
     <div class="form-group"><label>Calendar ID</label><input type="text" id="s-gcal-id" value="${escHtml(state.gcalId)}" placeholder="family@group.calendar.google.com"></div>
@@ -3030,7 +3061,8 @@ async function fetchWeather(){
     state.weather={now:d.current?{temp:Math.round(d.current.temperature_2m),code:d.current.weather_code}:null,days,at:Date.now()};
     if(glanceOpen())renderGlance();
     if(state.mainView==='calendar')renderCalendar();
-  }catch(e){console.error('weather',e);}
+    state.weatherErr=false;
+  }catch(e){console.error('weather',e);state.weatherErr=true;clearTimeout(window._wxRetry);window._wxRetry=setTimeout(fetchWeather,5*60000);if(glanceOpen())renderGlance();}
 }
 function weatherTick(){clearInterval(_wxT);if(state.weatherLoc&&state.weatherLoc.lat!=null){fetchWeather();_wxT=setInterval(fetchWeather,30*60000);}else state.weather=null;}
 async function saveWeatherLoc(){
@@ -3085,7 +3117,7 @@ function renderGlance(){
   if(overdue)chips+=`<span class="gl-chip" style="color:var(--accent2)"><span class="d" style="background:var(--accent2)"></span>${overdue} overdue task${overdue!==1?'s':''}</span>`;
   if(gList.length)chips+=`<span class="gl-chip" style="color:var(--accent4)"><span class="d" style="background:var(--accent4)"></span>🛒 ${gList.slice(0,4).map(t=>escHtml(t.title)).join(', ')}${gList.length>4?` +${gList.length-4}`:''}</span>`;
   // Weather now
-  let wxNow='';
+  let wxNow=(state.weatherLoc&&!(wx&&wx.now))?`<div class="gl-wx gl-wx-wait"><span class="gl-wx-ico">🌤️</span><div><div class="gl-wx-sub">${state.weatherErr?'Weather unavailable — retrying':'Loading weather…'}</div><div class="gl-wx-loc">${escHtml(state.weatherLoc.name||'')}</div></div></div>`:'';
   if(wx&&wx.now){const i=wxInfo(wx.now.code);const td=wx.days[today];wxNow=`<div class="gl-wx"><span class="gl-wx-ico">${i.icon}</span><div><div class="gl-wx-temp">${wx.now.temp}°</div><div class="gl-wx-sub">${i.label}${td?` · H ${td.hi}° L ${td.lo}°`:''}${td&&td.rain!=null&&td.rain>=20?` · ${td.rain}% rain`:''}</div><div class="gl-wx-loc">${escHtml(state.weatherLoc.name||'')}</div></div></div>`;}
   // Next 5 days
   let days='';
@@ -3103,22 +3135,26 @@ function renderGlance(){
   el.innerHTML=`<div class="gl-top"><div class="gl-clock"><div class="gl-time">${hh%12||12}:${pad(mm)}<span class="gl-ampm">${hh<12?'AM':'PM'}</span></div><div class="gl-date">${now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</div></div>${wxNow}</div>
   ${chips?`<div class="gl-chips">${chips}</div>`:''}
   <div class="gl-days">${days}</div>
+  ${glNewsHtml()}
   <section class="gl-fam"><div class="gl-fam-h"><span class="gl-label" style="color:var(--text3)">Family overview</span><span class="gl-hint">Tap a person to open their tasks · tap anywhere else for the Hub</span></div><div class="gl-fgrid">${fam}</div></section>`;
   glanceFit();
+  if(document.fonts&&document.fonts.status!=='loaded'&&!window._glFontWait){window._glFontWait=true;document.fonts.ready.then(()=>{if(glanceOpen())renderGlance();});}
 }
 // Trim each day's list to what fits on screen and show "+N more"
 function glanceFit(){
   document.querySelectorAll('#glance .gl-day').forEach(day=>{
     const box=day.querySelector('.gl-day-items');const more=day.querySelector('.gl-more');if(!box||!more)return;
     let hidden=0;const rows=[...box.querySelectorAll('.gl-it')];
+    if(box.scrollHeight>box.clientHeight+1){more.hidden=false;more.textContent='+0 more';}
     while(rows.length>0&&box.scrollHeight>box.clientHeight+1){rows.pop().remove();hidden++;}
+    if(!hidden)more.hidden=true;
     if(hidden){more.hidden=false;more.textContent=`+${hidden} more`;}
   });
 }
 var _glFitT=null;
 window.addEventListener('resize',()=>{clearTimeout(_glFitT);_glFitT=setTimeout(()=>{if(glanceOpen())renderGlance();},200);});
-function showGlance(){const el=document.getElementById('glance');if(!el)return;clearTimeout(_glanceIdleT);renderGlance();el.classList.add('open');el.setAttribute('aria-hidden','false');clearInterval(_glanceClockT);_glanceClockT=setInterval(renderGlance,20000);if(typeof vkbHide==='function')vkbHide();if(window.innerWidth<=768)closeSidebarMobile();document.body.classList.remove('rail-open');}
-function hideGlance(){const el=document.getElementById('glance');if(!el)return;el.classList.remove('open');el.setAttribute('aria-hidden','true');clearInterval(_glanceClockT);glanceResetIdle();}
+function showGlance(){const el=document.getElementById('glance');if(!el)return;newsRotateStart();clearTimeout(_glanceIdleT);renderGlance();el.classList.add('open');el.setAttribute('aria-hidden','false');clearInterval(_glanceClockT);_glanceClockT=setInterval(renderGlance,20000);if(typeof vkbHide==='function')vkbHide();if(window.innerWidth<=768)closeSidebarMobile();document.body.classList.remove('rail-open');}
+function hideGlance(){const el=document.getElementById('glance');if(!el)return;clearInterval(_newsRotT);el.classList.remove('open');el.setAttribute('aria-hidden','true');clearInterval(_glanceClockT);glanceResetIdle();}
 function glanceBusy(){
   if(document.querySelector('.modal-overlay.open'))return true;
   if(document.getElementById('meal-modal')||document.getElementById('mass-update-modal'))return true;
@@ -3200,6 +3236,46 @@ async function addMealsToGroceries(dates){
   for(const[k,v]of wanted){if(have.has(k)){skipped++;continue;}await pushTask(makeTask(v.title,{member:'groceries',notes:'For: '+[...new Set(v.meals)].join(', ')}),'add');added++;}
   toast(added?`🛒 Added ${added} item${added!==1?'s':''} to Groceries${skipped?` (${skipped} already on the list)`:''}`:(skipped?'Everything is already on the grocery list':'No ingredients to add'),added?'success':'info');
 }
+// ══════════════════════════════════════
+// AUTO-UPDATE: a wall screen picks up new versions on its own
+// ══════════════════════════════════════
+const HUB_BUILD='2026-10-24-news1';
+var _updT=null;
+async function checkForUpdate(){
+  try{
+    const t=await fetch(location.pathname+'?build-check='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'');
+    const m=t.match(/const HUB_BUILD='([^']+)'/);
+    if(m&&m[1]!==HUB_BUILD){state.updateReady=true;if(glanceOpen())location.reload();}
+  }catch(_){}
+}
+function updateInit(){clearInterval(_updT);_updT=setInterval(checkForUpdate,10*60000);setTimeout(checkForUpdate,60000);}
+
+// ══════════════════════════════════════
+// NEWS HEADLINES (Daily Wire) — news.json is refreshed by a GitHub Action
+// ══════════════════════════════════════
+var _newsT=null,_newsRotT=null;
+async function fetchNews(){
+  try{
+    const r=await fetch('news.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);
+    const d=await r.json();state.news={source:d.source||'Daily Wire',items:(d.items||[]).filter(i=>i&&i.title&&i.link).slice(0,12)};
+    if(state.newsIdx==null||state.newsIdx>=state.news.items.length)state.newsIdx=0;
+    if(glanceOpen())renderGlance();
+  }catch(e){console.warn('news',e.message);}
+}
+function newsInit(){clearInterval(_newsT);fetchNews();_newsT=setInterval(fetchNews,20*60000);}
+function newsAgo(iso){const t=Date.parse(iso);if(isNaN(t))return'';const m=Math.round((Date.now()-t)/60000);if(m<60)return`${Math.max(m,1)}m ago`;const h=Math.round(m/60);if(h<24)return`${h}h ago`;return`${Math.round(h/24)}d ago`;}
+function glNewsHtml(){
+  if(glanceCfg.news===false||!state.news||!state.news.items.length)return'<div id="gl-news" hidden></div>';
+  const items=state.news.items;const i=(state.newsIdx||0)%items.length;const it=items[i];
+  const dots=items.map((_,k)=>`<span class="${k===i?'on':''}"></span>`).join('');
+  return`<section id="gl-news" class="gl-news" onclick="event.stopPropagation();window.open('${escHtml(it.link).replace(/'/g,'%27')}','_blank','noopener')" title="Open the full story">
+    <div class="gl-news-h"><span class="gl-label" style="color:var(--text3)">📰 ${escHtml(state.news.source)} headlines</span><span class="gl-news-meta">${newsAgo(it.published)}${newsAgo(it.published)?' · ':''}${i+1} of ${items.length}</span></div>
+    <div class="gl-news-title">${escHtml(it.title)}</div>
+    ${it.summary?`<div class="gl-news-sum">${escHtml(it.summary)}</div>`:''}
+    <div class="gl-news-dots">${dots}</div></section>`;
+}
+function newsRotateStart(){clearInterval(_newsRotT);_newsRotT=setInterval(()=>{if(!glanceOpen()||!state.news||!state.news.items.length)return;state.newsIdx=((state.newsIdx||0)+1)%state.news.items.length;const box=document.getElementById('gl-news');if(box)box.outerHTML=glNewsHtml();},15000);}
+function setNewsEnabled(){glanceCfg.news=glanceCfg.news===false;saveGlanceCfg();renderSettings();}
 // ══════════════════════════════════════
 // BOOT
 // ══════════════════════════════════════
