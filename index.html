@@ -861,6 +861,25 @@ body::before { content: ''; position: fixed; inset: 0; z-index: -1; pointer-even
 }
 @media (orientation: portrait) and (min-width: 560px) and (max-width: 759px) { .gl-news { padding: 9px 12px 7px; gap: 2px; } .gl-news-title { font-size: 15.5px; } .gl-news-sum { display: none; } .gl-news-dots { display: none; } }
 @media (orientation: portrait) and (min-width: 1000px) { .gl-news { padding: 18px 22px; border-radius: 24px; } .gl-news-title { font-size: 26px; } .gl-news-sum { font-size: 18px; } .gl-news-meta { font-size: 15px; } }
+.gl-fam-h { gap: 10px; }
+.gl-fam-h .gl-hint { margin-left: auto; }
+.gl-fs-btn { order: 3; flex-shrink: 0; border: 1px solid var(--border); background: rgba(255,255,255,.85); color: var(--text2); font: 600 13px 'Inter', var(--emoji); padding: 7px 14px; border-radius: 12px; cursor: pointer; min-height: 36px; }
+.gl-fs-btn:hover { border-color: var(--accent); color: var(--accent); }
+@media (orientation: portrait) and (min-width: 1000px) { .gl-fs-btn { font-size: 17px; padding: 10px 18px; } }
+/* Small landscape windows (≈560–768px wide): compact family cards so the 5 days keep their room */
+@media (orientation: landscape) and (min-width: 560px) and (max-width: 768px) {
+  .glance { gap: 10px; padding: 18px 20px 14px; }
+  .gl-time { font-size: clamp(48px, 11vh, 84px); }
+  .gl-fgrid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)) !important; gap: 6px; }
+  .gl-fcard { flex-direction: column; text-align: center; gap: 2px; padding: 5px 3px; border-radius: 12px; }
+  .gl-fwho { width: 100%; }
+  .gl-fav { width: 30px; height: 30px; } .gl-fav .ov-ring { width: 30px; height: 30px; } .gl-fav .gl-av { inset: 4px; font-size: .68rem; }
+  .gl-fname { font-size: 11.5px; } .gl-fsub { font-size: 10px; white-space: normal; line-height: 1.15; }
+  .gl-fam-h .gl-hint { display: none; }
+  .gl-news { padding: 7px 12px 6px; } .gl-news-title { font-size: 14px; -webkit-line-clamp: 1; min-height: 1.25em; } .gl-news-sum, .gl-news-dots { display: none; }
+  .gl-days { gap: 8px; } .gl-day { padding: 8px 9px 6px; gap: 5px; }
+  .gl-report-sun { display: none; } .gl-report { font-size: 11.5px; padding: 4px 7px; }
+}
 </style>
 </head>
 <body>
@@ -1154,7 +1173,7 @@ function toggleFullscreen(){
     }
   }catch(e){toast('Fullscreen not available','error');}
 }
-function updateFsIcon(){const b=document.getElementById('fs-btn');if(b){b.textContent=isFullscreen()?'⤡':'⤢';b.title=isFullscreen()?'Exit fullscreen':'Enter fullscreen';}}
+function updateFsIcon(){if(typeof glanceOpen==='function'&&glanceOpen()){const gb=document.querySelector('.gl-fs-btn');if(gb){gb.textContent=isFullscreen()?'⤡ Exit full screen':'⤢ Full screen';gb.setAttribute('aria-label',isFullscreen()?'Exit full screen':'Full screen');}}const b=document.getElementById('fs-btn');if(b){b.textContent=isFullscreen()?'⤡':'⤢';b.title=isFullscreen()?'Exit fullscreen':'Enter fullscreen';}}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 function todayStr(){const d=new Date();return`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;}
 function pad(n){return String(n).padStart(2,'0');}
@@ -3136,7 +3155,7 @@ function renderGlance(){
   ${chips?`<div class="gl-chips">${chips}</div>`:''}
   <div class="gl-days">${days}</div>
   ${glNewsHtml()}
-  <section class="gl-fam"><div class="gl-fam-h"><span class="gl-label" style="color:var(--text3)">Family overview</span><span class="gl-hint">Tap a person to open their tasks · tap anywhere else for the Hub</span></div><div class="gl-fgrid">${fam}</div></section>`;
+  <section class="gl-fam"><div class="gl-fam-h"><span class="gl-label" style="color:var(--text3)">Family overview</span><button type="button" class="gl-fs-btn" onclick="event.stopPropagation();toggleFullscreen()" aria-label="${isFullscreen()?'Exit full screen':'Full screen'}">${isFullscreen()?'⤡ Exit full screen':'⤢ Full screen'}</button><span class="gl-hint">Tap a person to open their tasks · tap anywhere else for the Hub</span></div><div class="gl-fgrid">${fam}</div></section>`;
   glanceFit();
   if(document.fonts&&document.fonts.status!=='loaded'&&!window._glFontWait){window._glFontWait=true;document.fonts.ready.then(()=>{if(glanceOpen())renderGlance();});}
 }
@@ -3239,7 +3258,7 @@ async function addMealsToGroceries(dates){
 // ══════════════════════════════════════
 // AUTO-UPDATE: a wall screen picks up new versions on its own
 // ══════════════════════════════════════
-const HUB_BUILD='2026-10-24-news1';
+const HUB_BUILD='2026-10-24-fs1';
 var _updT=null;
 async function checkForUpdate(){
   try{
