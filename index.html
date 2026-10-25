@@ -1093,6 +1093,20 @@ body.vkb-active .modal { max-height: calc(100vh - 340px); overflow-y: auto; }
 .cal-who-banner { display: flex; align-items: center; gap: 12px; justify-content: space-between; margin: 0 0 12px; padding: 10px 12px 10px 16px; border-radius: 14px; background: #F3F7F4; color: var(--text); border-left: 6px solid var(--who); }
 .cal-who-banner span { font-size: .95rem; color: #22332B; }
 .cal-who-banner b { color: #22332B; }
+.kind-hint { font-size: .74rem; color: var(--text3); margin-top: 4px; }
+.task-tag.kind-chore { background: rgba(176,110,43,.13); color: #8A5A1F; }
+.task-tag.kind-todo { background: rgba(46,94,71,.12); color: #2E5E47; }
+.task-tag.kind-event { background: rgba(15,157,88,.13); color: #0B7A45; }
+.cal-task-dot.is-todo .lbl::before { content: attr(data-ic); margin-right: 3px; }
+.cal-task-dot.is-event { border-left: 3px solid var(--evc, #2E7D5B); border-radius: 4px 6px 6px 4px; }
+.cal-task-dot .tm { font-weight: 700; margin-right: 3px; opacity: .8; }
+.brk-item.brk-event .brk-title { font-weight: 700; }
+.ev-today { margin: 0 0 18px; }
+.ev-today .ev-h { font: 700 .8rem 'Inter', sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--text2); margin-bottom: 8px; }
+.ev-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 14px; background: rgba(255,255,255,.96); color: #22332B; margin-bottom: 6px; cursor: pointer; border-left: 5px solid var(--evc, #2E7D5B); }
+.ev-row .t { font-weight: 700; font-size: .82rem; min-width: 128px; color: #3B5247; }
+.ev-row .n { flex: 1; font-weight: 600; }
+.ev-row .w { font-size: .78rem; font-weight: 600; }
 </style>
 </head>
 <body>
@@ -1152,7 +1166,7 @@ body.vkb-active .modal { max-height: calc(100vh - 340px); overflow-y: auto; }
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="m8 12 3 3 5-6"/></svg>
         All Tasks
       </button>
-      <button class="nav-btn" id="nav-calendar" onclick="openCalendar('activity')">
+      <button class="nav-btn" id="nav-calendar" onclick="openCalendar('events')">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         Calendar
       </button>
@@ -1194,7 +1208,7 @@ body.vkb-active .modal { max-height: calc(100vh - 340px); overflow-y: auto; }
     <div class="topbar">
       <div class="member-color-bar" id="topbar-color" style="background:var(--accent)"></div>
       <h2 id="topbar-title">All Family</h2>
-      <div class="cal-kind cal-switch" id="cal-switch" role="group" aria-label="Which calendar" hidden><button data-k="activity" onclick="setCalKind('activity')">🏃 Activities</button><button data-k="school" onclick="setCalKind('school')">📚 School</button><button data-k="all" onclick="setCalKind('all')">🗂 All</button></div>
+      <div class="cal-kind cal-switch" id="cal-switch" role="group" aria-label="Which calendar" hidden><button data-k="events" onclick="setCalKind('events')">📅 Events</button><button data-k="todos" onclick="setCalKind('todos')">✅ To-dos</button><button data-k="all" onclick="setCalKind('all')">🗂 All</button></div>
       <div class="topbar-actions">
         <button class="btn btn-ghost btn-sm" onclick="openMassUpdate()">⚡ Mass Update</button>
         <button class="btn btn-ghost btn-sm" onclick="navTo('import')">⬆ Import</button>
@@ -1226,8 +1240,8 @@ body.vkb-active .modal { max-height: calc(100vh - 340px); overflow-y: auto; }
       </div>
     </div>
     <div class="row-2">
-      <div class="form-group"><label>Duration</label>
-        <select id="t-duration"><option value="">— None —</option><option value="5m">5 minutes</option><option value="10m">10 minutes</option><option value="15m">15 minutes</option><option value="30m">30 minutes</option><option value="1h">1 hour</option><option value="2h">2 hour</option><option value="3h">3 hour</option></select>
+      <div class="form-group"><label id="t-duration-lbl">Duration</label>
+        <select id="t-duration"><option value="">— None —</option><option value="5m">5 minutes</option><option value="10m">10 minutes</option><option value="15m">15 minutes</option><option value="30m">30 minutes</option><option value="45m">45 minutes</option><option value="1h">1 hour</option><option value="90m">1½ hours</option><option value="2h">2 hours</option><option value="3h">3 hours</option><option value="4h">4 hours</option><option value="6h">6 hours</option></select>
       </div>
       <div class="form-group"><label>Start On</label>
         <select id="t-starton"><option value="">— None —</option><option value="today">Today</option><option value="week">This Week</option><option value="month">This Month</option></select>
@@ -1253,7 +1267,7 @@ body.vkb-active .modal { max-height: calc(100vh - 340px); overflow-y: auto; }
         </label>
       </div>
     </div>
-    <div class="form-group"><label for="t-kind">Calendar</label><select id="t-kind"><option value="">Auto — decide from the title</option><option value="activity">🏃 Activities</option><option value="school">📚 School</option></select></div>
+    <div class="form-group"><label for="t-kind">Type</label><select id="t-kind" onchange="taskKindHint()"><option value="">Auto — decide from the title</option><option value="event">📅 Event (no checkbox)</option><option value="school">📚 School to-do</option><option value="chore">🧹 Chore to-do</option><option value="todo">✅ Other to-do</option></select><div class="kind-hint" id="t-kind-hint"></div></div>
     <div class="form-group" id="t-rotate-wrap" style="display:none"><label>Chore rotation (optional)</label><div class="rot-chips" id="t-rotate"></div><div class="rot-hint">Tap people in order. Each time it's checked off, the next one is assigned to the next person.</div></div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeModal('task-modal')">Cancel</button>
@@ -1357,7 +1371,7 @@ const LIST_EMOJIS=['📋','🛒','🏠','💼','📚','🎯','💡','🔧','✈�
 const MEMBER_EMOJIS=['😊','👨','👩','👦','👧','🧒','👴','👵','🧑','👶','🧔','👱','🧕','👮','👷','🧑‍🍳','🧑‍🎓','🦸'];
 const LIST_COLORS=['#1a7fe8','#e84a6f','#18c97a','#f0960a','#38b2ac','#8b5cf6','#5ab4ff','#f6ad55','#a78bfa'];
 const LINK_EMOJIS=['🔗','🌐','📧','📺','🎮','🎵','🛒','🏦','📰','📚','💼','📅','☁️','💬','📷','🎬','⚽','🍔','✈️','🗺️','💡','🧑‍💻'];
-const DURATIONS=[{v:'5m',label:'5 min'},{v:'10m',label:'10 min'},{v:'15m',label:'15 min'},{v:'30m',label:'30 min'},{v:'1h',label:'1 hour'},{v:'2h',label:'2 hour'},{v:'3h',label:'3 hour'}];
+const DURATIONS=[{v:'5m',label:'5 min'},{v:'10m',label:'10 min'},{v:'15m',label:'15 min'},{v:'30m',label:'30 min'},{v:'45m',label:'45 min'},{v:'1h',label:'1 hour'},{v:'90m',label:'1½ hours'},{v:'2h',label:'2 hours'},{v:'3h',label:'3 hours'},{v:'4h',label:'4 hours'},{v:'6h',label:'6 hours'}];
 const STARTONS=[{v:'today',label:'Today'},{v:'week',label:'This Week'},{v:'month',label:'This Month'}];
 // Groceries — a special "person" you can assign any task to.
 const GROCERIES={id:'groceries',name:'Groceries',color:'#18c97a',avatar:'🛒'};
@@ -1371,7 +1385,7 @@ let state={
   listView:'kanban',kanbanFilters:{members:[],priorities:[],durations:[],startOns:[]},
   kanbanGroupBy:'status',filterOpen:false,dragTaskId:null,kanbanDragging:false,
   lvTaskIds:[],
-  calKind:'activity',calMonth:new Date().getMonth(),calYear:new Date().getFullYear(),calSelectedDate:null,
+  calKind:'events',calMonth:new Date().getMonth(),calYear:new Date().getFullYear(),calSelectedDate:null,
   editingTaskId:null,editingListId:null,syncing:false,lastSync:null,
 };
 // ══════════════════════════════════════
@@ -1461,7 +1475,7 @@ function renderSidebarLists(){
   renderTaskListSelect();
 }
 function renderTaskListSelect(){const sel=document.getElementById('t-list-sel');if(!sel)return;sel.innerHTML='<option value="">No list</option>'+state.lists.map(l=>`<option value="${l.id}">${l.emoji} ${escHtml(l.name)}</option>`).join('');}
-function updateCounts(){const active=state.tasks.filter(t=>!t.completed);const fe=document.getElementById('count-family');if(fe)fe.textContent=active.length;state.members.forEach(m=>{const el=document.getElementById('count-'+m.id);if(el)el.textContent=active.filter(t=>t.member===String(m.id)).length;});const ge=document.getElementById('count-groceries');if(ge)ge.textContent=active.filter(t=>String(t.member)==='groceries').length;}
+function updateCounts(){const active=state.tasks.filter(t=>!t.completed&&!isEvent(t));const fe=document.getElementById('count-family');if(fe)fe.textContent=active.length;state.members.forEach(m=>{const el=document.getElementById('count-'+m.id);if(el)el.textContent=active.filter(t=>t.member===String(m.id)).length;});const ge=document.getElementById('count-groceries');if(ge)ge.textContent=active.filter(t=>String(t.member)==='groceries').length;}
 function navTo(v){setView(v);if(window.innerWidth<=768)closeSidebarMobile();}
 function selectMember(id,btn){
   state.currentMember=id;state.currentView='myday';state.mainView='tasks';state.currentListId=null;
@@ -1471,7 +1485,7 @@ function selectMember(id,btn){
   document.getElementById('topbar-color').style.background=m?m.color:'var(--accent)';
   document.getElementById('view-tabs').style.display=id==='family'?'none':'flex';
   document.querySelectorAll('.view-tab').forEach((t,i)=>t.classList.toggle('active',i===0));
-  setTimeout(()=>{const lt=document.getElementById('tab-late');if(lt&&id!=='family'){const today=todayStr();const lc=state.tasks.filter(t=>String(t.member)===String(id)&&!t.completed&&t.dueDate&&t.dueDate<today).length;lt.textContent=lc>0?`Late Tasks (${lc})`:'Late Tasks';lt.style.color=lc>0?'var(--accent2)':'';}},0);
+  setTimeout(()=>{const lt=document.getElementById('tab-late');if(lt&&id!=='family'){const today=todayStr();const lc=state.tasks.filter(t=>String(t.member)===String(id)&&!t.completed&&!isEvent(t)&&t.dueDate&&t.dueDate<today).length;lt.textContent=lc>0?`Late Tasks (${lc})`:'Late Tasks';lt.style.color=lc>0?'var(--accent2)':'';}},0);
   document.querySelectorAll('.list-btn,.nav-btn').forEach(b=>b.classList.remove('active'));
   if(id==='family'){const ab=document.getElementById('nav-alltasks');if(ab)ab.classList.add('active');document.getElementById('topbar-title').textContent='All Tasks';}
   renderTasksView();
@@ -1538,7 +1552,7 @@ function addToGoogleCalendar(task){if(!state.gcalKey||!state.gcalId)return;conso
 // TASKS VIEW
 // ══════════════════════════════════════
 function getFilteredTasks(){
-  let tasks=[...state.tasks];const mid=state.currentMember;
+  let tasks=state.tasks.filter(t=>!isEvent(t));const mid=state.currentMember;
   if(mid!=='family')tasks=tasks.filter(t=>String(t.member)===String(mid));
   const today=todayStr();
   switch(state.currentView){
@@ -1555,6 +1569,7 @@ function renderTasksView(){
   if(state.currentView==='myday'&&state.currentMember!=='family')html+=`<div style="margin-bottom:18px"><div style="font-family:'Outfit',serif;font-size:1.45rem">My Day</div><div style="font-size:.8rem;color:var(--text3)">${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</div></div>`;
   if(state.currentView==='late'&&state.currentMember!=='family')html+=`<div style="margin-bottom:18px"><div style="font-family:'Outfit',serif;font-size:1.45rem;color:var(--accent2)">Late Tasks</div><div style="font-size:.8rem;color:var(--text3)">Tasks past their due date</div></div>`;
   if(state.currentMember!=='family'){const total=incomplete.length+complete.length;const pct=total?Math.round(complete.length/total*100):0;html+=`<div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>`;}
+  if(state.currentView==='myday')html+=evTodayHtml(state.currentMember);
   html+=`<div class="add-task-bar"><svg width="15" height="15" fill="none" stroke="var(--text3)" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg><input type="text" placeholder="Add a task… try “Dentist Tue 3pm @Mom”" id="quick-add-input" oninput="renderQuickPreview()" onkeydown="if(event.key==='Enter')quickAddTask()"><button class="btn btn-primary btn-sm" onclick="openAddTask()">Details</button></div><div class="qa-preview" id="qa-preview"></div>
   <div class="filters"><button class="filter-chip active" onclick="filterTasks('all',this)">All</button><button class="filter-chip" onclick="filterTasks('high',this)">🔴 High</button><button class="filter-chip" onclick="filterTasks('medium',this)">🟡 Medium</button><button class="filter-chip" onclick="filterTasks('today',this)">📅 Today</button><button class="filter-chip" onclick="filterTasks('overdue',this)">⚠️ Overdue</button></div>`;
   if(!incomplete.length&&!complete.length)html+=`<div class="tasks-empty"><span class="emoji">✅</span><div style="font-weight:600">Nothing here yet</div><div style="font-size:.8rem;margin-top:5px">Add a task above</div></div>`;
@@ -1562,6 +1577,12 @@ function renderTasksView(){
   if(complete.length)html+=`<div class="section-title" style="margin-top:22px">Completed (${complete.length})</div>`+complete.map(t=>renderTaskItem(t,today)).join('');
   document.getElementById('main-content').innerHTML=html;
   renderQuickPreview();
+}
+function evTodayHtml(mid){
+  const ds=todayStr();let ev=glanceItemsFor(ds,'event');
+  if(mid&&mid!=='family')ev=ev.filter(it=>!it.gcal&&String(it.member)===String(mid));
+  if(!ev.length)return'';
+  return`<div class="ev-today"><div class="ev-h">📅 Today’s events</div>${ev.map(it=>{const m=it.gcal?null:findMember(it.member);const c=it.gcal?'#0f9d58':(m?m.color:'#2E7D5B');return`<div class="ev-row" style="--evc:${c}" ${it.id?`onclick="editTask('${it.id}')"`:''}><span class="t">${evRange(it.time,it.dur)}</span><span class="n">${it.recur?'↻ ':''}${escHtml(it.title)}</span><span class="w" style="color:${c}">${it.gcal?'Google':escHtml(m?m.name:'Family')}</span></div>`;}).join('')}</div>`;
 }
 function renderTaskItem(t,today){
   const member=findMember(t.member);const color=member?member.color:'var(--accent)';
@@ -1585,7 +1606,7 @@ function renderTaskItem(t,today){
       </div>
       ${t.dueTime?`<div><span class="task-due" style="color:var(--accent4)">⏰ ${formatTime(t.dueTime)}</span></div>`:''}
       ${t.recurrence?`<div><span class="task-tag" style="background:rgba(46,125,91,.15);color:var(--accent5)">↻ ${recurLabel(t.recurrence)}${rotationText(t)}</span></div>`:''}
-      ${taskKind(t)==='school'?`<div><span class="task-tag kind-school">📚 School</span></div>`:''}
+      <div><span class="task-tag kind-${taskKind(t)}">${KINDS[taskKind(t)]}</span></div>
       ${t.notes?`<div style="font-size:.76rem;color:var(--text3);margin-top:4px">${escHtml(t.notes)}</div>`:''}
     </div>
     <div class="task-actions">
@@ -1766,7 +1787,7 @@ function renderKanban(listId){
     if(!colTasks.length)html+=`<div class="kanban-drag-hint">Drop here</div>`;
     colTasks.forEach(t=>{
       const member=findMember(t.member);const color=member?member.color:'var(--accent)';
-      const overdue=!t.completed&&t.dueDate&&t.dueDate<today;
+      const overdue=!t.completed&&!isEvent(t)&&t.dueDate&&t.dueDate<today;
       html+=`<div class="kanban-card" draggable="true" ondragstart="kanbanDragStart(event,'${t.id}')" ondragend="kanbanDragEnd()" onclick="kanbanCardClick(event,'${t.id}')">
         <div class="kanban-card-actions">
           <button class="task-action-btn del" onclick="deleteTask('${t.id}',event)"><svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button>
@@ -1895,7 +1916,7 @@ function nextRecurDate(task){if(!task.dueDate||!task.recurrence)return null;cons
 function openAddTask(){
   state.editingTaskId=null;document.getElementById('task-modal-title').textContent='Add Task';
   ['t-title','t-notes','t-due','t-time','t-recur','t-duration','t-starton'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('t-priority').value='none';document.getElementById('t-add-to-cal').checked=false;rotateSel=[];buildRotateChips();updateRotateVisibility();document.getElementById('t-kind').value='';document.getElementById('t-list-sel').value='';document.getElementById('t-status').value='notstarted';
+  document.getElementById('t-priority').value='none';document.getElementById('t-add-to-cal').checked=false;rotateSel=[];buildRotateChips();updateRotateVisibility();document.getElementById('t-kind').value='';taskKindHint();document.getElementById('t-list-sel').value='';document.getElementById('t-status').value='notstarted';
   const sel=document.getElementById('t-member');if(sel)sel.value=state.currentMember!=='family'?state.currentMember:(state.members[0]?.id||'family');
   document.getElementById('task-modal').classList.add('open');
 }
@@ -1910,7 +1931,7 @@ function editTask(id,e){
   document.getElementById('t-time').value=t.dueTime||'';document.getElementById('t-recur').value=t.recurrence||'';
   document.getElementById('t-status').value=t.status||'notstarted';
   document.getElementById('t-duration').value=t.duration||'';document.getElementById('t-starton').value=t.startOn||'';
-  rotateSel=rotationOf(t);buildRotateChips();updateRotateVisibility();document.getElementById('t-kind').value=(t.kind==='school'||t.kind==='activity')?t.kind:'';
+  rotateSel=rotationOf(t);buildRotateChips();updateRotateVisibility();document.getElementById('t-kind').value=(t.kind in KINDS)?t.kind:'';taskKindHint();
   document.getElementById('task-modal').classList.add('open');
 }
 function saveTask(){
@@ -1968,7 +1989,7 @@ function ovRingSvg(pct,color,size){
   return`<svg class="ov-ring" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true"><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="rgba(15,40,80,.09)" stroke-width="4"></circle><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${color}" stroke-width="4" stroke-linecap="round" stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${off}" transform="rotate(-90 ${size/2} ${size/2})"></circle></svg>`;
 }
 function ovMemberStats(id){
-  const today=todayStr();const mt=state.tasks.filter(t=>String(t.member)===String(id));
+  const today=todayStr();const mt=state.tasks.filter(t=>String(t.member)===String(id)&&!isEvent(t));
   const active=mt.filter(t=>!t.completed),done=mt.filter(t=>t.completed),late=active.filter(t=>t.dueDate&&t.dueDate<today);
   const leftToday=active.filter(t=>t.dueDate&&t.dueDate<=today).length;
   const total=active.length+done.length;const pct=total?Math.round(done.length/total*100):0;
@@ -1981,7 +2002,7 @@ function renderOverview(){
   document.getElementById('topbar-title').textContent='Family Overview';
   document.getElementById('topbar-color').style.background='var(--accent)';
   const today=todayStr();const weekAgo=Date.now()-7*86400000;
-  const people=state.tasks.filter(t=>String(t.member)!=='groceries');
+  const people=state.tasks.filter(t=>String(t.member)!=='groceries'&&!isEvent(t));
   const dueToday=people.filter(t=>!t.completed&&t.dueDate===today).length;
   const overdue=people.filter(t=>!t.completed&&t.dueDate&&t.dueDate<today).length;
   const groc=grocNeed().length;
@@ -2010,7 +2031,7 @@ function renderOverview(){
   html+='</div>';
   // Coming up: the next 7 days
   const up=[];
-  for(let i=1;i<=7;i++){const d=new Date();d.setDate(d.getDate()+i);const ds=nlDateStr(d);glanceItemsFor(ds,'activity').forEach(it=>up.push(Object.assign({ds,d},it)));}
+  for(let i=1;i<=7;i++){const d=new Date();d.setDate(d.getDate()+i);const ds=nlDateStr(d);glanceItemsFor(ds,'event').forEach(it=>up.push(Object.assign({ds,d},it)));}
   html+=`<div class="ov-section"><div class="ov-section-h"><h2>Coming up this week</h2><button class="btn btn-ghost btn-sm" onclick="navTo('calendar')">Open calendar →</button></div>`;
   if(!up.length)html+=`<div class="ov-empty">Nothing scheduled in the next 7 days.</div>`;
   else html+=`<div class="ov-up">${up.slice(0,10).map(it=>{const m=it.gcal?null:findMember(it.member);const c=it.gcal?'#0f9d58':(m?m.color:'#4C8C9E');return`<div class="ov-up-item"><div class="d">${it.d.toLocaleDateString('en-US',{weekday:'short',day:'numeric'}).toUpperCase()}${it.time?' · '+formatTime(it.time):''}</div><div class="t">${it.recur?'↻ ':''}${escHtml(it.title)}</div><div class="w" style="color:${c}">${it.gcal?'Google':(m?escHtml(m.name):'Family')}</div></div>`;}).join('')}</div>`;
@@ -2055,11 +2076,11 @@ function renderCalendar(_fromFit){
   const gcalChip=state.gcalKey
     ?`<span class="cal-sync-chip" title="Google Calendar linked"><span class="d"></span>${state.gcalEvents.length} Google events</span><button class="icon-btn" onclick="fetchGoogleCalendarEvents()" title="Sync Google Calendar" aria-label="Sync Google Calendar">🔄</button>`
     :`<a class="cal-sync-chip cal-link" href="#" onclick="navTo('settings');return false">🔗 Link Google Calendar</a>`;
-  const ck=state.calKind||'activity';
+  const ck=normCalKind(state.calKind);
   {const cs=document.getElementById('cal-switch');if(cs){cs.hidden=false;cs.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.k===ck));}}
-  {const lab=ck==='school'?'School Calendar':ck==='all'?'All Calendars':'Activities Calendar';document.getElementById('topbar-title').textContent=m2?`${m2.name}’s ${ck==='school'?'School':ck==='all'?'Calendars':'Activities'}`:lab;document.getElementById('topbar-color').style.background=m2?m2.color:'var(--accent)';}
+  {const lab=ck==='todos'?'To-do Calendar':ck==='all'?'Events & To-dos':'Events Calendar';document.getElementById('topbar-title').textContent=m2?`${m2.name}’s ${ck==='todos'?'To-dos':ck==='all'?'Calendar':'Events'}`:lab;document.getElementById('topbar-color').style.background=m2?m2.color:'var(--accent)';}
   let html=`<div class="cal-nav"><h3>${monthLong} <span>${year}</span></h3><button class="icon-btn" onclick="calPrev()" aria-label="Previous month">‹</button><button class="icon-btn" onclick="calNext()" aria-label="Next month">›</button><button class="btn btn-ghost btn-sm" onclick="calToday()">Today</button>${calWhoPicker(m2)}${gcalChip}</div>${m2?`<div class="cal-who-banner" style="--who:${m2.color}"><span>Showing only <b>${escHtml(m2.name)}</b></span><button type="button" class="btn btn-primary btn-sm" onclick="setCalPerson('family')">👥 Show everyone</button></div>`:''}
-  <div class="cal-tip">💡 Tap a day for its breakout below · tap a task to open it · dashed = recurring</div>`;
+  <div class="cal-tip">💡 Tap a day for its breakout below · bars = events · ☐ 📚 🧹 = to-dos · dashed = recurring</div>`;
   const totalCells=Math.ceil((firstDay+daysInMonth)/7)*7;const weeks=totalCells/7;
   html+=`<div class="cal-board"><div class="cal-head">${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>`<div class="cal-header-cell">${d}</div>`).join('')}</div><div class="cal-grid" id="cal-grid" data-weeks="${weeks}">`;
   const recurBase=state.tasks.filter(t=>t.recurrence&&t.dueDate&&!t.completed&&calShow(t));
@@ -2068,16 +2089,17 @@ function renderCalendar(_fromFit){
     if(i<firstDay){day=daysInPrev-firstDay+i+1;isOther=true;const pm=month===0?12:month;const py=month===0?year-1:year;ds=`${py}-${pad(pm)}-${pad(day)}`;}
     else if(i>=firstDay+daysInMonth){day=i-firstDay-daysInMonth+1;isOther=true;const nm=month===11?1:month+2;const ny=month===11?year+1:year;ds=`${ny}-${pad(nm)}-${pad(day)}`;}
     else{day=i-firstDay+1;ds=`${year}-${pad(month+1)}-${pad(day)}`;}
-    let ft=state.tasks.filter(t=>t.dueDate===ds&&!t.completed&&calShow(t));
+    let ft=state.tasks.filter(t=>t.dueDate===ds&&(!t.completed||isEvent(t))&&calShow(t));
     if(m2)ft=ft.filter(t=>String(t.member)===String(m2.id));
     ft.sort((a,b)=>(a.dueTime||'99').localeCompare(b.dueTime||'99'));
     let recurOccs=recurBase.filter(t=>occursOnDate(t,ds));
     if(m2)recurOccs=recurOccs.filter(t=>String(t.member)===String(m2.id));
-    const gcalEvs=(state.calKind==='school')?[]:state.gcalEvents.filter(e=>e.date===ds);
+    const gcalEvs=(ck==='todos')?[]:state.gcalEvents.filter(e=>e.date===ds);
     const items=[];
     gcalEvs.forEach(e=>items.push(`<div class="cal-task-dot gcal-event" style="background:rgba(15,157,88,.12)" title="${escHtml(e.title)}" onclick="event.stopPropagation();calDayClick('${ds}')"><span class="dot" style="background:#0f9d58"></span><span class="lbl">${escHtml(e.title)}</span></div>`));
-    ft.forEach(t=>{const tm=findMember(t.member);const c=tm?tm.color:'#2E7D5B';items.push(`<div class="cal-task-dot" style="background:${hexA(c,'1f')}" title="${escHtml(t.title)}" onclick="calTaskClick(event,'${t.id}')"><span class="dot" style="background:${c}"></span><span class="lbl">${escHtml(t.title)}</span></div>`);});
-    recurOccs.forEach(t=>{const tm=findMember(t.member);const c=tm?tm.color:'#4C8C9E';items.push(`<div class="cal-task-dot recur-occ" style="background:${hexA(c,'14')}" title="Recurring: ${escHtml(t.title)}" onclick="calTaskClick(event,'${t.id}')"><span class="dot" style="background:${c}"></span><span class="lbl">↻ ${escHtml(t.title)}</span></div>`);});
+    const calItem=(t,c,rec)=>{const ev=isEvent(t);const tm=ev&&t.dueTime?`<span class="tm">${formatTime(t.dueTime).replace(/:00| /g,'').toLowerCase()}</span>`:'';return`<div class="cal-task-dot${rec?' recur-occ':''} ${ev?'is-event':'is-todo'}" style="background:${hexA(c,ev?'2a':(rec?'14':'1f'))};--evc:${c}" title="${rec?'Recurring: ':''}${escHtml(t.title)}${ev?' · '+evRange(t.dueTime,t.duration):''}" onclick="calTaskClick(event,'${t.id}')">${ev?'':`<span class="dot" style="background:${c}"></span>`}<span class="lbl"${ev?'':` data-ic="${kindIcon(t)}"`}>${tm}${rec?'↻ ':''}${escHtml(t.title)}</span></div>`;};
+    ft.forEach(t=>{const tm=findMember(t.member);items.push(calItem(t,tm?tm.color:'#2E7D5B',false));});
+    recurOccs.forEach(t=>{const tm=findMember(t.member);items.push(calItem(t,tm?tm.color:'#4C8C9E',true));});
     const show=Math.min(items.length,cap);const more=items.length-show;
     html+=`<div class="cal-cell ${isOther?'other-month':''} ${ds===todayStr2?'today':''} ${ds===selDate?'sel-day':''}" onclick="calDayClick('${ds}')"><div class="cal-day-row"><span class="cal-day-num">${day}</span>${(()=>{const w=state.weather&&state.weather.days&&state.weather.days[ds];return w?`<span class="cal-wx" title="${escHtml(wxInfo(w.code).label)} · ${w.hi}°/${w.lo}°${w.rain!=null?' · '+w.rain+'% rain':''}">${wxInfo(w.code).icon}<b>${w.hi}°</b></span>`:'';})()}${more>0?`<span class="cal-more" title="${more} more — tap the day to see all">+${more}</span>`:''}</div><div class="cal-items">${items.slice(0,show).join('')}</div></div>`;
   }
@@ -2104,24 +2126,28 @@ window.addEventListener('resize',()=>{clearTimeout(_calResizeT);_calResizeT=setT
 // ── Daily breakout: everything happening on the selected day ──
 function calDailyItems(ds){
   const m2=state.currentMember!=='family'?findMember(state.currentMember):null;
-  let tasks=state.tasks.filter(t=>t.dueDate===ds&&!t.completed&&calShow(t));
+  let tasks=state.tasks.filter(t=>t.dueDate===ds&&(!t.completed||isEvent(t))&&calShow(t));
   if(m2)tasks=tasks.filter(t=>String(t.member)===String(m2.id));
   let recur=state.tasks.filter(t=>t.recurrence&&t.dueDate&&!t.completed&&occursOnDate(t,ds)&&calShow(t));
   if(m2)recur=recur.filter(t=>String(t.member)===String(m2.id));
-  const gcal=(state.calKind==='school')?[]:state.gcalEvents.filter(e=>e.date===ds);
+  const gcal=(normCalKind(state.calKind)==='todos')?[]:state.gcalEvents.filter(e=>e.date===ds);
   return{tasks,recur,gcal};
 }
 function renderDailyBreakout(ds){
   const d=new Date(ds+'T12:00:00');
   const label=isNaN(d)?ds:d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
   const isToday=ds===todayStr();
-  const{tasks,recur,gcal}=calDailyItems(ds);
+  let{tasks,recur,gcal}=calDailyItems(ds);
   const prioMap={high:'🔴 High',medium:'🟡 Med',low:'🟢 Low'};
   const statusMap={inprogress:'🔵 In Progress',complete:'✅ Complete'};
   const rows=[];
   gcal.forEach(e=>rows.push({sort:(e.time||'zz')+'_g',html:`<div class="brk-item brk-gcal"><span class="brk-dot" style="background:#0f9d58"></span><div class="brk-body"><div class="brk-title">${escHtml(e.title)}</div><div class="brk-meta"><span class="brk-tag" style="background:rgba(15,157,88,.14);color:#0f9d58">📅 Google Cal</span><span class="brk-time">${e.time?'🕑 '+e.time:'All day'}</span></div></div></div>`}));
-  tasks.forEach(t=>{const tm=findMember(t.member);const c=tm&&tm.color?tm.color:'var(--accent)';rows.push({sort:(t.dueTime||'zy')+'_t',html:`<div class="brk-item" onclick="editTask('${t.id}')"><span class="brk-dot" style="background:${c}"></span><div class="brk-body"><div class="brk-title">${escHtml(t.title)}</div><div class="brk-meta">${tm?`<span class="brk-tag">${escHtml(tm.name)}</span>`:''}${t.dueTime?`<span class="brk-time">🕑 ${escHtml(t.dueTime)}</span>`:''}${t.priority&&t.priority!=='none'?`<span class="brk-tag brk-prio-${t.priority}">${prioMap[t.priority]||''}</span>`:''}${t.status&&t.status!=='notstarted'?`<span class="brk-tag brk-status">${statusMap[t.status]||''}</span>`:''}${t.duration?`<span class="brk-time">⏱ ${escHtml(t.duration)}</span>`:''}</div></div><button class="brk-check" title="Mark complete" onclick="event.stopPropagation();toggleTask('${t.id}',event)"></button></div>`});});
-  recur.forEach(t=>{const tm=findMember(t.member);const c=tm&&tm.color?tm.color:'#3F7A8A';rows.push({sort:(t.dueTime||'zx')+'_r',html:`<div class="brk-item brk-recur" onclick="editTask('${t.id}')"><span class="brk-dot" style="background:${c}"></span><div class="brk-body"><div class="brk-title">↻ ${escHtml(t.title)}</div><div class="brk-meta"><span class="brk-tag" style="background:rgba(76,140,158,.14);color:#3F7A8A">↻ Recurring</span>${tm?`<span class="brk-tag">${escHtml(tm.name)}</span>`:''}${t.dueTime?`<span class="brk-time">🕑 ${escHtml(t.dueTime)}</span>`:''}</div></div></div>`});});
+  const evRow=(t,rec)=>{const tm=findMember(t.member);const c=tm&&tm.color?tm.color:'#2E7D5B';return{sort:(t.dueTime||'00')+'_e',html:`<div class="brk-item brk-event${rec?' brk-recur':''}" onclick="editTask('${t.id}')"><span class="brk-dot" style="background:${c};border-radius:3px;height:100%;min-height:26px;width:5px"></span><div class="brk-body"><div class="brk-title">${rec?'↻ ':''}${escHtml(t.title)}</div><div class="brk-meta"><span class="brk-tag" style="background:rgba(15,157,88,.14);color:#0B7A45">📅 Event</span>${tm?`<span class="brk-tag">${escHtml(tm.name)}</span>`:''}<span class="brk-time">🕑 ${evRange(t.dueTime,t.duration)}</span></div></div></div>`};};
+  tasks.filter(isEvent).forEach(t=>rows.push(evRow(t,false)));
+  recur.filter(isEvent).forEach(t=>rows.push(evRow(t,true)));
+  tasks=tasks.filter(t=>!isEvent(t));recur=recur.filter(t=>!isEvent(t));
+  tasks.forEach(t=>{const tm=findMember(t.member);const c=tm&&tm.color?tm.color:'var(--accent)';rows.push({sort:(t.dueTime||'zy')+'_t',html:`<div class="brk-item" onclick="editTask('${t.id}')"><span class="brk-dot" style="background:${c}"></span><div class="brk-body"><div class="brk-title">${escHtml(t.title)}</div><div class="brk-meta"><span class="brk-tag task-tag kind-${taskKind(t)}">${KINDS[taskKind(t)]}</span>${tm?`<span class="brk-tag">${escHtml(tm.name)}</span>`:''}${t.dueTime?`<span class="brk-time">🕑 ${formatTime(t.dueTime)}</span>`:''}${t.priority&&t.priority!=='none'?`<span class="brk-tag brk-prio-${t.priority}">${prioMap[t.priority]||''}</span>`:''}${t.status&&t.status!=='notstarted'?`<span class="brk-tag brk-status">${statusMap[t.status]||''}</span>`:''}${t.duration?`<span class="brk-time">⏱ ${escHtml(t.duration)}</span>`:''}</div></div><button class="brk-check" title="Mark complete" onclick="event.stopPropagation();toggleTask('${t.id}',event)"></button></div>`});});
+  recur.forEach(t=>{const tm=findMember(t.member);const c=tm&&tm.color?tm.color:'#3F7A8A';rows.push({sort:(t.dueTime||'zx')+'_r',html:`<div class="brk-item brk-recur" onclick="editTask('${t.id}')"><span class="brk-dot" style="background:${c}"></span><div class="brk-body"><div class="brk-title">↻ ${escHtml(t.title)}</div><div class="brk-meta"><span class="brk-tag task-tag kind-${taskKind(t)}">${KINDS[taskKind(t)]}</span><span class="brk-tag" style="background:rgba(76,140,158,.14);color:#3F7A8A">↻ Recurring</span>${tm?`<span class="brk-tag">${escHtml(tm.name)}</span>`:''}${t.dueTime?`<span class="brk-time">🕑 ${escHtml(t.dueTime)}</span>`:''}</div></div></div>`});});
   rows.sort((a,b)=>String(a.sort).localeCompare(String(b.sort)));
   const total=rows.length;
   const body=total?rows.map(r=>r.html).join(''):'<div class="brk-empty">Nothing scheduled for this day. Tap “+ Add task” to plan something.</div>';
@@ -2742,7 +2768,7 @@ function openMassUpdate(){
   <div style="background:var(--surface2);border-radius:10px;padding:14px">
     <div style="font-size:.7rem;font-weight:700;color:var(--accent5);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">Action</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div class="form-group" style="margin:0"><label>Action Type</label><select id="mu-action-type" onchange="massUpdateToggleActionFields()"><option value="">— Choose —</option><option value="reassign">Reassign</option><option value="priority">Change priority</option><option value="due">Set due date</option><option value="duration">Set duration</option><option value="starton">Set start on</option><option value="list">Move to list</option><option value="status">Change status</option><option value="complete">Mark complete</option><option value="incomplete">Mark incomplete</option><option value="kind">Set calendar (School / Activities)</option><option value="delete">🗑️ Delete</option></select></div>
+      <div class="form-group" style="margin:0"><label>Action Type</label><select id="mu-action-type" onchange="massUpdateToggleActionFields()"><option value="">— Choose —</option><option value="reassign">Reassign</option><option value="priority">Change priority</option><option value="due">Set due date</option><option value="duration">Set duration</option><option value="starton">Set start on</option><option value="list">Move to list</option><option value="status">Change status</option><option value="complete">Mark complete</option><option value="incomplete">Mark incomplete</option><option value="kind">Set type (Event / School / Chore / To-do)</option><option value="delete">🗑️ Delete</option></select></div>
       <div class="form-group" style="margin:0" id="mu-action-value-wrap"></div>
     </div>
   </div>
@@ -2782,7 +2808,7 @@ function massUpdateToggleActionFields(){
   const lo='<option value="">No list</option>'+state.lists.map(l=>`<option value="${l.id}">${l.emoji} ${escHtml(l.name)}</option>`).join('');
   const dro=DURATIONS.map(d=>`<option value="${d.v}">${d.label}</option>`).join('');
   const sto=STARTONS.map(s=>`<option value="${s.v}">${s.label}</option>`).join('');
-  const fields={kind:`<label>Calendar</label><select id="mu-action-val"><option value="activity">🏃 Activities</option><option value="school">📚 School</option><option value="">Auto (from title)</option></select>`,reassign:`<label>Assign To</label><select id="mu-action-val"><option value="family">All Family</option>${mo}</select>`,priority:`<label>Priority</label><select id="mu-action-val"><option value="none">None</option><option value="low">🟢 Low</option><option value="medium">🟡 Medium</option><option value="high">🔴 High</option></select>`,due:`<label>Due Date</label><input type="date" id="mu-action-val">`,duration:`<label>Duration</label><select id="mu-action-val"><option value="">— None —</option>${dro}</select>`,starton:`<label>Start On</label><select id="mu-action-val"><option value="">— None —</option>${sto}</select>`,list:`<label>List</label><select id="mu-action-val">${lo}</select>`,status:`<label>Status</label><select id="mu-action-val"><option value="notstarted">⬜ Not Started</option><option value="inprogress">🔵 In Progress</option><option value="complete">✅ Complete</option></select>`,complete:'',incomplete:'',delete:''};
+  const fields={kind:`<label>Type</label><select id="mu-action-val"><option value="event">📅 Event</option><option value="school">📚 School to-do</option><option value="chore">🧹 Chore to-do</option><option value="todo">✅ Other to-do</option><option value="">Auto (from title)</option></select>`,reassign:`<label>Assign To</label><select id="mu-action-val"><option value="family">All Family</option>${mo}</select>`,priority:`<label>Priority</label><select id="mu-action-val"><option value="none">None</option><option value="low">🟢 Low</option><option value="medium">🟡 Medium</option><option value="high">🔴 High</option></select>`,due:`<label>Due Date</label><input type="date" id="mu-action-val">`,duration:`<label>Duration</label><select id="mu-action-val"><option value="">— None —</option>${dro}</select>`,starton:`<label>Start On</label><select id="mu-action-val"><option value="">— None —</option>${sto}</select>`,list:`<label>List</label><select id="mu-action-val">${lo}</select>`,status:`<label>Status</label><select id="mu-action-val"><option value="notstarted">⬜ Not Started</option><option value="inprogress">🔵 In Progress</option><option value="complete">✅ Complete</option></select>`,complete:'',incomplete:'',delete:''};
   if(type&&fields[type]!==undefined)wrap.innerHTML=fields[type]?`<div class="form-group" style="margin:0">${fields[type]}</div>`:`<div style="display:flex;align-items:flex-end;padding-bottom:4px"><span style="font-size:.8rem;color:var(--text3)">No extra value needed</span></div>`;else wrap.innerHTML='';
 }
 async function massUpdateApply(){
@@ -2791,7 +2817,7 @@ async function massUpdateApply(){
   if(type==='delete'&&!confirm(`Delete ${ids.length} task${ids.length!==1?'s':''}?`))return;
   const av=document.getElementById('mu-action-val')?.value??'';let n=0;
   for(const id of ids){const t=state.tasks.find(x=>String(x.id)===String(id));if(!t)continue;if(type==='delete'){await pushTask({id},'delete');}else{const u=Object.assign({},t);if(type==='reassign')u.member=av;if(type==='kind')u.kind=av;if(type==='priority')u.priority=av;if(type==='due')u.dueDate=av;if(type==='duration')u.duration=av;if(type==='starton')u.startOn=av;if(type==='list')u.listId=av;if(type==='status'){u.status=av;u.completed=av==='complete';u.completedAt=av==='complete'?new Date().toISOString():'';}if(type==='complete'){u.completed=true;u.completedAt=new Date().toISOString();u.status='complete';}if(type==='incomplete'){u.completed=false;u.completedAt='';u.status='notstarted';}await pushTask(u,'update');}n++;}
-  const lbl={kind:'Calendar set',reassign:'Reassigned',priority:'Priority updated',due:'Due date set',duration:'Duration set',starton:'Start-on set',list:'Moved',status:'Status updated',complete:'Marked complete',incomplete:'Marked incomplete',delete:'Deleted'};
+  const lbl={kind:'Type set',reassign:'Reassigned',priority:'Priority updated',due:'Due date set',duration:'Duration set',starton:'Start-on set',list:'Moved',status:'Status updated',complete:'Marked complete',incomplete:'Marked incomplete',delete:'Deleted'};
   toast(`${lbl[type]}: ${n} task${n!==1?'s':''}`, 'success');closeMassUpdate();
 }
 // ══════════════════════════════════════
@@ -3199,7 +3225,7 @@ function parseQuickTask(raw){
   take(new RegExp('\\s(?:at\\s+|@\\s*)(\\d{1,2})(?::(\\d{2}))?'+B,'i'),m=>{let h=parseInt(m[1],10);if((out._pm||h<8)&&h<12)h+=12;setT(h,m[2]);})||
   take(new RegExp('\\s(\\d{1,2}):(\\d{2})'+B,'i'),m=>{let h=parseInt(m[1],10);if(out._pm&&h<12)h+=12;setT(h,m[2]);});
   // Calendar tag
-  take(new RegExp('\\s#school'+B,'i'),()=>out.kind='school')||take(new RegExp('\\s#(activity|activities)'+B,'i'),()=>out.kind='activity');
+  take(new RegExp('\\s#school'+B,'i'),()=>out.kind='school')||take(new RegExp('\\s#chores?'+B,'i'),()=>out.kind='chore')||take(new RegExp('\\s#(todo|to-do)'+B,'i'),()=>out.kind='todo')||take(new RegExp('\\s#(event|events|activity|activities)'+B,'i'),()=>out.kind='event');
   // Priority
   take(new RegExp('\\s(!high|!h|!!+|urgent|asap)'+B,'i'),()=>out.priority='high')||
   take(new RegExp('\\s(!medium|!med|!m)'+B,'i'),()=>out.priority='medium')||
@@ -3277,10 +3303,37 @@ if(!glanceCfg.v5){glanceCfg.enabled=true;glanceCfg.minutes=5;glanceCfg.v5=1;try{
 var _glanceIdleT=null,_glanceClockT=null;
 function saveGlanceCfg(){try{localStorage.setItem('familyhub_glance',JSON.stringify(glanceCfg));}catch(_){}}
 function glanceOpen(){const g=document.getElementById('glance');return!!(g&&g.classList.contains('open'));}
-// School vs Activities: an explicit choice on the task wins; otherwise detect from the title
+// Events (like Google Calendar: no checkbox, never late) vs To-dos (school, chores, errands)
 const SCHOOL_RE=/\b(language arts?|l\.a\.?|bible|history|reading|read book|math|maths|geography|multiplication|handwriting|handeriting|hand writing|teaching textbook|textbook|grammar|spelling|phonics|science|duo ?lingo|uku|u\.k\.?|ukulele|homework|worksheet|homescho\w*|home school|tuition|efa|curriculum|school ?work|test scores?|lesson)\b/i;
-function taskKind(t){if(!t)return'activity';if(t.kind==='school'||t.kind==='activity')return t.kind;return SCHOOL_RE.test(String(t.title||''))?'school':'activity';}
-function calShow(t){const k=state.calKind||'activity';return k==='all'||taskKind(t)===k;}
+const CHORE_RE=/\b(chores?|shower|bath|getting ready|get ready|laundry|fold|trash|garbage|recycl\w*|vacuum\w*|sweep|mop|dust\w*|dish(es|washer)?|feed (the )?(pets?|dogs?|cats?|fish|chickens)|clean\w*|tidy|make (the |your )?beds?|brush teeth|yard ?work|mow\w*|rake|water (the )?plants|meal prep|unload|empty|wipe)\b/i;
+const ERRAND_RE=/\b(pay|order|cancel|buy|purchase|call|email|text|drop ?off|return|renew|subscription|schedule|sign ?up|register|fix|repair|finish|update|make|get new|check for|grocery|groceries|errand|pack|print|mail|ship|bike service|oil change|tune ?up|install|research|send|submit|pick ?up)\b/i;
+const EVENT_RE=/\b(soccer|practi[cs]e|prsctice|ballet|recital|game|match|tournament|race|regionals?|nica|mtb|ride|class|devo|potluck|meeting|birthday|party|dinner|lunch|breakfast|brunch|bbq|church|worship|appointment|appt|dentist|doctor|vet|orthodont\w*|check-?up|concert|movie|play ?date|trip|camp|festival|fair|patch|parade|wedding|funeral|office day|date night|night out|youth group|small group|reunion|visit|game night)\b/i;
+const KINDS={event:'📅 Event',school:'📚 School',chore:'🧹 Chore',todo:'✅ To-do'};
+function taskKind(t){
+  if(!t)return'todo';
+  if(t.kind==='event'||t.kind==='school'||t.kind==='chore'||t.kind==='todo')return t.kind;
+  const s=String(t.title||'');
+  if(SCHOOL_RE.test(s))return'school';
+  if(CHORE_RE.test(s))return'chore';
+  if(ERRAND_RE.test(s))return'todo';
+  if(EVENT_RE.test(s))return'event';
+  return t.dueTime?'event':'todo';
+}
+function isEvent(t){return taskKind(t)==='event';}
+function normCalKind(k){return k==='activity'||k==='events'?'events':k==='school'||k==='todos'?'todos':k==='all'?'all':'events';}
+function calShow(t){const k=normCalKind(state.calKind);return k==='all'||(k==='events')===isEvent(t);}
+const DUR_MIN={'5m':5,'10m':10,'15m':15,'30m':30,'45m':45,'1h':60,'90m':90,'2h':120,'3h':180,'4h':240,'6h':360};
+function evEnd(time,dur){const m=DUR_MIN[dur];if(!time||!m)return'';const[h,mi]=time.split(':').map(Number);const e=h*60+mi+m;return`${pad(Math.floor(e/60)%24)}:${pad(e%60)}`;}
+function evRange(time,dur){if(!time)return'All day';const e=evEnd(time,dur);return formatTime(time)+(e?' – '+formatTime(e):'');}
+document.addEventListener('input',e=>{const id=e.target&&e.target.id;if(id==='t-title'||id==='t-time')taskKindHint();});
+function kindIcon(t){const k=taskKind(t);return k==='school'?'📚':k==='chore'?'🧹':k==='todo'?'☐':'';}
+function taskKindHint(){
+  const sel=document.getElementById('t-kind');const h=document.getElementById('t-kind-hint');if(!sel||!h)return;
+  const ti=document.getElementById('t-title'),tm=document.getElementById('t-time');
+  const k=sel.value||taskKind({title:ti?ti.value:'',dueTime:tm?tm.value:''});
+  h.textContent=(sel.value?'':'Auto: ')+KINDS[k]+(k==='event'?' — shows on the calendar, no checkbox, never late':' — has a checkbox and shows as late if missed');
+  const dl=document.getElementById('t-duration-lbl');if(dl)dl.textContent=k==='event'?'Length':'Duration';
+}
 function calWhoPicker(m2){
   const opts=[`<option value="family"${m2?'':' selected'}>👥 Everyone</option>`].concat(state.members.map(m=>`<option value="${m.id}"${m2&&String(m2.id)===String(m.id)?' selected':''}>${escHtml(m.name)}</option>`)).join('');
   return`<label class="cal-who${m2?' on':''}"${m2?` style="--who:${m2.color}"`:''}><span class="sr">Whose calendar</span><select onchange="setCalPerson(this.value)" aria-label="Whose calendar">${opts}</select></label>`;
@@ -3291,18 +3344,19 @@ function setCalPerson(id){
   renderCalendar();
 }
 function calNavId(k){return 'nav-calendar';}
-function openCalendar(kind){state.calKind=kind||'activity';setView('calendar');document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));const nb=document.getElementById(calNavId(state.calKind));if(nb)nb.classList.add('active');if(window.innerWidth<=768)closeSidebarMobile();}
-function setCalKind(k){state.calKind=k;document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));const nb=document.getElementById(calNavId(k));if(nb)nb.classList.add('active');renderCalendar();}
+function openCalendar(kind){state.calKind=normCalKind(kind);setView('calendar');document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));const nb=document.getElementById(calNavId(state.calKind));if(nb)nb.classList.add('active');if(window.innerWidth<=768)closeSidebarMobile();}
+function setCalKind(k){k=normCalKind(k);state.calKind=k;document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));const nb=document.getElementById(calNavId(k));if(nb)nb.classList.add('active');renderCalendar();}
 function glSchoolLine(ds,i){
-  const it=glanceItemsFor(ds,'school');if(!it.length)return'';
+  const it=glanceItemsFor(ds,'todo');if(!it.length)return'';
   const by={};it.forEach(x=>{const m=findMember(x.member);const n=m?m.name:'Family';by[n]=(by[n]||0)+1;});
-  return`<div class="gl-school" onclick="event.stopPropagation();hideGlance();state.calSelectedDate='${ds}';openCalendar('school')" title="Open the School calendar">📚 <b>School</b> ${Object.entries(by).map(([n,c])=>`${escHtml(n)} ${c}`).join(' · ')}</div>`;
+  return`<div class="gl-school" onclick="event.stopPropagation();hideGlance();state.calSelectedDate='${ds}';openCalendar('todos')" title="Open the To-do calendar">✅ <b>To-dos</b> ${Object.entries(by).map(([n,c])=>`${escHtml(n)} ${c}`).join(' · ')}</div>`;
 }
 function glanceItemsFor(ds,kind){
-  const ok=t=>!kind||taskKind(t)===kind;
-  const tasks=state.tasks.filter(t=>!t.completed&&t.dueDate===ds&&String(t.member)!=='groceries'&&ok(t)).map(t=>({time:t.dueTime||'',title:t.title,member:t.member}));
-  const recur=state.tasks.filter(t=>t.recurrence&&t.dueDate&&!t.completed&&occursOnDate(t,ds)&&ok(t)).map(t=>({time:t.dueTime||'',title:t.title,member:t.member,recur:true}));
-  const gcal=kind==='school'?[]:(state.gcalEvents||[]).filter(e=>e.date===ds).map(e=>({time:e.time||'',title:e.title,gcal:true}));
+  const ok=t=>!kind||(kind==='event'||kind==='activity'?isEvent(t):kind==='todo'?!isEvent(t):taskKind(t)===kind);
+  const live=t=>!t.completed||isEvent(t);
+  const tasks=state.tasks.filter(t=>live(t)&&t.dueDate===ds&&String(t.member)!=='groceries'&&ok(t)).map(t=>({id:t.id,time:t.dueTime||'',dur:t.duration||'',title:t.title,member:t.member}));
+  const recur=state.tasks.filter(t=>t.recurrence&&t.dueDate&&!t.completed&&occursOnDate(t,ds)&&ok(t)).map(t=>({id:t.id,time:t.dueTime||'',dur:t.duration||'',title:t.title,member:t.member,recur:true}));
+  const gcal=(kind&&kind!=='event'&&kind!=='activity')?[]:(state.gcalEvents||[]).filter(e=>e.date===ds).map(e=>({time:e.time||'',title:e.title,gcal:true}));
   return gcal.concat(tasks,recur).sort((a,b)=>(a.time||'99').localeCompare(b.time||'99'));
 }
 function glanceRowHtml(it){
@@ -3367,7 +3421,7 @@ function glDur(min){if(min<1)return'now';if(min<60)return`in ${min} min`;const h
 function glItemHtml(it){
   const m=it.gcal?null:findMember(it.member);const c=it.gcal?'#0f9d58':(m?m.color:'#4C8C9E');
   const who=it.gcal?'Google':(m?m.name:'Family');
-  return`<div class="gl-it"><span class="bar" style="background:${c}"></span><div class="tx"><div class="ttl">${it.recur?'↻ ':''}${escHtml(it.title)}</div><div class="sub">${it.time?formatTime(it.time)+' · ':''}<span style="color:${c}">${escHtml(who)}</span></div></div></div>`;
+  return`<div class="gl-it"><span class="bar" style="background:${c}"></span><div class="tx"><div class="ttl">${it.recur?'↻ ':''}${escHtml(it.title)}</div><div class="sub">${it.time?evRange(it.time,it.dur)+' · ':''}<span style="color:${c}">${escHtml(who)}</span></div></div></div>`;
 }
 function renderGlance(){
   const el=document.getElementById('glance');if(!el)return;
@@ -3375,11 +3429,11 @@ function renderGlance(){
   if(new Date().getHours()===3&&Date.now()-GL_BOOT_TS>6*3600000){location.reload();return;}
   const now=new Date();const today=todayStr();const hh=now.getHours(),mm=now.getMinutes();const nowHM=`${pad(hh)}:${pad(mm)}`;
   const plan=(state.meals&&state.meals.plan)||{};const wx=state.weather;
-  const todays=glanceItemsFor(today,'activity');
+  const todays=glanceItemsFor(today,'event');
   const nextIt=todays.find(it=>it.time&&it.time>=nowHM);
   let chips='';
   if(nextIt){const[h,m]=nextIt.time.split(':').map(Number);const mins=h*60+m-(hh*60+mm);chips+=`<span class="gl-chip gl-next"><span class="d" style="background:var(--accent)"></span>Next: <b>${escHtml(nextIt.title)}</b>&nbsp;${formatTime(nextIt.time)} · ${glDur(mins)}</span>`;}
-  const overdue=state.tasks.filter(t=>!t.completed&&t.dueDate&&t.dueDate<today&&String(t.member)!=='groceries').length;
+  const overdue=state.tasks.filter(t=>!t.completed&&!isEvent(t)&&t.dueDate&&t.dueDate<today&&String(t.member)!=='groceries').length;
   if(overdue)chips+=`<span class="gl-chip" style="color:var(--accent2)"><span class="d" style="background:var(--accent2)"></span>${overdue} overdue task${overdue!==1?'s':''}</span>`;
   const need=grocNeed(),low=grocLow();
   if(need.length||low.length)chips+=`<span class="gl-chip" style="color:var(--accent4)"><span class="d" style="background:var(--accent4)"></span>🛒 ${need.length?need.slice(0,4).map(i=>escHtml(i.name)).join(', ')+(need.length>4?` +${need.length-4}`:''):'Nothing needed'}${low.length?` · ${low.length} low`:''}</span>`;
@@ -3389,11 +3443,11 @@ function renderGlance(){
   let days='',meals='';
   for(let i=0;i<5;i++){
     const d=new Date();d.setDate(d.getDate()+i);const ds=nlDateStr(d);
-    let items=glanceItemsFor(ds,'activity');if(i===0)items=items.filter(it=>!it.time||it.time>=nowHM);
+    let items=glanceItemsFor(ds,'event');if(i===0)items=items.filter(it=>!it.time||it.time>=nowHM);
     const name=i===0?'Today':i===1?'Tomorrow':d.toLocaleDateString('en-US',{weekday:'long'});
     const short=i===0?'Today':i===1?'Tmrw':d.toLocaleDateString('en-US',{weekday:'short'});
     const w=wx&&wx.days&&wx.days[ds];const dm=plan[ds];
-    days+=`<section class="gl-day${i===0?' today':' gl-small'}"><div class="gl-day-h"><div><div class="gl-day-name">${name}</div><div class="gl-day-date">${d.toLocaleDateString('en-US',{weekday:i<2?'short':undefined,month:'short',day:'numeric'})}</div></div>${w?`<div class="gl-day-wx" title="${wxInfo(w.code).label}">${wxInfo(w.code).icon}<span>${w.hi}°<i>/${w.lo}°</i>${i>0&&w.rain!=null&&w.rain>=30?`<b class="gl-rain">💧${w.rain}%</b>`:''}</span></div>`:''}</div>${(()=>{if(i!==0)return'';const rp=wxReport(ds);if(!rp)return'';return`<div class="gl-report"><span class="gl-report-line">${escHtml(rp.line)}</span>${rp.tips.length?`<span class="gl-report-tip">${rp.tips.map(escHtml).join(' · ')}</span>`:''}${rp.sun?`<span class="gl-report-sun">${escHtml(rp.sun)}</span>`:''}</div>`;})()}${glSchoolLine(ds,i)}<div class="gl-day-items">${items.length?items.map(glItemHtml).join(''):`<div class="gl-empty">${i===0?'No activities left today.':'No activities'}</div>`}</div><div class="gl-more" hidden></div></section>`;
+    days+=`<section class="gl-day${i===0?' today':' gl-small'}"><div class="gl-day-h"><div><div class="gl-day-name">${name}</div><div class="gl-day-date">${d.toLocaleDateString('en-US',{weekday:i<2?'short':undefined,month:'short',day:'numeric'})}</div></div>${w?`<div class="gl-day-wx" title="${wxInfo(w.code).label}">${wxInfo(w.code).icon}<span>${w.hi}°<i>/${w.lo}°</i>${i>0&&w.rain!=null&&w.rain>=30?`<b class="gl-rain">💧${w.rain}%</b>`:''}</span></div>`:''}</div>${(()=>{if(i!==0)return'';const rp=wxReport(ds);if(!rp)return'';return`<div class="gl-report"><span class="gl-report-line">${escHtml(rp.line)}</span>${rp.tips.length?`<span class="gl-report-tip">${rp.tips.map(escHtml).join(' · ')}</span>`:''}${rp.sun?`<span class="gl-report-sun">${escHtml(rp.sun)}</span>`:''}</div>`;})()}${glSchoolLine(ds,i)}<div class="gl-day-items">${items.length?items.map(glItemHtml).join(''):`<div class="gl-empty">${i===0?'No activities left today.':'No events'}</div>`}</div><div class="gl-more" hidden></div></section>`;
     meals+=`<div class="gl-meal${i===0?' today':''}${dm&&dm.name?'':' none'}"><span class="gl-meal-d">${short}</span><span class="gl-meal-n">${dm&&dm.name?(dm.freezer?'🧊 ':'')+escHtml(dm.name):'—'}</span></div>`;
   }
   // Family overview (people only; Groceries has its own list now)
@@ -3451,7 +3505,7 @@ function deleteSavedMeal(k){if(!confirm('Remove this saved meal?'))return;const 
 // ══════════════════════════════════════
 // AUTO-UPDATE: a wall screen picks up new versions on its own
 // ══════════════════════════════════════
-const HUB_BUILD='2026-10-25-cal4';
+const HUB_BUILD='2026-10-25-evt1';
 var _updT=null;
 async function checkForUpdate(){
   try{
