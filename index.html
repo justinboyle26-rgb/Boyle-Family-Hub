@@ -1075,6 +1075,15 @@ body.vkb-active .modal { max-height: calc(100vh - 340px); overflow-y: auto; }
 .gl-school b { font-weight: 700; }
 .gl-day.gl-small .gl-school { font-size: 10.5px; padding: 3px 6px; white-space: normal; line-height: 1.25; }
 @media (orientation: portrait) and (min-width: 1000px) { .gl-school { font-size: 16px; } .gl-day.gl-small .gl-school { font-size: 14px; } }
+/* Calendar switcher pinned in the top bar */
+.topbar .cal-switch { margin: 0; flex-shrink: 0; }
+.topbar .cal-switch[hidden] { display: none; }
+@media (max-width: 1000px) {
+  .topbar { flex-wrap: wrap; row-gap: 8px; }
+  .topbar .cal-switch { order: 5; width: 100%; display: flex; }
+  .topbar .cal-switch[hidden] { display: none; }
+  .topbar .cal-switch button { flex: 1; }
+}
 </style>
 </head>
 <body>
@@ -1142,6 +1151,10 @@ body.vkb-active .modal { max-height: calc(100vh - 340px); overflow-y: auto; }
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5"/><path d="M22 9v6"/></svg>
         School Calendar
       </button>
+      <button class="nav-btn" id="nav-allcal" onclick="openCalendar('all')">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="5" width="15" height="15" rx="2"/><path d="M7 2v3M14 2v3M3 10h15"/><path d="M21 8v12a2 2 0 01-2 2H7"/></svg>
+        All Calendars
+      </button>
       <button class="nav-btn" id="nav-meals" onclick="navTo('meals')">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M7 2v20M4 2v6a3 3 0 006 0V2"/><path d="M18 22V2c-2.5 1.5-4 4-4 8s1.5 4 4 4"/></svg>
         Meal Plan
@@ -1180,6 +1193,7 @@ body.vkb-active .modal { max-height: calc(100vh - 340px); overflow-y: auto; }
     <div class="topbar">
       <div class="member-color-bar" id="topbar-color" style="background:var(--accent)"></div>
       <h2 id="topbar-title">All Family</h2>
+      <div class="cal-kind cal-switch" id="cal-switch" role="group" aria-label="Which calendar" hidden><button data-k="activity" onclick="setCalKind('activity')">🏃 Activities</button><button data-k="school" onclick="setCalKind('school')">📚 School</button><button data-k="all" onclick="setCalKind('all')">🗂 All</button></div>
       <div class="topbar-actions">
         <button class="btn btn-ghost btn-sm" onclick="openMassUpdate()">⚡ Mass Update</button>
         <button class="btn btn-ghost btn-sm" onclick="navTo('import')">⬆ Import</button>
@@ -2041,8 +2055,9 @@ function renderCalendar(_fromFit){
     ?`<span class="cal-sync-chip" title="Google Calendar linked"><span class="d"></span>${state.gcalEvents.length} Google events</span><button class="icon-btn" onclick="fetchGoogleCalendarEvents()" title="Sync Google Calendar" aria-label="Sync Google Calendar">🔄</button>`
     :`<a class="cal-sync-chip cal-link" href="#" onclick="navTo('settings');return false">🔗 Link Google Calendar</a>`;
   const ck=state.calKind||'activity';
+  {const cs=document.getElementById('cal-switch');if(cs){cs.hidden=false;cs.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.k===ck));}}
   if(!m2){document.getElementById('topbar-title').textContent=ck==='school'?'School Calendar':ck==='all'?'All Calendars':'Activities Calendar';}
-  let html=`<div class="cal-kind" role="group" aria-label="Which calendar"><button class="${ck==='activity'?'on':''}" onclick="setCalKind('activity')">🏃 Activities</button><button class="${ck==='school'?'on':''}" onclick="setCalKind('school')">📚 School</button><button class="${ck==='all'?'on':''}" onclick="setCalKind('all')">Both</button></div><div class="cal-nav"><h3>${monthLong} <span>${year}</span></h3><button class="icon-btn" onclick="calPrev()" aria-label="Previous month">‹</button><button class="icon-btn" onclick="calNext()" aria-label="Next month">›</button><button class="btn btn-ghost btn-sm" onclick="calToday()">Today</button>${gcalChip}</div>
+  let html=`<div class="cal-nav"><h3>${monthLong} <span>${year}</span></h3><button class="icon-btn" onclick="calPrev()" aria-label="Previous month">‹</button><button class="icon-btn" onclick="calNext()" aria-label="Next month">›</button><button class="btn btn-ghost btn-sm" onclick="calToday()">Today</button>${gcalChip}</div>
   <div class="cal-tip">💡 Tap a day for its breakout below · tap a task to open it · dashed = recurring</div>`;
   const totalCells=Math.ceil((firstDay+daysInMonth)/7)*7;const weeks=totalCells/7;
   html+=`<div class="cal-board"><div class="cal-head">${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>`<div class="cal-header-cell">${d}</div>`).join('')}</div><div class="cal-grid" id="cal-grid" data-weeks="${weeks}">`;
@@ -3265,8 +3280,9 @@ function glanceOpen(){const g=document.getElementById('glance');return!!(g&&g.cl
 const SCHOOL_RE=/\b(language arts?|l\.a\.?|bible|history|reading|read book|math|maths|geography|multiplication|handwriting|handeriting|hand writing|teaching textbook|textbook|grammar|spelling|phonics|science|duo ?lingo|uku|u\.k\.?|ukulele|homework|worksheet|homescho\w*|home school|tuition|efa|curriculum|school ?work|test scores?|lesson)\b/i;
 function taskKind(t){if(!t)return'activity';if(t.kind==='school'||t.kind==='activity')return t.kind;return SCHOOL_RE.test(String(t.title||''))?'school':'activity';}
 function calShow(t){const k=state.calKind||'activity';return k==='all'||taskKind(t)===k;}
-function openCalendar(kind){state.calKind=kind||'activity';setView('calendar');document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));const nb=document.getElementById(state.calKind==='school'?'nav-school':'nav-calendar');if(nb)nb.classList.add('active');if(window.innerWidth<=768)closeSidebarMobile();}
-function setCalKind(k){state.calKind=k;document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));const nb=document.getElementById(k==='school'?'nav-school':'nav-calendar');if(nb)nb.classList.add('active');renderCalendar();}
+function calNavId(k){return ({school:'nav-school',all:'nav-allcal'}[k]||'nav-calendar');}
+function openCalendar(kind){state.calKind=kind||'activity';setView('calendar');document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));const nb=document.getElementById(calNavId(state.calKind));if(nb)nb.classList.add('active');if(window.innerWidth<=768)closeSidebarMobile();}
+function setCalKind(k){state.calKind=k;document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));const nb=document.getElementById(calNavId(k));if(nb)nb.classList.add('active');renderCalendar();}
 function glSchoolLine(ds,i){
   const it=glanceItemsFor(ds,'school');if(!it.length)return'';
   const by={};it.forEach(x=>{const m=findMember(x.member);const n=m?m.name:'Family';by[n]=(by[n]||0)+1;});
@@ -3425,7 +3441,7 @@ function deleteSavedMeal(k){if(!confirm('Remove this saved meal?'))return;const 
 // ══════════════════════════════════════
 // AUTO-UPDATE: a wall screen picks up new versions on its own
 // ══════════════════════════════════════
-const HUB_BUILD='2026-10-25-cal2';
+const HUB_BUILD='2026-10-25-cal3';
 var _updT=null;
 async function checkForUpdate(){
   try{
@@ -3692,6 +3708,7 @@ function renderMeals(){
   html+=`<div class="meal-lib"><div class="section-title">Saved meals (${libKeys.length})</div>${libKeys.length?`<div class="meal-lib-list">${libKeys.sort((a,b)=>String(lib[a].name).localeCompare(String(lib[b].name))).map(k=>`<span class="meal-lib-chip">${escHtml(lib[k].name)} <small>${mealIngredients(lib[k]).length} items</small><button onclick="deleteSavedMeal('${k}')" aria-label="Remove ${escHtml(lib[k].name)} from saved meals">×</button></span>`).join('')}</div>`:'<div style="font-size:.82rem;color:var(--text3)">Meals you plan are saved here so you can reuse them with one tap.</div>'}</div>`;
   document.getElementById('main-content').innerHTML=html;
 }
+(function(){const mc=document.getElementById('main-content');const cs=()=>document.getElementById('cal-switch');if(mc&&window.MutationObserver)new MutationObserver(()=>{const c=cs();if(c)c.hidden=state.mainView!=='calendar';}).observe(mc,{childList:true});})();
 // ══════════════════════════════════════
 // BOOT
 // ══════════════════════════════════════
