@@ -1084,6 +1084,15 @@ body.vkb-active .modal { max-height: calc(100vh - 340px); overflow-y: auto; }
   .topbar .cal-switch[hidden] { display: none; }
   .topbar .cal-switch button { flex: 1; }
 }
+/* Whose calendar picker */
+.cal-who { position: relative; display: inline-flex; align-items: center; }
+.cal-who .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.cal-who select { appearance: none; -webkit-appearance: none; font: 600 .86rem 'Inter', var(--emoji); color: #2E5E47; background: #F3F7F4; border: 1px solid rgba(255,255,255,.5); border-radius: 10px; padding: 8px 30px 8px 12px; min-height: 38px; cursor: pointer;
+  background-image: linear-gradient(45deg, transparent 50%, #2E5E47 50%), linear-gradient(135deg, #2E5E47 50%, transparent 50%); background-position: calc(100% - 15px) 52%, calc(100% - 10px) 52%; background-size: 5px 5px; background-repeat: no-repeat; }
+.cal-who.on select { box-shadow: inset 4px 0 0 var(--who); font-weight: 700; }
+.cal-who-banner { display: flex; align-items: center; gap: 12px; justify-content: space-between; margin: 0 0 12px; padding: 10px 12px 10px 16px; border-radius: 14px; background: #F3F7F4; color: var(--text); border-left: 6px solid var(--who); }
+.cal-who-banner span { font-size: .95rem; color: #22332B; }
+.cal-who-banner b { color: #22332B; }
 </style>
 </head>
 <body>
@@ -1146,14 +1155,6 @@ body.vkb-active .modal { max-height: calc(100vh - 340px); overflow-y: auto; }
       <button class="nav-btn" id="nav-calendar" onclick="openCalendar('activity')">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         Calendar
-      </button>
-      <button class="nav-btn" id="nav-school" onclick="openCalendar('school')">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5"/><path d="M22 9v6"/></svg>
-        School Calendar
-      </button>
-      <button class="nav-btn" id="nav-allcal" onclick="openCalendar('all')">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="5" width="15" height="15" rx="2"/><path d="M7 2v3M14 2v3M3 10h15"/><path d="M21 8v12a2 2 0 01-2 2H7"/></svg>
-        All Calendars
       </button>
       <button class="nav-btn" id="nav-meals" onclick="navTo('meals')">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M7 2v20M4 2v6a3 3 0 006 0V2"/><path d="M18 22V2c-2.5 1.5-4 4-4 8s1.5 4 4 4"/></svg>
@@ -2056,8 +2057,8 @@ function renderCalendar(_fromFit){
     :`<a class="cal-sync-chip cal-link" href="#" onclick="navTo('settings');return false">🔗 Link Google Calendar</a>`;
   const ck=state.calKind||'activity';
   {const cs=document.getElementById('cal-switch');if(cs){cs.hidden=false;cs.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.k===ck));}}
-  if(!m2){document.getElementById('topbar-title').textContent=ck==='school'?'School Calendar':ck==='all'?'All Calendars':'Activities Calendar';}
-  let html=`<div class="cal-nav"><h3>${monthLong} <span>${year}</span></h3><button class="icon-btn" onclick="calPrev()" aria-label="Previous month">‹</button><button class="icon-btn" onclick="calNext()" aria-label="Next month">›</button><button class="btn btn-ghost btn-sm" onclick="calToday()">Today</button>${gcalChip}</div>
+  {const lab=ck==='school'?'School Calendar':ck==='all'?'All Calendars':'Activities Calendar';document.getElementById('topbar-title').textContent=m2?`${m2.name}’s ${ck==='school'?'School':ck==='all'?'Calendars':'Activities'}`:lab;document.getElementById('topbar-color').style.background=m2?m2.color:'var(--accent)';}
+  let html=`<div class="cal-nav"><h3>${monthLong} <span>${year}</span></h3><button class="icon-btn" onclick="calPrev()" aria-label="Previous month">‹</button><button class="icon-btn" onclick="calNext()" aria-label="Next month">›</button><button class="btn btn-ghost btn-sm" onclick="calToday()">Today</button>${calWhoPicker(m2)}${gcalChip}</div>${m2?`<div class="cal-who-banner" style="--who:${m2.color}"><span>Showing only <b>${escHtml(m2.name)}</b></span><button type="button" class="btn btn-primary btn-sm" onclick="setCalPerson('family')">👥 Show everyone</button></div>`:''}
   <div class="cal-tip">💡 Tap a day for its breakout below · tap a task to open it · dashed = recurring</div>`;
   const totalCells=Math.ceil((firstDay+daysInMonth)/7)*7;const weeks=totalCells/7;
   html+=`<div class="cal-board"><div class="cal-head">${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>`<div class="cal-header-cell">${d}</div>`).join('')}</div><div class="cal-grid" id="cal-grid" data-weeks="${weeks}">`;
@@ -3280,7 +3281,16 @@ function glanceOpen(){const g=document.getElementById('glance');return!!(g&&g.cl
 const SCHOOL_RE=/\b(language arts?|l\.a\.?|bible|history|reading|read book|math|maths|geography|multiplication|handwriting|handeriting|hand writing|teaching textbook|textbook|grammar|spelling|phonics|science|duo ?lingo|uku|u\.k\.?|ukulele|homework|worksheet|homescho\w*|home school|tuition|efa|curriculum|school ?work|test scores?|lesson)\b/i;
 function taskKind(t){if(!t)return'activity';if(t.kind==='school'||t.kind==='activity')return t.kind;return SCHOOL_RE.test(String(t.title||''))?'school':'activity';}
 function calShow(t){const k=state.calKind||'activity';return k==='all'||taskKind(t)===k;}
-function calNavId(k){return ({school:'nav-school',all:'nav-allcal'}[k]||'nav-calendar');}
+function calWhoPicker(m2){
+  const opts=[`<option value="family"${m2?'':' selected'}>👥 Everyone</option>`].concat(state.members.map(m=>`<option value="${m.id}"${m2&&String(m2.id)===String(m.id)?' selected':''}>${escHtml(m.name)}</option>`)).join('');
+  return`<label class="cal-who${m2?' on':''}"${m2?` style="--who:${m2.color}"`:''}><span class="sr">Whose calendar</span><select onchange="setCalPerson(this.value)" aria-label="Whose calendar">${opts}</select></label>`;
+}
+function setCalPerson(id){
+  state.currentMember=id||'family';
+  document.querySelectorAll('.member-btn').forEach(b=>b.classList.toggle('active',b.dataset.member===String(state.currentMember)));
+  renderCalendar();
+}
+function calNavId(k){return 'nav-calendar';}
 function openCalendar(kind){state.calKind=kind||'activity';setView('calendar');document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));const nb=document.getElementById(calNavId(state.calKind));if(nb)nb.classList.add('active');if(window.innerWidth<=768)closeSidebarMobile();}
 function setCalKind(k){state.calKind=k;document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));const nb=document.getElementById(calNavId(k));if(nb)nb.classList.add('active');renderCalendar();}
 function glSchoolLine(ds,i){
@@ -3441,7 +3451,7 @@ function deleteSavedMeal(k){if(!confirm('Remove this saved meal?'))return;const 
 // ══════════════════════════════════════
 // AUTO-UPDATE: a wall screen picks up new versions on its own
 // ══════════════════════════════════════
-const HUB_BUILD='2026-10-25-cal3';
+const HUB_BUILD='2026-10-25-cal4';
 var _updT=null;
 async function checkForUpdate(){
   try{
