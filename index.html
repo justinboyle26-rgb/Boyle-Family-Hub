@@ -1066,6 +1066,15 @@ body.vkb-active .modal { max-height: calc(100vh - 340px); overflow-y: auto; }
 .import-zone, .import-zone:hover, .import-zone.dragover { background: rgba(255,255,255,.96) !important; }
 #imp-tab-csv, #imp-tab-sheets { color: #F3F7F4 !important; }
 #imp-tab-csv[style*="var(--accent)"], #imp-tab-sheets[style*="border-bottom: 2px solid var(--accent)"] { border-bottom-color: #F3F7F4 !important; }
+/* School vs Activities */
+.cal-kind { display: inline-flex; gap: 4px; padding: 4px; border-radius: 14px; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.2); margin-bottom: 10px; }
+.cal-kind button { border: none; background: transparent; color: #F3F7F4; font: 600 .86rem 'Inter', var(--emoji); padding: 8px 14px; border-radius: 10px; cursor: pointer; min-height: 38px; }
+.cal-kind button.on { background: #F3F7F4; color: #2E5E47; }
+.task-tag.kind-school { background: rgba(43,123,176,.13); color: #1F5F8B; }
+.gl-school { flex-shrink: 0; font-size: 12.5px; color: #1F5F8B; background: rgba(43,123,176,.10); border-radius: 9px; padding: 4px 8px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: 'Inter', var(--emoji); }
+.gl-school b { font-weight: 700; }
+.gl-day.gl-small .gl-school { font-size: 10.5px; padding: 3px 6px; white-space: normal; line-height: 1.25; }
+@media (orientation: portrait) and (min-width: 1000px) { .gl-school { font-size: 16px; } .gl-day.gl-small .gl-school { font-size: 14px; } }
 </style>
 </head>
 <body>
@@ -1125,9 +1134,13 @@ body.vkb-active .modal { max-height: calc(100vh - 340px); overflow-y: auto; }
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="m8 12 3 3 5-6"/></svg>
         All Tasks
       </button>
-      <button class="nav-btn" id="nav-calendar" onclick="navTo('calendar')">
+      <button class="nav-btn" id="nav-calendar" onclick="openCalendar('activity')">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        Family Calendar
+        Calendar
+      </button>
+      <button class="nav-btn" id="nav-school" onclick="openCalendar('school')">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5"/><path d="M22 9v6"/></svg>
+        School Calendar
       </button>
       <button class="nav-btn" id="nav-meals" onclick="navTo('meals')">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M7 2v20M4 2v6a3 3 0 006 0V2"/><path d="M18 22V2c-2.5 1.5-4 4-4 8s1.5 4 4 4"/></svg>
@@ -1225,6 +1238,7 @@ body.vkb-active .modal { max-height: calc(100vh - 340px); overflow-y: auto; }
         </label>
       </div>
     </div>
+    <div class="form-group"><label for="t-kind">Calendar</label><select id="t-kind"><option value="">Auto — decide from the title</option><option value="activity">🏃 Activities</option><option value="school">📚 School</option></select></div>
     <div class="form-group" id="t-rotate-wrap" style="display:none"><label>Chore rotation (optional)</label><div class="rot-chips" id="t-rotate"></div><div class="rot-hint">Tap people in order. Each time it's checked off, the next one is assigned to the next person.</div></div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeModal('task-modal')">Cancel</button>
@@ -1342,7 +1356,7 @@ let state={
   listView:'kanban',kanbanFilters:{members:[],priorities:[],durations:[],startOns:[]},
   kanbanGroupBy:'status',filterOpen:false,dragTaskId:null,kanbanDragging:false,
   lvTaskIds:[],
-  calMonth:new Date().getMonth(),calYear:new Date().getFullYear(),calSelectedDate:null,
+  calKind:'activity',calMonth:new Date().getMonth(),calYear:new Date().getFullYear(),calSelectedDate:null,
   editingTaskId:null,editingListId:null,syncing:false,lastSync:null,
 };
 // ══════════════════════════════════════
@@ -1556,6 +1570,7 @@ function renderTaskItem(t,today){
       </div>
       ${t.dueTime?`<div><span class="task-due" style="color:var(--accent4)">⏰ ${formatTime(t.dueTime)}</span></div>`:''}
       ${t.recurrence?`<div><span class="task-tag" style="background:rgba(46,125,91,.15);color:var(--accent5)">↻ ${recurLabel(t.recurrence)}${rotationText(t)}</span></div>`:''}
+      ${taskKind(t)==='school'?`<div><span class="task-tag kind-school">📚 School</span></div>`:''}
       ${t.notes?`<div style="font-size:.76rem;color:var(--text3);margin-top:4px">${escHtml(t.notes)}</div>`:''}
     </div>
     <div class="task-actions">
@@ -1865,7 +1880,7 @@ function nextRecurDate(task){if(!task.dueDate||!task.recurrence)return null;cons
 function openAddTask(){
   state.editingTaskId=null;document.getElementById('task-modal-title').textContent='Add Task';
   ['t-title','t-notes','t-due','t-time','t-recur','t-duration','t-starton'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('t-priority').value='none';document.getElementById('t-add-to-cal').checked=false;rotateSel=[];buildRotateChips();updateRotateVisibility();document.getElementById('t-list-sel').value='';document.getElementById('t-status').value='notstarted';
+  document.getElementById('t-priority').value='none';document.getElementById('t-add-to-cal').checked=false;rotateSel=[];buildRotateChips();updateRotateVisibility();document.getElementById('t-kind').value='';document.getElementById('t-list-sel').value='';document.getElementById('t-status').value='notstarted';
   const sel=document.getElementById('t-member');if(sel)sel.value=state.currentMember!=='family'?state.currentMember:(state.members[0]?.id||'family');
   document.getElementById('task-modal').classList.add('open');
 }
@@ -1880,13 +1895,13 @@ function editTask(id,e){
   document.getElementById('t-time').value=t.dueTime||'';document.getElementById('t-recur').value=t.recurrence||'';
   document.getElementById('t-status').value=t.status||'notstarted';
   document.getElementById('t-duration').value=t.duration||'';document.getElementById('t-starton').value=t.startOn||'';
-  rotateSel=rotationOf(t);buildRotateChips();updateRotateVisibility();
+  rotateSel=rotationOf(t);buildRotateChips();updateRotateVisibility();document.getElementById('t-kind').value=(t.kind==='school'||t.kind==='activity')?t.kind:'';
   document.getElementById('task-modal').classList.add('open');
 }
 function saveTask(){
   const title=document.getElementById('t-title').value.trim();if(!title){toast('Please enter a task title','error');return;}
   const addToCal=document.getElementById('t-add-to-cal').checked;const dueDate=document.getElementById('t-due').value;
-  const fields={notes:document.getElementById('t-notes').value,member:document.getElementById('t-member').value,priority:document.getElementById('t-priority').value,dueDate,dueTime:document.getElementById('t-time').value,recurrence:document.getElementById('t-recur').value,listId:document.getElementById('t-list-sel').value,duration:document.getElementById('t-duration').value,startOn:document.getElementById('t-starton').value,addedToCal:addToCal,status:document.getElementById('t-status').value,rotation:(document.getElementById('t-recur').value&&rotateSel.length>1)?rotateSel.filter(id=>state.members.some(m=>String(m.id)===id)):''};
+  const fields={kind:document.getElementById('t-kind').value||'',notes:document.getElementById('t-notes').value,member:document.getElementById('t-member').value,priority:document.getElementById('t-priority').value,dueDate,dueTime:document.getElementById('t-time').value,recurrence:document.getElementById('t-recur').value,listId:document.getElementById('t-list-sel').value,duration:document.getElementById('t-duration').value,startOn:document.getElementById('t-starton').value,addedToCal:addToCal,status:document.getElementById('t-status').value,rotation:(document.getElementById('t-recur').value&&rotateSel.length>1)?rotateSel.filter(id=>state.members.some(m=>String(m.id)===id)):''};
   if(state.editingTaskId){const idx=state.tasks.findIndex(x=>String(x.id)===String(state.editingTaskId));if(idx>-1){pushTask(Object.assign({},state.tasks[idx],fields),'update');toast('Updated!','success');}}
   else{const task=makeTask(title,fields);pushTask(task,'add');toast('Task added!','success');if(addToCal&&dueDate)addToGoogleCalendar(task);}
   closeModal('task-modal');
@@ -1980,7 +1995,7 @@ function renderOverview(){
   html+='</div>';
   // Coming up: the next 7 days
   const up=[];
-  for(let i=1;i<=7;i++){const d=new Date();d.setDate(d.getDate()+i);const ds=nlDateStr(d);glanceItemsFor(ds).forEach(it=>up.push(Object.assign({ds,d},it)));}
+  for(let i=1;i<=7;i++){const d=new Date();d.setDate(d.getDate()+i);const ds=nlDateStr(d);glanceItemsFor(ds,'activity').forEach(it=>up.push(Object.assign({ds,d},it)));}
   html+=`<div class="ov-section"><div class="ov-section-h"><h2>Coming up this week</h2><button class="btn btn-ghost btn-sm" onclick="navTo('calendar')">Open calendar →</button></div>`;
   if(!up.length)html+=`<div class="ov-empty">Nothing scheduled in the next 7 days.</div>`;
   else html+=`<div class="ov-up">${up.slice(0,10).map(it=>{const m=it.gcal?null:findMember(it.member);const c=it.gcal?'#0f9d58':(m?m.color:'#4C8C9E');return`<div class="ov-up-item"><div class="d">${it.d.toLocaleDateString('en-US',{weekday:'short',day:'numeric'}).toUpperCase()}${it.time?' · '+formatTime(it.time):''}</div><div class="t">${it.recur?'↻ ':''}${escHtml(it.title)}</div><div class="w" style="color:${c}">${it.gcal?'Google':(m?escHtml(m.name):'Family')}</div></div>`;}).join('')}</div>`;
@@ -2021,26 +2036,28 @@ function renderCalendar(_fromFit){
   if(!selDate||!inThisMonth(selDate))selDate=todayInView?todayStr2:`${year}-${pad(month+1)}-01`;
   state.calSelectedDate=selDate;
   const cap=state.calCap||3; // items that fit in one day cell (set by calFitRows)
+  const m2=state.currentMember!=='family'?findMember(state.currentMember):null;
   const gcalChip=state.gcalKey
     ?`<span class="cal-sync-chip" title="Google Calendar linked"><span class="d"></span>${state.gcalEvents.length} Google events</span><button class="icon-btn" onclick="fetchGoogleCalendarEvents()" title="Sync Google Calendar" aria-label="Sync Google Calendar">🔄</button>`
     :`<a class="cal-sync-chip cal-link" href="#" onclick="navTo('settings');return false">🔗 Link Google Calendar</a>`;
-  let html=`<div class="cal-nav"><h3>${monthLong} <span>${year}</span></h3><button class="icon-btn" onclick="calPrev()" aria-label="Previous month">‹</button><button class="icon-btn" onclick="calNext()" aria-label="Next month">›</button><button class="btn btn-ghost btn-sm" onclick="calToday()">Today</button>${gcalChip}</div>
+  const ck=state.calKind||'activity';
+  if(!m2){document.getElementById('topbar-title').textContent=ck==='school'?'School Calendar':ck==='all'?'All Calendars':'Activities Calendar';}
+  let html=`<div class="cal-kind" role="group" aria-label="Which calendar"><button class="${ck==='activity'?'on':''}" onclick="setCalKind('activity')">🏃 Activities</button><button class="${ck==='school'?'on':''}" onclick="setCalKind('school')">📚 School</button><button class="${ck==='all'?'on':''}" onclick="setCalKind('all')">Both</button></div><div class="cal-nav"><h3>${monthLong} <span>${year}</span></h3><button class="icon-btn" onclick="calPrev()" aria-label="Previous month">‹</button><button class="icon-btn" onclick="calNext()" aria-label="Next month">›</button><button class="btn btn-ghost btn-sm" onclick="calToday()">Today</button>${gcalChip}</div>
   <div class="cal-tip">💡 Tap a day for its breakout below · tap a task to open it · dashed = recurring</div>`;
   const totalCells=Math.ceil((firstDay+daysInMonth)/7)*7;const weeks=totalCells/7;
   html+=`<div class="cal-board"><div class="cal-head">${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>`<div class="cal-header-cell">${d}</div>`).join('')}</div><div class="cal-grid" id="cal-grid" data-weeks="${weeks}">`;
-  const m2=state.currentMember!=='family'?findMember(state.currentMember):null;
-  const recurBase=state.tasks.filter(t=>t.recurrence&&t.dueDate&&!t.completed);
+  const recurBase=state.tasks.filter(t=>t.recurrence&&t.dueDate&&!t.completed&&calShow(t));
   for(let i=0;i<totalCells;i++){
     let day,isOther=false,ds;
     if(i<firstDay){day=daysInPrev-firstDay+i+1;isOther=true;const pm=month===0?12:month;const py=month===0?year-1:year;ds=`${py}-${pad(pm)}-${pad(day)}`;}
     else if(i>=firstDay+daysInMonth){day=i-firstDay-daysInMonth+1;isOther=true;const nm=month===11?1:month+2;const ny=month===11?year+1:year;ds=`${ny}-${pad(nm)}-${pad(day)}`;}
     else{day=i-firstDay+1;ds=`${year}-${pad(month+1)}-${pad(day)}`;}
-    let ft=state.tasks.filter(t=>t.dueDate===ds&&!t.completed);
+    let ft=state.tasks.filter(t=>t.dueDate===ds&&!t.completed&&calShow(t));
     if(m2)ft=ft.filter(t=>String(t.member)===String(m2.id));
     ft.sort((a,b)=>(a.dueTime||'99').localeCompare(b.dueTime||'99'));
     let recurOccs=recurBase.filter(t=>occursOnDate(t,ds));
     if(m2)recurOccs=recurOccs.filter(t=>String(t.member)===String(m2.id));
-    const gcalEvs=state.gcalEvents.filter(e=>e.date===ds);
+    const gcalEvs=(state.calKind==='school')?[]:state.gcalEvents.filter(e=>e.date===ds);
     const items=[];
     gcalEvs.forEach(e=>items.push(`<div class="cal-task-dot gcal-event" style="background:rgba(15,157,88,.12)" title="${escHtml(e.title)}" onclick="event.stopPropagation();calDayClick('${ds}')"><span class="dot" style="background:#0f9d58"></span><span class="lbl">${escHtml(e.title)}</span></div>`));
     ft.forEach(t=>{const tm=findMember(t.member);const c=tm?tm.color:'#2E7D5B';items.push(`<div class="cal-task-dot" style="background:${hexA(c,'1f')}" title="${escHtml(t.title)}" onclick="calTaskClick(event,'${t.id}')"><span class="dot" style="background:${c}"></span><span class="lbl">${escHtml(t.title)}</span></div>`);});
@@ -2071,11 +2088,11 @@ window.addEventListener('resize',()=>{clearTimeout(_calResizeT);_calResizeT=setT
 // ── Daily breakout: everything happening on the selected day ──
 function calDailyItems(ds){
   const m2=state.currentMember!=='family'?findMember(state.currentMember):null;
-  let tasks=state.tasks.filter(t=>t.dueDate===ds&&!t.completed);
+  let tasks=state.tasks.filter(t=>t.dueDate===ds&&!t.completed&&calShow(t));
   if(m2)tasks=tasks.filter(t=>String(t.member)===String(m2.id));
-  let recur=state.tasks.filter(t=>t.recurrence&&t.dueDate&&!t.completed&&occursOnDate(t,ds));
+  let recur=state.tasks.filter(t=>t.recurrence&&t.dueDate&&!t.completed&&occursOnDate(t,ds)&&calShow(t));
   if(m2)recur=recur.filter(t=>String(t.member)===String(m2.id));
-  const gcal=state.gcalEvents.filter(e=>e.date===ds);
+  const gcal=(state.calKind==='school')?[]:state.gcalEvents.filter(e=>e.date===ds);
   return{tasks,recur,gcal};
 }
 function renderDailyBreakout(ds){
@@ -2709,7 +2726,7 @@ function openMassUpdate(){
   <div style="background:var(--surface2);border-radius:10px;padding:14px">
     <div style="font-size:.7rem;font-weight:700;color:var(--accent5);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">Action</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div class="form-group" style="margin:0"><label>Action Type</label><select id="mu-action-type" onchange="massUpdateToggleActionFields()"><option value="">— Choose —</option><option value="reassign">Reassign</option><option value="priority">Change priority</option><option value="due">Set due date</option><option value="duration">Set duration</option><option value="starton">Set start on</option><option value="list">Move to list</option><option value="status">Change status</option><option value="complete">Mark complete</option><option value="incomplete">Mark incomplete</option><option value="delete">🗑️ Delete</option></select></div>
+      <div class="form-group" style="margin:0"><label>Action Type</label><select id="mu-action-type" onchange="massUpdateToggleActionFields()"><option value="">— Choose —</option><option value="reassign">Reassign</option><option value="priority">Change priority</option><option value="due">Set due date</option><option value="duration">Set duration</option><option value="starton">Set start on</option><option value="list">Move to list</option><option value="status">Change status</option><option value="complete">Mark complete</option><option value="incomplete">Mark incomplete</option><option value="kind">Set calendar (School / Activities)</option><option value="delete">🗑️ Delete</option></select></div>
       <div class="form-group" style="margin:0" id="mu-action-value-wrap"></div>
     </div>
   </div>
@@ -2749,7 +2766,7 @@ function massUpdateToggleActionFields(){
   const lo='<option value="">No list</option>'+state.lists.map(l=>`<option value="${l.id}">${l.emoji} ${escHtml(l.name)}</option>`).join('');
   const dro=DURATIONS.map(d=>`<option value="${d.v}">${d.label}</option>`).join('');
   const sto=STARTONS.map(s=>`<option value="${s.v}">${s.label}</option>`).join('');
-  const fields={reassign:`<label>Assign To</label><select id="mu-action-val"><option value="family">All Family</option>${mo}</select>`,priority:`<label>Priority</label><select id="mu-action-val"><option value="none">None</option><option value="low">🟢 Low</option><option value="medium">🟡 Medium</option><option value="high">🔴 High</option></select>`,due:`<label>Due Date</label><input type="date" id="mu-action-val">`,duration:`<label>Duration</label><select id="mu-action-val"><option value="">— None —</option>${dro}</select>`,starton:`<label>Start On</label><select id="mu-action-val"><option value="">— None —</option>${sto}</select>`,list:`<label>List</label><select id="mu-action-val">${lo}</select>`,status:`<label>Status</label><select id="mu-action-val"><option value="notstarted">⬜ Not Started</option><option value="inprogress">🔵 In Progress</option><option value="complete">✅ Complete</option></select>`,complete:'',incomplete:'',delete:''};
+  const fields={kind:`<label>Calendar</label><select id="mu-action-val"><option value="activity">🏃 Activities</option><option value="school">📚 School</option><option value="">Auto (from title)</option></select>`,reassign:`<label>Assign To</label><select id="mu-action-val"><option value="family">All Family</option>${mo}</select>`,priority:`<label>Priority</label><select id="mu-action-val"><option value="none">None</option><option value="low">🟢 Low</option><option value="medium">🟡 Medium</option><option value="high">🔴 High</option></select>`,due:`<label>Due Date</label><input type="date" id="mu-action-val">`,duration:`<label>Duration</label><select id="mu-action-val"><option value="">— None —</option>${dro}</select>`,starton:`<label>Start On</label><select id="mu-action-val"><option value="">— None —</option>${sto}</select>`,list:`<label>List</label><select id="mu-action-val">${lo}</select>`,status:`<label>Status</label><select id="mu-action-val"><option value="notstarted">⬜ Not Started</option><option value="inprogress">🔵 In Progress</option><option value="complete">✅ Complete</option></select>`,complete:'',incomplete:'',delete:''};
   if(type&&fields[type]!==undefined)wrap.innerHTML=fields[type]?`<div class="form-group" style="margin:0">${fields[type]}</div>`:`<div style="display:flex;align-items:flex-end;padding-bottom:4px"><span style="font-size:.8rem;color:var(--text3)">No extra value needed</span></div>`;else wrap.innerHTML='';
 }
 async function massUpdateApply(){
@@ -2757,8 +2774,8 @@ async function massUpdateApply(){
   const ids=[...document.querySelectorAll('.mu-task-cb:checked')].map(cb=>cb.dataset.id);if(!ids.length){toast('No tasks selected','error');return;}
   if(type==='delete'&&!confirm(`Delete ${ids.length} task${ids.length!==1?'s':''}?`))return;
   const av=document.getElementById('mu-action-val')?.value??'';let n=0;
-  for(const id of ids){const t=state.tasks.find(x=>String(x.id)===String(id));if(!t)continue;if(type==='delete'){await pushTask({id},'delete');}else{const u=Object.assign({},t);if(type==='reassign')u.member=av;if(type==='priority')u.priority=av;if(type==='due')u.dueDate=av;if(type==='duration')u.duration=av;if(type==='starton')u.startOn=av;if(type==='list')u.listId=av;if(type==='status'){u.status=av;u.completed=av==='complete';u.completedAt=av==='complete'?new Date().toISOString():'';}if(type==='complete'){u.completed=true;u.completedAt=new Date().toISOString();u.status='complete';}if(type==='incomplete'){u.completed=false;u.completedAt='';u.status='notstarted';}await pushTask(u,'update');}n++;}
-  const lbl={reassign:'Reassigned',priority:'Priority updated',due:'Due date set',duration:'Duration set',starton:'Start-on set',list:'Moved',status:'Status updated',complete:'Marked complete',incomplete:'Marked incomplete',delete:'Deleted'};
+  for(const id of ids){const t=state.tasks.find(x=>String(x.id)===String(id));if(!t)continue;if(type==='delete'){await pushTask({id},'delete');}else{const u=Object.assign({},t);if(type==='reassign')u.member=av;if(type==='kind')u.kind=av;if(type==='priority')u.priority=av;if(type==='due')u.dueDate=av;if(type==='duration')u.duration=av;if(type==='starton')u.startOn=av;if(type==='list')u.listId=av;if(type==='status'){u.status=av;u.completed=av==='complete';u.completedAt=av==='complete'?new Date().toISOString():'';}if(type==='complete'){u.completed=true;u.completedAt=new Date().toISOString();u.status='complete';}if(type==='incomplete'){u.completed=false;u.completedAt='';u.status='notstarted';}await pushTask(u,'update');}n++;}
+  const lbl={kind:'Calendar set',reassign:'Reassigned',priority:'Priority updated',due:'Due date set',duration:'Duration set',starton:'Start-on set',list:'Moved',status:'Status updated',complete:'Marked complete',incomplete:'Marked incomplete',delete:'Deleted'};
   toast(`${lbl[type]}: ${n} task${n!==1?'s':''}`, 'success');closeMassUpdate();
 }
 // ══════════════════════════════════════
@@ -3165,6 +3182,8 @@ function parseQuickTask(raw){
   take(new RegExp('\\s(?:at\\s+|@\\s*)?(\\d{1,2})(?::(\\d{2}))?\\s*(am|pm|a\\.m\\.|p\\.m\\.|a|p)'+B,'i'),m=>setT(m[1],m[2],m[3]))||
   take(new RegExp('\\s(?:at\\s+|@\\s*)(\\d{1,2})(?::(\\d{2}))?'+B,'i'),m=>{let h=parseInt(m[1],10);if((out._pm||h<8)&&h<12)h+=12;setT(h,m[2]);})||
   take(new RegExp('\\s(\\d{1,2}):(\\d{2})'+B,'i'),m=>{let h=parseInt(m[1],10);if(out._pm&&h<12)h+=12;setT(h,m[2]);});
+  // Calendar tag
+  take(new RegExp('\\s#school'+B,'i'),()=>out.kind='school')||take(new RegExp('\\s#(activity|activities)'+B,'i'),()=>out.kind='activity');
   // Priority
   take(new RegExp('\\s(!high|!h|!!+|urgent|asap)'+B,'i'),()=>out.priority='high')||
   take(new RegExp('\\s(!medium|!med|!m)'+B,'i'),()=>out.priority='medium')||
@@ -3203,7 +3222,7 @@ function quickAddTask(){
   const inp=document.getElementById('quick-add-input');const raw=inp.value.trim();if(!raw)return;
   const p=parseQuickTask(raw);if(!p.title){toast('Add a task name too','error');return;}
   const fields={member:p.member||(state.currentMember==='family'?'family':state.currentMember)};
-  ['dueDate','dueTime','priority','recurrence','duration'].forEach(k=>{if(p[k])fields[k]=p[k];});
+  ['dueDate','dueTime','priority','recurrence','duration','kind'].forEach(k=>{if(p[k])fields[k]=p[k];});
   pushTask(makeTask(p.title,fields),'add');
   const chips=quickSummaryChips(Object.assign({},p,{member:fields.member==='family'?'':fields.member}));
   toast('Added '+escHtml(p.title)+(chips.length?' · '+escHtml(chips.join(' · ')):''),'success');
@@ -3242,10 +3261,22 @@ if(!glanceCfg.v5){glanceCfg.enabled=true;glanceCfg.minutes=5;glanceCfg.v5=1;try{
 var _glanceIdleT=null,_glanceClockT=null;
 function saveGlanceCfg(){try{localStorage.setItem('familyhub_glance',JSON.stringify(glanceCfg));}catch(_){}}
 function glanceOpen(){const g=document.getElementById('glance');return!!(g&&g.classList.contains('open'));}
-function glanceItemsFor(ds){
-  const tasks=state.tasks.filter(t=>!t.completed&&t.dueDate===ds&&String(t.member)!=='groceries').map(t=>({time:t.dueTime||'',title:t.title,member:t.member}));
-  const recur=state.tasks.filter(t=>t.recurrence&&t.dueDate&&!t.completed&&occursOnDate(t,ds)).map(t=>({time:t.dueTime||'',title:t.title,member:t.member,recur:true}));
-  const gcal=(state.gcalEvents||[]).filter(e=>e.date===ds).map(e=>({time:e.time||'',title:e.title,gcal:true}));
+// School vs Activities: an explicit choice on the task wins; otherwise detect from the title
+const SCHOOL_RE=/\b(language arts?|l\.a\.?|bible|history|reading|read book|math|maths|geography|multiplication|handwriting|handeriting|hand writing|teaching textbook|textbook|grammar|spelling|phonics|science|duo ?lingo|uku|u\.k\.?|ukulele|homework|worksheet|homescho\w*|home school|tuition|efa|curriculum|school ?work|test scores?|lesson)\b/i;
+function taskKind(t){if(!t)return'activity';if(t.kind==='school'||t.kind==='activity')return t.kind;return SCHOOL_RE.test(String(t.title||''))?'school':'activity';}
+function calShow(t){const k=state.calKind||'activity';return k==='all'||taskKind(t)===k;}
+function openCalendar(kind){state.calKind=kind||'activity';setView('calendar');document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));const nb=document.getElementById(state.calKind==='school'?'nav-school':'nav-calendar');if(nb)nb.classList.add('active');if(window.innerWidth<=768)closeSidebarMobile();}
+function setCalKind(k){state.calKind=k;document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));const nb=document.getElementById(k==='school'?'nav-school':'nav-calendar');if(nb)nb.classList.add('active');renderCalendar();}
+function glSchoolLine(ds,i){
+  const it=glanceItemsFor(ds,'school');if(!it.length)return'';
+  const by={};it.forEach(x=>{const m=findMember(x.member);const n=m?m.name:'Family';by[n]=(by[n]||0)+1;});
+  return`<div class="gl-school" onclick="event.stopPropagation();hideGlance();state.calSelectedDate='${ds}';openCalendar('school')" title="Open the School calendar">📚 <b>School</b> ${Object.entries(by).map(([n,c])=>`${escHtml(n)} ${c}`).join(' · ')}</div>`;
+}
+function glanceItemsFor(ds,kind){
+  const ok=t=>!kind||taskKind(t)===kind;
+  const tasks=state.tasks.filter(t=>!t.completed&&t.dueDate===ds&&String(t.member)!=='groceries'&&ok(t)).map(t=>({time:t.dueTime||'',title:t.title,member:t.member}));
+  const recur=state.tasks.filter(t=>t.recurrence&&t.dueDate&&!t.completed&&occursOnDate(t,ds)&&ok(t)).map(t=>({time:t.dueTime||'',title:t.title,member:t.member,recur:true}));
+  const gcal=kind==='school'?[]:(state.gcalEvents||[]).filter(e=>e.date===ds).map(e=>({time:e.time||'',title:e.title,gcal:true}));
   return gcal.concat(tasks,recur).sort((a,b)=>(a.time||'99').localeCompare(b.time||'99'));
 }
 function glanceRowHtml(it){
@@ -3318,7 +3349,7 @@ function renderGlance(){
   if(new Date().getHours()===3&&Date.now()-GL_BOOT_TS>6*3600000){location.reload();return;}
   const now=new Date();const today=todayStr();const hh=now.getHours(),mm=now.getMinutes();const nowHM=`${pad(hh)}:${pad(mm)}`;
   const plan=(state.meals&&state.meals.plan)||{};const wx=state.weather;
-  const todays=glanceItemsFor(today);
+  const todays=glanceItemsFor(today,'activity');
   const nextIt=todays.find(it=>it.time&&it.time>=nowHM);
   let chips='';
   if(nextIt){const[h,m]=nextIt.time.split(':').map(Number);const mins=h*60+m-(hh*60+mm);chips+=`<span class="gl-chip gl-next"><span class="d" style="background:var(--accent)"></span>Next: <b>${escHtml(nextIt.title)}</b>&nbsp;${formatTime(nextIt.time)} · ${glDur(mins)}</span>`;}
@@ -3332,11 +3363,11 @@ function renderGlance(){
   let days='',meals='';
   for(let i=0;i<5;i++){
     const d=new Date();d.setDate(d.getDate()+i);const ds=nlDateStr(d);
-    let items=glanceItemsFor(ds);if(i===0)items=items.filter(it=>!it.time||it.time>=nowHM);
+    let items=glanceItemsFor(ds,'activity');if(i===0)items=items.filter(it=>!it.time||it.time>=nowHM);
     const name=i===0?'Today':i===1?'Tomorrow':d.toLocaleDateString('en-US',{weekday:'long'});
     const short=i===0?'Today':i===1?'Tmrw':d.toLocaleDateString('en-US',{weekday:'short'});
     const w=wx&&wx.days&&wx.days[ds];const dm=plan[ds];
-    days+=`<section class="gl-day${i===0?' today':' gl-small'}"><div class="gl-day-h"><div><div class="gl-day-name">${name}</div><div class="gl-day-date">${d.toLocaleDateString('en-US',{weekday:i<2?'short':undefined,month:'short',day:'numeric'})}</div></div>${w?`<div class="gl-day-wx" title="${wxInfo(w.code).label}">${wxInfo(w.code).icon}<span>${w.hi}°<i>/${w.lo}°</i>${i>0&&w.rain!=null&&w.rain>=30?`<b class="gl-rain">💧${w.rain}%</b>`:''}</span></div>`:''}</div>${(()=>{if(i!==0)return'';const rp=wxReport(ds);if(!rp)return'';return`<div class="gl-report"><span class="gl-report-line">${escHtml(rp.line)}</span>${rp.tips.length?`<span class="gl-report-tip">${rp.tips.map(escHtml).join(' · ')}</span>`:''}${rp.sun?`<span class="gl-report-sun">${escHtml(rp.sun)}</span>`:''}</div>`;})()}<div class="gl-day-items">${items.length?items.map(glItemHtml).join(''):`<div class="gl-empty">${i===0?'All clear for the rest of today.':'Nothing planned'}</div>`}</div><div class="gl-more" hidden></div></section>`;
+    days+=`<section class="gl-day${i===0?' today':' gl-small'}"><div class="gl-day-h"><div><div class="gl-day-name">${name}</div><div class="gl-day-date">${d.toLocaleDateString('en-US',{weekday:i<2?'short':undefined,month:'short',day:'numeric'})}</div></div>${w?`<div class="gl-day-wx" title="${wxInfo(w.code).label}">${wxInfo(w.code).icon}<span>${w.hi}°<i>/${w.lo}°</i>${i>0&&w.rain!=null&&w.rain>=30?`<b class="gl-rain">💧${w.rain}%</b>`:''}</span></div>`:''}</div>${(()=>{if(i!==0)return'';const rp=wxReport(ds);if(!rp)return'';return`<div class="gl-report"><span class="gl-report-line">${escHtml(rp.line)}</span>${rp.tips.length?`<span class="gl-report-tip">${rp.tips.map(escHtml).join(' · ')}</span>`:''}${rp.sun?`<span class="gl-report-sun">${escHtml(rp.sun)}</span>`:''}</div>`;})()}${glSchoolLine(ds,i)}<div class="gl-day-items">${items.length?items.map(glItemHtml).join(''):`<div class="gl-empty">${i===0?'No activities left today.':'No activities'}</div>`}</div><div class="gl-more" hidden></div></section>`;
     meals+=`<div class="gl-meal${i===0?' today':''}${dm&&dm.name?'':' none'}"><span class="gl-meal-d">${short}</span><span class="gl-meal-n">${dm&&dm.name?(dm.freezer?'🧊 ':'')+escHtml(dm.name):'—'}</span></div>`;
   }
   // Family overview (people only; Groceries has its own list now)
@@ -3394,7 +3425,7 @@ function deleteSavedMeal(k){if(!confirm('Remove this saved meal?'))return;const 
 // ══════════════════════════════════════
 // AUTO-UPDATE: a wall screen picks up new versions on its own
 // ══════════════════════════════════════
-const HUB_BUILD='2026-10-25-moss1';
+const HUB_BUILD='2026-10-25-cal2';
 var _updT=null;
 async function checkForUpdate(){
   try{
