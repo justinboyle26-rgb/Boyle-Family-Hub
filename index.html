@@ -1107,6 +1107,9 @@ body.vkb-active .modal { max-height: calc(100vh - 340px); overflow-y: auto; }
 .ev-row .t { font-weight: 700; font-size: .82rem; min-width: 128px; color: #3B5247; }
 .ev-row .n { flex: 1; font-weight: 600; }
 .ev-row .w { font-size: .78rem; font-weight: 600; }
+.t-allday { display: flex; align-items: center; gap: 8px; margin: -4px 0 12px; font-size: .9rem; font-weight: 600; cursor: pointer; text-transform: none; }
+.t-allday input { width: auto; }
+.cal-task-dot.is-event.multi { border-radius: 4px; }
 </style>
 </head>
 <body>
@@ -1239,7 +1242,7 @@ body.vkb-active .modal { max-height: calc(100vh - 340px); overflow-y: auto; }
         <select id="t-priority"><option value="none">None</option><option value="low">🟢 Low</option><option value="medium">🟡 Medium</option><option value="high">🔴 High</option></select>
       </div>
     </div>
-    <div class="row-2">
+    <div class="row-2" id="t-dur-row">
       <div class="form-group"><label id="t-duration-lbl">Duration</label>
         <select id="t-duration"><option value="">— None —</option><option value="5m">5 minutes</option><option value="10m">10 minutes</option><option value="15m">15 minutes</option><option value="30m">30 minutes</option><option value="45m">45 minutes</option><option value="1h">1 hour</option><option value="90m">1½ hours</option><option value="2h">2 hours</option><option value="3h">3 hours</option><option value="4h">4 hours</option><option value="6h">6 hours</option></select>
       </div>
@@ -1248,9 +1251,14 @@ body.vkb-active .modal { max-height: calc(100vh - 340px); overflow-y: auto; }
       </div>
     </div>
     <div class="row-2">
-      <div class="form-group"><label>Due Date</label><input type="date" id="t-due"></div>
-      <div class="form-group"><label>Due Time</label><input type="time" id="t-time"></div>
+      <div class="form-group"><label id="t-due-lbl">Due Date</label><input type="date" id="t-due"></div>
+      <div class="form-group"><label id="t-time-lbl">Due Time</label><input type="time" id="t-time"></div>
     </div>
+    <div class="row-2" id="t-end-row" style="display:none">
+      <div class="form-group"><label>End Date</label><input type="date" id="t-end-date"></div>
+      <div class="form-group"><label>End Time</label><input type="time" id="t-end-time"></div>
+    </div>
+    <label class="t-allday" id="t-allday-wrap" style="display:none"><input type="checkbox" id="t-allday" onchange="evAllDayToggle()"> All-day event</label>
     <div class="row-2">
       <div class="form-group"><label>List</label><select id="t-list-sel"><option value="">No list</option></select></div>
       <div class="form-group"><label>Status</label>
@@ -1582,7 +1590,7 @@ function evTodayHtml(mid){
   const ds=todayStr();let ev=glanceItemsFor(ds,'event');
   if(mid&&mid!=='family')ev=ev.filter(it=>!it.gcal&&String(it.member)===String(mid));
   if(!ev.length)return'';
-  return`<div class="ev-today"><div class="ev-h">📅 Today’s events</div>${ev.map(it=>{const m=it.gcal?null:findMember(it.member);const c=it.gcal?'#0f9d58':(m?m.color:'#2E7D5B');return`<div class="ev-row" style="--evc:${c}" ${it.id?`onclick="editTask('${it.id}')"`:''}><span class="t">${evRange(it.time,it.dur)}</span><span class="n">${it.recur?'↻ ':''}${escHtml(it.title)}</span><span class="w" style="color:${c}">${it.gcal?'Google':escHtml(m?m.name:'Family')}</span></div>`;}).join('')}</div>`;
+  return`<div class="ev-today"><div class="ev-h">📅 Today’s events</div>${ev.map(it=>{const m=it.gcal?null:findMember(it.member);const c=it.gcal?'#0f9d58':(m?m.color:'#2E7D5B');return`<div class="ev-row" style="--evc:${c}" ${it.id?`onclick="editTask('${it.id}')"`:''}><span class="t">${it.label||evRange(it.time,it.dur)}</span><span class="n">${it.recur?'↻ ':''}${escHtml(it.title)}</span><span class="w" style="color:${c}">${it.gcal?'Google':escHtml(m?m.name:'Family')}</span></div>`;}).join('')}</div>`;
 }
 function renderTaskItem(t,today){
   const member=findMember(t.member);const color=member?member.color:'var(--accent)';
@@ -1915,7 +1923,7 @@ function makeTask(title,overrides={}){return{id:genId(),title,notes:'',member:'f
 function nextRecurDate(task){if(!task.dueDate||!task.recurrence)return null;const d=new Date(task.dueDate+'T12:00:00');switch(task.recurrence){case'daily':d.setDate(d.getDate()+1);break;case'weekdays':d.setDate(d.getDate()+1);while(d.getDay()===0||d.getDay()===6)d.setDate(d.getDate()+1);break;case'weekly':d.setDate(d.getDate()+7);break;case'biweekly':d.setDate(d.getDate()+14);break;case'monthly':d.setMonth(d.getMonth()+1);break;case'yearly':d.setFullYear(d.getFullYear()+1);break;default:return null;}return d.toISOString().split('T')[0];}
 function openAddTask(){
   state.editingTaskId=null;document.getElementById('task-modal-title').textContent='Add Task';
-  ['t-title','t-notes','t-due','t-time','t-recur','t-duration','t-starton'].forEach(id=>document.getElementById(id).value='');
+  ['t-title','t-notes','t-due','t-time','t-recur','t-duration','t-starton','t-end-date','t-end-time'].forEach(id=>document.getElementById(id).value='');document.getElementById('t-allday').checked=false;
   document.getElementById('t-priority').value='none';document.getElementById('t-add-to-cal').checked=false;rotateSel=[];buildRotateChips();updateRotateVisibility();document.getElementById('t-kind').value='';taskKindHint();document.getElementById('t-list-sel').value='';document.getElementById('t-status').value='notstarted';
   const sel=document.getElementById('t-member');if(sel)sel.value=state.currentMember!=='family'?state.currentMember:(state.members[0]?.id||'family');
   document.getElementById('task-modal').classList.add('open');
@@ -1931,13 +1939,18 @@ function editTask(id,e){
   document.getElementById('t-time').value=t.dueTime||'';document.getElementById('t-recur').value=t.recurrence||'';
   document.getElementById('t-status').value=t.status||'notstarted';
   document.getElementById('t-duration').value=t.duration||'';document.getElementById('t-starton').value=t.startOn||'';
+  document.getElementById('t-end-date').value=t.endDate||'';document.getElementById('t-end-time').value=t.endTime||(isEvent(t)?evEnd(t.dueTime,t.duration):'')||'';document.getElementById('t-allday').checked=!!t.allDay;
   rotateSel=rotationOf(t);buildRotateChips();updateRotateVisibility();document.getElementById('t-kind').value=(t.kind in KINDS)?t.kind:'';taskKindHint();
   document.getElementById('task-modal').classList.add('open');
 }
 function saveTask(){
   const title=document.getElementById('t-title').value.trim();if(!title){toast('Please enter a task title','error');return;}
   const addToCal=document.getElementById('t-add-to-cal').checked;const dueDate=document.getElementById('t-due').value;
-  const fields={kind:document.getElementById('t-kind').value||'',notes:document.getElementById('t-notes').value,member:document.getElementById('t-member').value,priority:document.getElementById('t-priority').value,dueDate,dueTime:document.getElementById('t-time').value,recurrence:document.getElementById('t-recur').value,listId:document.getElementById('t-list-sel').value,duration:document.getElementById('t-duration').value,startOn:document.getElementById('t-starton').value,addedToCal:addToCal,status:document.getElementById('t-status').value,rotation:(document.getElementById('t-recur').value&&rotateSel.length>1)?rotateSel.filter(id=>state.members.some(m=>String(m.id)===id)):''};
+  const evK=taskKind({kind:document.getElementById('t-kind').value,title,dueTime:document.getElementById('t-time').value})==='event';
+  const ev={endDate:'',endTime:'',allDay:false};
+  if(evK){ev.allDay=document.getElementById('t-allday').checked;ev.endDate=document.getElementById('t-end-date').value||dueDate;if(dueDate&&ev.endDate<dueDate)ev.endDate=dueDate;if(ev.endDate===dueDate)ev.endDate='';ev.endTime=ev.allDay?'':document.getElementById('t-end-time').value;
+    const st=document.getElementById('t-time').value;if(!ev.endDate&&ev.endTime&&st&&ev.endTime<=st){toast('End time is before the start time','error');return;}}
+  const fields={...ev,kind:document.getElementById('t-kind').value||'',notes:document.getElementById('t-notes').value,member:document.getElementById('t-member').value,priority:document.getElementById('t-priority').value,dueDate,dueTime:(evK&&ev.allDay)?'':document.getElementById('t-time').value,recurrence:document.getElementById('t-recur').value,listId:document.getElementById('t-list-sel').value,duration:document.getElementById('t-duration').value,startOn:document.getElementById('t-starton').value,addedToCal:addToCal,status:document.getElementById('t-status').value,rotation:(document.getElementById('t-recur').value&&rotateSel.length>1)?rotateSel.filter(id=>state.members.some(m=>String(m.id)===id)):''};
   if(state.editingTaskId){const idx=state.tasks.findIndex(x=>String(x.id)===String(state.editingTaskId));if(idx>-1){pushTask(Object.assign({},state.tasks[idx],fields),'update');toast('Updated!','success');}}
   else{const task=makeTask(title,fields);pushTask(task,'add');toast('Task added!','success');if(addToCal&&dueDate)addToGoogleCalendar(task);}
   closeModal('task-modal');
@@ -2089,15 +2102,15 @@ function renderCalendar(_fromFit){
     if(i<firstDay){day=daysInPrev-firstDay+i+1;isOther=true;const pm=month===0?12:month;const py=month===0?year-1:year;ds=`${py}-${pad(pm)}-${pad(day)}`;}
     else if(i>=firstDay+daysInMonth){day=i-firstDay-daysInMonth+1;isOther=true;const nm=month===11?1:month+2;const ny=month===11?year+1:year;ds=`${ny}-${pad(nm)}-${pad(day)}`;}
     else{day=i-firstDay+1;ds=`${year}-${pad(month+1)}-${pad(day)}`;}
-    let ft=state.tasks.filter(t=>t.dueDate===ds&&(!t.completed||isEvent(t))&&calShow(t));
+    let ft=state.tasks.filter(t=>calShow(t)&&(isEvent(t)?evStartFor(t,ds)===t.dueDate:(t.dueDate===ds&&!t.completed)));
     if(m2)ft=ft.filter(t=>String(t.member)===String(m2.id));
-    ft.sort((a,b)=>(a.dueTime||'99').localeCompare(b.dueTime||'99'));
-    let recurOccs=recurBase.filter(t=>occursOnDate(t,ds));
+    ft.sort((a,b)=>(evSpan(b)-evSpan(a))||(a.dueTime||'99').localeCompare(b.dueTime||'99'));
+    let recurOccs=recurBase.filter(t=>{if(isEvent(t)){const s=evStartFor(t,ds);return!!s&&s!==t.dueDate;}return occursOnDate(t,ds);});
     if(m2)recurOccs=recurOccs.filter(t=>String(t.member)===String(m2.id));
     const gcalEvs=(ck==='todos')?[]:state.gcalEvents.filter(e=>e.date===ds);
     const items=[];
     gcalEvs.forEach(e=>items.push(`<div class="cal-task-dot gcal-event" style="background:rgba(15,157,88,.12)" title="${escHtml(e.title)}" onclick="event.stopPropagation();calDayClick('${ds}')"><span class="dot" style="background:#0f9d58"></span><span class="lbl">${escHtml(e.title)}</span></div>`));
-    const calItem=(t,c,rec)=>{const ev=isEvent(t);const tm=ev&&t.dueTime?`<span class="tm">${formatTime(t.dueTime).replace(/:00| /g,'').toLowerCase()}</span>`:'';return`<div class="cal-task-dot${rec?' recur-occ':''} ${ev?'is-event':'is-todo'}" style="background:${hexA(c,ev?'2a':(rec?'14':'1f'))};--evc:${c}" title="${rec?'Recurring: ':''}${escHtml(t.title)}${ev?' · '+evRange(t.dueTime,t.duration):''}" onclick="calTaskClick(event,'${t.id}')">${ev?'':`<span class="dot" style="background:${c}"></span>`}<span class="lbl"${ev?'':` data-ic="${kindIcon(t)}"`}>${tm}${rec?'↻ ':''}${escHtml(t.title)}</span></div>`;};
+    const calItem=(t,c,rec)=>{const ev=isEvent(t);const sp=ev?evSpan(t):0;const st=ev?evStartFor(t,ds):null;const tm=ev&&!evAllDay(t)&&st===ds?`<span class="tm">${formatTime(t.dueTime).replace(/:00| /g,'').toLowerCase()}</span>`:(sp&&st!==ds?'<span class="tm">→</span>':'');return`<div class="cal-task-dot${rec?' recur-occ':''} ${ev?'is-event':'is-todo'}${sp?' multi':''}" style="background:${hexA(c,ev?'2a':(rec?'14':'1f'))};--evc:${c}" title="${rec?'Recurring: ':''}${escHtml(t.title)}${ev?' · '+evLabel(t,ds):''}" onclick="calTaskClick(event,'${t.id}')">${ev?'':`<span class="dot" style="background:${c}"></span>`}<span class="lbl"${ev?'':` data-ic="${kindIcon(t)}"`}>${tm}${rec?'↻ ':''}${escHtml(t.title)}</span></div>`;};
     ft.forEach(t=>{const tm=findMember(t.member);items.push(calItem(t,tm?tm.color:'#2E7D5B',false));});
     recurOccs.forEach(t=>{const tm=findMember(t.member);items.push(calItem(t,tm?tm.color:'#4C8C9E',true));});
     const show=Math.min(items.length,cap);const more=items.length-show;
@@ -2126,9 +2139,9 @@ window.addEventListener('resize',()=>{clearTimeout(_calResizeT);_calResizeT=setT
 // ── Daily breakout: everything happening on the selected day ──
 function calDailyItems(ds){
   const m2=state.currentMember!=='family'?findMember(state.currentMember):null;
-  let tasks=state.tasks.filter(t=>t.dueDate===ds&&(!t.completed||isEvent(t))&&calShow(t));
+  let tasks=state.tasks.filter(t=>calShow(t)&&(isEvent(t)?evStartFor(t,ds)===t.dueDate:(t.dueDate===ds&&!t.completed)));
   if(m2)tasks=tasks.filter(t=>String(t.member)===String(m2.id));
-  let recur=state.tasks.filter(t=>t.recurrence&&t.dueDate&&!t.completed&&occursOnDate(t,ds)&&calShow(t));
+  let recur=state.tasks.filter(t=>t.recurrence&&t.dueDate&&!t.completed&&calShow(t)&&(isEvent(t)?(()=>{const s=evStartFor(t,ds);return!!s&&s!==t.dueDate;})():occursOnDate(t,ds)));
   if(m2)recur=recur.filter(t=>String(t.member)===String(m2.id));
   const gcal=(normCalKind(state.calKind)==='todos')?[]:state.gcalEvents.filter(e=>e.date===ds);
   return{tasks,recur,gcal};
@@ -2142,7 +2155,7 @@ function renderDailyBreakout(ds){
   const statusMap={inprogress:'🔵 In Progress',complete:'✅ Complete'};
   const rows=[];
   gcal.forEach(e=>rows.push({sort:(e.time||'zz')+'_g',html:`<div class="brk-item brk-gcal"><span class="brk-dot" style="background:#0f9d58"></span><div class="brk-body"><div class="brk-title">${escHtml(e.title)}</div><div class="brk-meta"><span class="brk-tag" style="background:rgba(15,157,88,.14);color:#0f9d58">📅 Google Cal</span><span class="brk-time">${e.time?'🕑 '+e.time:'All day'}</span></div></div></div>`}));
-  const evRow=(t,rec)=>{const tm=findMember(t.member);const c=tm&&tm.color?tm.color:'#2E7D5B';return{sort:(t.dueTime||'00')+'_e',html:`<div class="brk-item brk-event${rec?' brk-recur':''}" onclick="editTask('${t.id}')"><span class="brk-dot" style="background:${c};border-radius:3px;height:100%;min-height:26px;width:5px"></span><div class="brk-body"><div class="brk-title">${rec?'↻ ':''}${escHtml(t.title)}</div><div class="brk-meta"><span class="brk-tag" style="background:rgba(15,157,88,.14);color:#0B7A45">📅 Event</span>${tm?`<span class="brk-tag">${escHtml(tm.name)}</span>`:''}<span class="brk-time">🕑 ${evRange(t.dueTime,t.duration)}</span></div></div></div>`};};
+  const evRow=(t,rec)=>{const tm=findMember(t.member);const c=tm&&tm.color?tm.color:'#2E7D5B';return{sort:(evTimesOn(t,ds).time||'00')+'_e',html:`<div class="brk-item brk-event${rec?' brk-recur':''}" onclick="editTask('${t.id}')"><span class="brk-dot" style="background:${c};border-radius:3px;height:100%;min-height:26px;width:5px"></span><div class="brk-body"><div class="brk-title">${rec?'↻ ':''}${escHtml(t.title)}</div><div class="brk-meta"><span class="brk-tag" style="background:rgba(15,157,88,.14);color:#0B7A45">📅 Event</span>${tm?`<span class="brk-tag">${escHtml(tm.name)}</span>`:''}<span class="brk-time">🕑 ${evLabel(t,ds)}</span>${evSpan(t)?`<span class="brk-time">📆 ${evShortDate(evStartFor(t,ds)||t.dueDate)} – ${evShortDate(addDays(evStartFor(t,ds)||t.dueDate,evSpan(t)))}</span>`:''}</div></div></div>`};};
   tasks.filter(isEvent).forEach(t=>rows.push(evRow(t,false)));
   recur.filter(isEvent).forEach(t=>rows.push(evRow(t,true)));
   tasks=tasks.filter(t=>!isEvent(t));recur=recur.filter(t=>!isEvent(t));
@@ -3324,16 +3337,41 @@ function normCalKind(k){return k==='activity'||k==='events'?'events':k==='school
 function calShow(t){const k=normCalKind(state.calKind);return k==='all'||(k==='events')===isEvent(t);}
 const DUR_MIN={'5m':5,'10m':10,'15m':15,'30m':30,'45m':45,'1h':60,'90m':90,'2h':120,'3h':180,'4h':240,'6h':360};
 function evEnd(time,dur){const m=DUR_MIN[dur];if(!time||!m)return'';const[h,mi]=time.split(':').map(Number);const e=h*60+mi+m;return`${pad(Math.floor(e/60)%24)}:${pad(e%60)}`;}
+function evSpan(t){if(!t||!t.endDate||!t.dueDate||t.endDate<=t.dueDate)return 0;return Math.min(90,Math.round((new Date(t.endDate+'T12:00:00')-new Date(t.dueDate+'T12:00:00'))/864e5));}
+function addDays(ds,n){const d=new Date(ds+'T12:00:00');d.setDate(d.getDate()+n);return nlDateStr(d);}
+// Start date of the occurrence of event t that covers day ds (handles multi-day + repeating), else null
+function evStartFor(t,ds){if(!t||!t.dueDate)return null;const sp=evSpan(t);for(let k=0;k<=sp;k++){const b=k?addDays(ds,-k):ds;if(b===t.dueDate||(t.recurrence&&occursOnDate(t,b)))return b;}return null;}
+function evEndTime(t){return t.endTime||evEnd(t.dueTime,t.duration);}
+function evAllDay(t){return !!t.allDay||!t.dueTime;}
+function evShortDate(ds){const d=new Date(ds+'T12:00:00');return d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});}
+// Human label for an event on a given day, e.g. "5:30 PM – 6:30 PM", "Fri 9:00 AM → Sun 2:00 PM", "Day 2 of 3"
+function evLabel(t,ds){
+  const st=evStartFor(t,ds)||t.dueDate;const sp=evSpan(t);const en=sp?addDays(st,sp):st;const et=evEndTime(t);const all=evAllDay(t);
+  if(!sp)return all?'All day':formatTime(t.dueTime)+(et?' – '+formatTime(et):'');
+  const n=sp+1,i=Math.round((new Date(ds+'T12:00:00')-new Date(st+'T12:00:00'))/864e5)+1;
+  if(all)return`All day · day ${i} of ${n} (ends ${evShortDate(en)})`;
+  if(ds===st)return`${formatTime(t.dueTime)} → ${evShortDate(en)}${et?' '+formatTime(et):''}`;
+  if(ds===en)return`Until ${et?formatTime(et):'end of day'} · day ${i} of ${n}`;
+  return`All day · day ${i} of ${n}`;
+}
+// For "is it still happening?" checks: start time on the first day, end time on the last day
+function evTimesOn(t,ds){const st=evStartFor(t,ds)||t.dueDate;const sp=evSpan(t);const en=sp?addDays(st,sp):st;const all=evAllDay(t);
+  return{time:(!all&&ds===st)?t.dueTime:'',until:all?'':(ds===en?(evEndTime(t)||''):'23:59'),start:st};}
 function evRange(time,dur){if(!time)return'All day';const e=evEnd(time,dur);return formatTime(time)+(e?' – '+formatTime(e):'');}
-document.addEventListener('input',e=>{const id=e.target&&e.target.id;if(id==='t-title'||id==='t-time')taskKindHint();});
+document.addEventListener('input',e=>{const id=e.target&&e.target.id;if(id==='t-title'||id==='t-time'||id==='t-due')taskKindHint();});
 function kindIcon(t){const k=taskKind(t);return k==='school'?'📚':k==='chore'?'🧹':k==='todo'?'☐':'';}
 function taskKindHint(){
   const sel=document.getElementById('t-kind');const h=document.getElementById('t-kind-hint');if(!sel||!h)return;
   const ti=document.getElementById('t-title'),tm=document.getElementById('t-time');
   const k=sel.value||taskKind({title:ti?ti.value:'',dueTime:tm?tm.value:''});
   h.textContent=(sel.value?'':'Auto: ')+KINDS[k]+(k==='event'?' — shows on the calendar, no checkbox, never late':' — has a checkbox and shows as late if missed');
-  const dl=document.getElementById('t-duration-lbl');if(dl)dl.textContent=k==='event'?'Length':'Duration';
+  const isEv=k==='event',$=id=>document.getElementById(id);
+  $('t-end-row').style.display=isEv?'':'none';$('t-allday-wrap').style.display=isEv?'':'none';$('t-dur-row').style.display=isEv?'none':'';
+  $('t-due-lbl').textContent=isEv?'Start Date':'Due Date';$('task-modal-title').textContent=(state.editingTaskId?'Edit ':'Add ')+(isEv?'Event':'Task');$('t-time-lbl').textContent=isEv?'Start Time':'Due Time';
+  if(isEv){const sd=$('t-due').value,stt=$('t-time').value;if(sd&&(!$('t-end-date').value||$('t-end-date').value<sd))$('t-end-date').value=sd;if(stt&&!$('t-end-time').value)$('t-end-time').value=evEnd(stt,$('t-duration').value||'1h');}
+  evAllDayToggle();
 }
+function evAllDayToggle(){const a=document.getElementById('t-allday').checked&&document.getElementById('t-allday-wrap').style.display!=='none';['t-time','t-end-time'].forEach(id=>{const el=document.getElementById(id);el.disabled=a;el.style.opacity=a?.45:1;});}
 function calWhoPicker(m2){
   const opts=[`<option value="family"${m2?'':' selected'}>👥 Everyone</option>`].concat(state.members.map(m=>`<option value="${m.id}"${m2&&String(m2.id)===String(m.id)?' selected':''}>${escHtml(m.name)}</option>`)).join('');
   return`<label class="cal-who${m2?' on':''}"${m2?` style="--who:${m2.color}"`:''}><span class="sr">Whose calendar</span><select onchange="setCalPerson(this.value)" aria-label="Whose calendar">${opts}</select></label>`;
@@ -3354,8 +3392,9 @@ function glSchoolLine(ds,i){
 function glanceItemsFor(ds,kind){
   const ok=t=>!kind||(kind==='event'||kind==='activity'?isEvent(t):kind==='todo'?!isEvent(t):taskKind(t)===kind);
   const live=t=>!t.completed||isEvent(t);
-  const tasks=state.tasks.filter(t=>live(t)&&t.dueDate===ds&&String(t.member)!=='groceries'&&ok(t)).map(t=>({id:t.id,time:t.dueTime||'',dur:t.duration||'',title:t.title,member:t.member}));
-  const recur=state.tasks.filter(t=>t.recurrence&&t.dueDate&&!t.completed&&occursOnDate(t,ds)&&ok(t)).map(t=>({id:t.id,time:t.dueTime||'',dur:t.duration||'',title:t.title,member:t.member,recur:true}));
+  const mk=(t,rec)=>{if(isEvent(t)){const x=evTimesOn(t,ds);return{id:t.id,time:x.time,until:x.until,label:evLabel(t,ds),title:t.title,member:t.member,recur:rec,multi:evSpan(t)>0};}return{id:t.id,time:t.dueTime||'',dur:t.duration||'',title:t.title,member:t.member,recur:rec};};
+  const tasks=state.tasks.filter(t=>String(t.member)!=='groceries'&&ok(t)&&(isEvent(t)?evStartFor(t,ds)===t.dueDate:(t.dueDate===ds&&!t.completed))).map(t=>mk(t,false));
+  const recur=state.tasks.filter(t=>t.recurrence&&t.dueDate&&!t.completed&&ok(t)&&(isEvent(t)?(()=>{const s=evStartFor(t,ds);return!!s&&s!==t.dueDate;})():occursOnDate(t,ds))).map(t=>mk(t,true));
   const gcal=(kind&&kind!=='event'&&kind!=='activity')?[]:(state.gcalEvents||[]).filter(e=>e.date===ds).map(e=>({time:e.time||'',title:e.title,gcal:true}));
   return gcal.concat(tasks,recur).sort((a,b)=>(a.time||'99').localeCompare(b.time||'99'));
 }
@@ -3421,7 +3460,7 @@ function glDur(min){if(min<1)return'now';if(min<60)return`in ${min} min`;const h
 function glItemHtml(it){
   const m=it.gcal?null:findMember(it.member);const c=it.gcal?'#0f9d58':(m?m.color:'#4C8C9E');
   const who=it.gcal?'Google':(m?m.name:'Family');
-  return`<div class="gl-it"><span class="bar" style="background:${c}"></span><div class="tx"><div class="ttl">${it.recur?'↻ ':''}${escHtml(it.title)}</div><div class="sub">${it.time?evRange(it.time,it.dur)+' · ':''}<span style="color:${c}">${escHtml(who)}</span></div></div></div>`;
+  return`<div class="gl-it"><span class="bar" style="background:${c}"></span><div class="tx"><div class="ttl">${it.recur?'↻ ':''}${escHtml(it.title)}</div><div class="sub">${it.label?it.label+' · ':(it.time?formatTime(it.time)+' · ':'')}<span style="color:${c}">${escHtml(who)}</span></div></div></div>`;
 }
 function renderGlance(){
   const el=document.getElementById('glance');if(!el)return;
@@ -3443,7 +3482,7 @@ function renderGlance(){
   let days='',meals='';
   for(let i=0;i<5;i++){
     const d=new Date();d.setDate(d.getDate()+i);const ds=nlDateStr(d);
-    let items=glanceItemsFor(ds,'event');if(i===0)items=items.filter(it=>!it.time||it.time>=nowHM);
+    let items=glanceItemsFor(ds,'event');if(i===0)items=items.filter(it=>!it.time||it.time>=nowHM||(it.until&&it.until>=nowHM));
     const name=i===0?'Today':i===1?'Tomorrow':d.toLocaleDateString('en-US',{weekday:'long'});
     const short=i===0?'Today':i===1?'Tmrw':d.toLocaleDateString('en-US',{weekday:'short'});
     const w=wx&&wx.days&&wx.days[ds];const dm=plan[ds];
@@ -3505,7 +3544,7 @@ function deleteSavedMeal(k){if(!confirm('Remove this saved meal?'))return;const 
 // ══════════════════════════════════════
 // AUTO-UPDATE: a wall screen picks up new versions on its own
 // ══════════════════════════════════════
-const HUB_BUILD='2026-10-25-evt1';
+const HUB_BUILD='2026-10-26-evt2';
 var _updT=null;
 async function checkForUpdate(){
   try{
