@@ -3401,7 +3401,7 @@ function evEnd(time,dur){const m=DUR_MIN[dur];if(!time||!m)return'';const[h,mi]=
 function evSpan(t){if(!t||!t.endDate||!t.dueDate||t.endDate<=t.dueDate)return 0;return Math.min(90,Math.round((new Date(t.endDate+'T12:00:00')-new Date(t.dueDate+'T12:00:00'))/864e5));}
 function addDays(ds,n){const d=new Date(ds+'T12:00:00');d.setDate(d.getDate()+n);return nlDateStr(d);}
 // Start date of the occurrence of event t that covers day ds (handles multi-day + repeating), else null
-function evStartFor(t,ds){if(!t||!t.dueDate)return null;const sp=evSpan(t);for(let k=0;k<=sp;k++){const b=k?addDays(ds,-k):ds;if(b===t.dueDate||(t.recurrence&&occursOnDate(t,b)))return b;}return null;}
+function evStartFor(t,ds){if(!t||!t.dueDate)return null;const sp=evSpan(t);for(let k=0;k<=sp;k++){const b=k?addDays(ds,-k):ds;if(b===t.dueDate||(t.recurrence&&!t.completed&&occursOnDate(t,b)))return b;}return null;}
 function evEndTime(t){return t.endTime||evEnd(t.dueTime,t.duration);}
 function evAllDay(t){return !!t.allDay||!t.dueTime;}
 function evShortDate(ds){const d=new Date(ds+'T12:00:00');return d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});}
@@ -3607,7 +3607,7 @@ function deleteSavedMeal(k){if(!confirm('Remove this saved meal?'))return;const 
 // ══════════════════════════════════════
 // AUTO-UPDATE: a wall screen picks up new versions on its own
 // ══════════════════════════════════════
-const HUB_BUILD='2026-10-26-smart1';
+const HUB_BUILD='2026-10-26-smart2';
 var _updT=null;
 async function checkForUpdate(){
   try{
@@ -3907,14 +3907,14 @@ function staleApply(how){
 
 // ── Daily brief (rules-based, runs in the browser — no AI account needed) ──
 const OUTDOOR_RE=/\b(soccer|practi[cs]e|prsctice|mtb|ride|race|regionals?|nica|game|match|tournament|patch|park|hike|camp|parade|festival|fair|bbq|picnic|swim|pool|zoo|golf|baseball|softball|football|run\b|5k)\b/i;
-function evOnDay(ds){return state.tasks.filter(t=>isEvent(t)&&String(t.member)!=='groceries'&&evStartFor(t,ds)).map(t=>{const x=evTimesOn(t,ds);return{t,ds,start:x.time,end:x.time?(x.until&&x.until!=='23:59'?x.until:evEnd(x.time,'1h')):''};});}
+function evOnDay(ds){const seen=new Set();return state.tasks.filter(t=>{if(!isEvent(t)||String(t.member)==='groceries'||!evStartFor(t,ds))return false;const k=String(t.title).toLowerCase().trim()+'|'+t.member+'|'+(t.dueTime||'');if(seen.has(k))return false;seen.add(k);return true;}).map(t=>{const x=evTimesOn(t,ds);return{t,ds,start:x.time,end:x.time?(x.until&&x.until!=='23:59'?x.until:evEnd(x.time,'1h')):''};});}
 function hm(s){const[a,b]=String(s).split(':').map(Number);return a*60+(b||0);}
 function briefData(){
   const today=todayStr(),tmr=addDays(today,1);const out=[];const wx=state.weather&&state.weather.days||{};
   const dayName=ds=>ds===today?'today':ds===tmr?'tomorrow':new Date(ds+'T12:00:00').toLocaleDateString('en-US',{weekday:'long'});
   // Overlaps (today + tomorrow)
-  [today,tmr].forEach(ds=>{const ev=evOnDay(ds).filter(e=>e.start).sort((a,b)=>a.start.localeCompare(b.start));
-    for(let i=0;i<ev.length;i++)for(let j=i+1;j<ev.length;j++){const a=ev[i],b=ev[j];if(hm(b.start)<hm(a.end)){const ma=findMember(a.t.member),mb=findMember(b.t.member);
+  let nClash=0;[today,tmr].forEach(ds=>{const ev=evOnDay(ds).filter(e=>e.start).sort((a,b)=>a.start.localeCompare(b.start));
+    for(let i=0;i<ev.length;i++)for(let j=i+1;j<ev.length;j++){const a=ev[i],b=ev[j];if(nClash<3&&hm(b.start)<hm(a.end)){nClash++;const ma=findMember(a.t.member),mb=findMember(b.t.member);
       out.push({ic:'⚠️',pri:1,txt:`<b>${escHtml(a.t.title)}</b>${ma?' ('+escHtml(ma.name)+')':''} overlaps <b>${escHtml(b.t.title)}</b>${mb?' ('+escHtml(mb.name)+')':''} ${dayName(ds)} at ${formatTime(b.start)}`});}}});
   // Weather vs outdoor events (next 3 days)
   for(let i=0;i<3;i++){const ds=addDays(today,i);const w=wx[ds];if(!w)continue;evOnDay(ds).filter(e=>OUTDOOR_RE.test(e.t.title)).slice(0,2).forEach(e=>{
