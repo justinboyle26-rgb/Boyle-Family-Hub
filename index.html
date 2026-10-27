@@ -9,6 +9,7 @@
 <link rel="apple-touch-icon" href="favicon.png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=Noto+Color+Emoji&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 <style>
 /* One light theme — Sage (dark mode removed) */
@@ -37,7 +38,10 @@
 body { font-family: 'Inter', 'Noto Color Emoji', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; transition: background .25s, color .25s; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
 /* Crisp, full-color emoji on Linux / Raspberry Pi where the system emoji font may be missing or monochrome */
 .emoji, .celeb-emoji, .tasks-empty .emoji, .import-icon, .m-avatar, .list-icon, .cal-task-dot, .task-tag, .filter-chip, .kfilter-chip, .office-btn, .view-toggle-btn, .theme-toggle-btn, .btn, .nav-btn, .member-btn, .v-label, .vkb-key, .link-emoji { font-family: 'Inter', var(--emoji); }
-#setup-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: var(--setup-bg); }
+#setup-screen, #auth-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: var(--setup-bg); }
+.auth-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+.auth-alt { background: none; border: none; color: var(--text3); font-family: inherit; font-size: .82rem; cursor: pointer; text-decoration: underline; padding: 4px; }
+.auth-alt:hover { color: var(--text); }
 .setup-card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 48px; width: 540px; max-width: 95vw; box-shadow: var(--shadow); }
 .setup-card h1 { font-family: 'Outfit', serif; font-size: 2.2rem; margin-bottom: 8px; background: linear-gradient(135deg, #5ab4ff, #1a7fe8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .setup-card p { color: var(--text2); margin-bottom: 28px; font-size: .95rem; line-height: 1.6; }
@@ -1176,6 +1180,22 @@ body.vkb-active .modal { max-height: calc(100vh - 340px); overflow-y: auto; }
 </head>
 <body>
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebarMobile()"></div>
+<div id="auth-screen">
+  <div class="setup-card">
+    <h1>Boyle Family Hub</h1>
+    <p>Sign in with the family email and password to open tasks, meals, and the calendar. This device stays signed in until you sign out in Settings.</p>
+    <form id="auth-form" onsubmit="authSignIn();return false;">
+      <div class="form-group"><label for="auth-email">Family email</label><input id="auth-email" type="email" autocomplete="username" required placeholder="family@email.com"></div>
+      <div class="form-group"><label for="auth-pass">Password</label><input id="auth-pass" type="password" autocomplete="current-password" required minlength="6" placeholder="At least 6 characters"></div>
+      <div class="auth-actions">
+        <button type="submit" class="btn btn-primary" style="width:100%">Sign in</button>
+        <button type="button" class="btn btn-ghost" id="auth-create-btn" style="width:100%;display:none" onclick="authCreate()">Create family account</button>
+        <button type="button" class="auth-alt" onclick="authResetPassword()">Forgot password?</button>
+      </div>
+    </form>
+    <div id="auth-msg" style="margin-top:12px;min-height:20px;text-align:center;font-size:.82rem;color:var(--text3)">Checking sign-in…</div>
+  </div>
+</div>
 <div id="setup-screen" style="display:none">
   <div class="setup-card">
     <h1>Boyle Family Hub</h1>
@@ -1195,7 +1215,7 @@ body.vkb-active .modal { max-height: calc(100vh - 340px); overflow-y: auto; }
     <div id="setup-msg" style="margin-top:10px;min-height:20px;text-align:center;font-size:.82rem"></div>
   </div>
 </div>
-<div id="app" style="display:block">
+<div id="app" style="display:none">
   <button class="sidebar-toggle" onclick="toggleSidebar()">
     <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
   </button>
@@ -1408,8 +1428,93 @@ const FIREBASE_CONFIG = {
   messagingSenderId:"603208983666",
   appId:"1:603208983666:web:7573f19352c8466d6d0eeb"
 };
-var _fbDb=null,_fbListening=false;
-function getDb(){if(_fbDb)return _fbDb;try{const app=firebase.apps.length?firebase.apps[0]:firebase.initializeApp(FIREBASE_CONFIG);_fbDb=firebase.database();return _fbDb;}catch(e){console.error(e);return null;}}
+var _fbDb=null,_fbListening=false,_fbAuthWatch=false,_startedForUid=null,_bootUiReady=false;
+function getApp(){try{return firebase.apps.length?firebase.apps[0]:firebase.initializeApp(FIREBASE_CONFIG);}catch(e){console.error(e);return null;}}
+function getDb(){if(_fbDb)return _fbDb;try{const app=getApp();if(!app)return null;_fbDb=firebase.database();return _fbDb;}catch(e){console.error(e);return null;}}
+function getAuth(){if(!getApp())return null;return firebase.auth();}
+function allowAccountCreate(){return /(?:\?|&)create=1(?:&|$)/.test(location.search||'');}
+function currentUser(){try{return firebase.auth().currentUser;}catch(e){return null;}}
+function requireAuth(){const u=currentUser();if(u)return u;toast('Sign in required','error');return null;}
+function authMsg(t,err){const el=document.getElementById('auth-msg');if(!el)return;el.textContent=t||'';el.style.color=err?'var(--accent2)':'var(--text3)';}
+function authErrorText(e){
+  const c=e&&e.code||'';
+  return({
+    'auth/invalid-email':'Enter a valid email address.',
+    'auth/user-disabled':'This account is disabled.',
+    'auth/user-not-found':'No family account uses that email. Create one, or check the address.',
+    'auth/wrong-password':'Wrong password.',
+    'auth/invalid-credential':'Wrong email or password.',
+    'auth/too-many-requests':'Too many tries. Wait a minute, then try again.',
+    'auth/email-already-in-use':'That email already has an account. Sign in instead.',
+    'auth/weak-password':'Use a password with at least 6 characters.',
+    'auth/network-request-failed':'Network error. Check the connection.',
+    'auth/operation-not-allowed':'Email/password sign-in is not enabled in the Firebase console yet.',
+    'auth/missing-password':'Enter a password.',
+    'permission-denied':'Signed in, but the database blocked access. Publish database.rules.json so authenticated users can read and write.'
+  }[c]||(e&&e.message)||'Could not sign in.');
+}
+function authFormValues(){
+  const email=(document.getElementById('auth-email')?.value||'').trim();
+  const password=document.getElementById('auth-pass')?.value||'';
+  return {email,password};
+}
+async function authSignIn(){
+  const auth=getAuth();if(!auth){authMsg('Firebase did not load.',true);return;}
+  const {email,password}=authFormValues();
+  if(!email||!password){authMsg('Enter the family email and password.',true);return;}
+  authMsg('Signing in…');
+  try{await auth.signInWithEmailAndPassword(email,password);}
+  catch(e){console.error(e);authMsg(authErrorText(e),true);}
+}
+async function authCreate(){
+  if(!allowAccountCreate()){authMsg('Open this page with ?create=1 to create the family account.',true);return;}
+  const auth=getAuth();if(!auth){authMsg('Firebase did not load.',true);return;}
+  const {email,password}=authFormValues();
+  if(!email||!password){authMsg('Enter an email and password to create the family account.',true);return;}
+  if(password.length<6){authMsg('Use a password with at least 6 characters.',true);return;}
+  if(!confirm('Create the family account now?\n\nDo this once. After it exists, everyone else should Sign in — not create another account.'))return;
+  authMsg('Creating account…');
+  try{await auth.createUserWithEmailAndPassword(email,password);}
+  catch(e){console.error(e);authMsg(authErrorText(e),true);}
+}
+async function authResetPassword(){
+  const auth=getAuth();if(!auth)return;
+  const {email}=authFormValues();
+  if(!email){authMsg('Enter the family email first, then tap Forgot password.',true);return;}
+  try{await auth.sendPasswordResetEmail(email);authMsg('Password reset email sent. Check that inbox.');}
+  catch(e){console.error(e);authMsg(authErrorText(e),true);}
+}
+function authSignOut(){
+  const auth=getAuth();if(!auth)return;
+  if(!confirm('Sign out on this device? The hub will ask for the family password again.'))return;
+  auth.signOut().catch(e=>{console.error(e);toast('Could not sign out','error');});
+}
+function showAuthScreen(msg,err){
+  const a=document.getElementById('auth-screen');
+  if(a)a.style.display='flex';
+  document.getElementById('setup-screen').style.display='none';
+  document.getElementById('app').style.display='none';
+  if(typeof glanceOpen==='function'&&glanceOpen()){const g=document.getElementById('glance');if(g)g.classList.remove('open');}
+  if(msg!==undefined)authMsg(msg,err);
+}
+function hideAuthScreen(){const a=document.getElementById('auth-screen');if(a)a.style.display='none';}
+function stopFirebaseListener(){
+  const db=getDb();
+  if(db)['tasks','config','workout/weights','workout/sessions','meals','groceries','workout/meta'].forEach(p=>{try{db.ref(p).off();}catch(_){}});
+  _fbListening=false;
+}
+async function onAuthChanged(user){
+  if(!user){
+    _startedForUid=null;
+    stopFirebaseListener();
+    showAuthScreen('');
+    return;
+  }
+  hideAuthScreen();
+  if(_startedForUid===user.uid)return;
+  _startedForUid=user.uid;
+  await startHubAfterAuth();
+}
 // ══════════════════════════════════════
 // SETUP
 // ══════════════════════════════════════
@@ -2746,7 +2851,8 @@ function renderSettings(){
     <div class="settings-row"><div><div class="settings-row-label">On-Screen Keyboard</div><div class="settings-row-sub">Pops up a touch keyboard when you tap a text field (great for touchscreens)</div></div><button class="toggle ${vkbEnabled?'on':''}" onclick="toggleVkbEnabled();renderSettings()"></button></div>
   </div>
   <div class="settings-section"><h4>🗄️ Firebase</h4>
-    <div style="background:rgba(24,201,122,.08);border:1px solid rgba(24,201,122,.2);border-radius:10px;padding:10px 14px;font-size:.82rem;color:var(--accent3)">✅ Connected to Firebase Realtime Database. Your data is shared across every device automatically.</div>
+    <div style="background:rgba(24,201,122,.08);border:1px solid rgba(24,201,122,.2);border-radius:10px;padding:10px 14px;font-size:.82rem;color:var(--accent3)">Signed in as <b>${escHtml((currentUser()&&currentUser().email)||'family account')}</b>. Data syncs only after this sign-in.</div>
+    <div class="settings-row" style="margin-top:10px"><div><div class="settings-row-label">This device</div><div class="settings-row-sub">Stays signed in until you sign out. Use the same family email on every tablet and phone.</div></div><button class="btn btn-ghost btn-sm" onclick="authSignOut()">Sign out</button></div>
   </div>
   <div class="settings-section"><h4>🌤️ Weather</h4>
     <div class="settings-row"><div><div class="settings-row-label">Weather on the Glance screen</div><div class="settings-row-sub">${state.weatherLoc?'Showing weather for <b>'+escHtml(state.weatherLoc.name)+'</b> (shared with every device)':'Enter your city to show today\u2019s weather and a 5-day forecast'}</div></div></div>
@@ -2782,16 +2888,18 @@ function resetAll(){if(!confirm('Reset local data and reload? (Your tasks and fa
 // FIREBASE SYNC
 // ══════════════════════════════════════
 async function pushTask(task,action){
+  if(!requireAuth())return;
   const db=getDb();if(!db)return;
   try{if(action==='delete')await db.ref('tasks/'+task.id).remove();else await db.ref('tasks/'+task.id).set(task);}
   catch(e){console.error('pushTask error:',e);toast('Failed to save','error');}
 }
 function saveConfigToFirebase(){
+  if(!currentUser())return;
   const db=getDb();if(!db)return;
   db.ref('config').set({members:state.members.map(m=>({id:m.id,name:m.name,color:m.color,avatar:m.avatar||null,links:m.links||[]})),lists:state.lists,gcalKey:state.gcalKey,gcalId:state.gcalId,theme:state.theme,familyLinks:state.familyLinks||[],weatherLoc:state.weatherLoc||null}).catch(e=>console.error('Config sync:',e));
 }
 function startFirebaseListener(){
-  if(_fbListening)return;const db=getDb();if(!db)return;_fbListening=true;setSyncStatus('syncing');
+  if(_fbListening)return;if(!currentUser())return;const db=getDb();if(!db)return;_fbListening=true;setSyncStatus('syncing');
   db.ref('tasks').on('value',snap=>{
     const data=snap.val();
     state.tasks=data?Object.values(data).map(t=>Object.assign({},t,{completed:t.completed===true||t.completed==='true',addedToCal:t.addedToCal===true||t.addedToCal==='true'})).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)):[];
@@ -3607,7 +3715,7 @@ function deleteSavedMeal(k){if(!confirm('Remove this saved meal?'))return;const 
 // ══════════════════════════════════════
 // AUTO-UPDATE: a wall screen picks up new versions on its own
 // ══════════════════════════════════════
-const HUB_BUILD='2026-10-26-smart2';
+const HUB_BUILD='2026-10-27-auth1';
 var _updT=null;
 async function checkForUpdate(){
   try{
@@ -4007,15 +4115,8 @@ function grocPredictHtml(){const lw=grocProbablyLow();if(!lw.length)return'';ret
 // ══════════════════════════════════════
 // BOOT
 // ══════════════════════════════════════
-function showSetupScreen(){document.getElementById('setup-screen').style.display='flex';document.getElementById('app').style.display='none';setupRenderMembers();}
-function _boot(){
-  ['pointerdown','mousedown','touchstart'].forEach(ev=>document.addEventListener(ev,e=>{window._downEl=e.target;},{capture:true,passive:true}));
-  document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o&&window._downEl===o)o.classList.remove('open');}));
-  vkbInit();
-  railInit();
-  glanceInit();
-  document.addEventListener('fullscreenchange',()=>{updateFsIcon();if(state.mainView==='settings'&&document.getElementById('app').style.display!=='none')renderSettings();});
-  document.addEventListener('webkitfullscreenchange',updateFsIcon);
+function showSetupScreen(){hideAuthScreen();document.getElementById('setup-screen').style.display='flex';document.getElementById('app').style.display='none';setupRenderMembers();}
+function startHubAfterAuth(){
   document.getElementById('setup-screen').style.display='none';
   document.getElementById('app').style.display='none';
   const saved=localStorage.getItem('familyhub_v2');
@@ -4024,7 +4125,7 @@ function _boot(){
   const haveLocal=!!(saved&&state.members&&state.members.length);
   const db=getDb();
   if(!db){ if(haveLocal)startApp(); else showSetupScreen(); return; }
-  db.ref('config').once('value').then(snap=>{
+  return db.ref('config').once('value').then(snap=>{
     const data=snap.val();
     if(data&&data.members&&data.members.length){
       state.members=data.members;
@@ -4043,7 +4144,38 @@ function _boot(){
     }
   }).catch(e=>{
     console.error('Boot config check failed:',e);
+    const denied=e&&(e.code==='PERMISSION_DENIED'||String(e.message||'').toLowerCase().includes('permission'));
+    if(denied){
+      stopFirebaseListener();
+      _startedForUid=null;
+      showAuthScreen(authErrorText({code:'permission-denied'}),true);
+      return;
+    }
     if(haveLocal)startApp(); else showSetupScreen();
+  });
+}
+function _boot(){
+  if(!_bootUiReady){
+    _bootUiReady=true;
+    ['pointerdown','mousedown','touchstart'].forEach(ev=>document.addEventListener(ev,e=>{window._downEl=e.target;},{capture:true,passive:true}));
+    document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o&&window._downEl===o)o.classList.remove('open');}));
+    vkbInit();
+    railInit();
+    glanceInit();
+    document.addEventListener('fullscreenchange',()=>{updateFsIcon();if(state.mainView==='settings'&&document.getElementById('app').style.display!=='none')renderSettings();});
+    document.addEventListener('webkitfullscreenchange',updateFsIcon);
+  }
+  document.getElementById('setup-screen').style.display='none';
+  document.getElementById('app').style.display='none';
+  applyTheme(state.theme);
+  const auth=getAuth();
+  if(!auth){showAuthScreen('Firebase did not load. Check the network and refresh.',true);return;}
+  if(_fbAuthWatch)return;
+  _fbAuthWatch=true;
+  const createBtn=document.getElementById('auth-create-btn');
+  if(createBtn)createBtn.style.display=allowAccountCreate()?'':'none';
+  auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(e=>console.warn('auth persistence',e)).finally(()=>{
+    auth.onAuthStateChanged(onAuthChanged);
   });
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',_boot);
