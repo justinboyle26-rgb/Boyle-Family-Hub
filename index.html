@@ -733,6 +733,17 @@ body::before { content: ''; position: fixed; inset: 0; z-index: -1; pointer-even
 .gl-wx-loc { font-size: 12px; color: var(--text3); }
 .gl-chips { flex-direction: row; flex-wrap: wrap; align-items: center; margin-left: 0; gap: 8px; }
 .gl-chip { padding: 8px 14px; font-size: 14.5px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gl-tell { display: flex; gap: 8px; align-items: stretch; cursor: default; }
+.gl-tell input { flex: 1; min-width: 0; padding: 12px 16px; border-radius: 16px; border: 1px solid var(--border); background: rgba(255,255,255,.88); color: #15231C; font: 500 16px 'Inter', sans-serif; outline: none; }
+.gl-tell input:focus { border-color: var(--accent); }
+.gl-tell-preview { min-height: 0; margin: 4px 2px 0; font-size: .78rem; color: var(--text3); display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.gl-tell-preview:empty { display: none; }
+.gl-tell-bar { display: flex; flex-direction: column; gap: 0; cursor: default; }
+.fridge-shot { width: 100%; max-height: 220px; object-fit: cover; border-radius: 12px; background: #111; margin-bottom: 12px; }
+.fridge-picks { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 14px; max-height: 220px; overflow: auto; }
+.fridge-pick { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface2); cursor: pointer; font-size: .88rem; }
+.fridge-pick.on { background: rgba(46,125,91,.14); border-color: var(--accent); }
+.fridge-msg { font-size: .84rem; color: var(--text3); margin-bottom: 8px; }
 .gl-chip.gl-next { background: rgba(46,125,91,.09); border-color: rgba(46,125,91,.22); color: var(--text); }
 .gl-days { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
 .gl-day { background: rgba(255,255,255,.8); border: 1px solid var(--border); border-radius: 20px; padding: 14px 14px 10px; display: flex; flex-direction: column; gap: 8px; min-height: 0; min-width: 0; overflow: hidden; box-shadow: 0 6px 20px rgba(20,40,80,.05); }
@@ -1243,6 +1254,10 @@ body.vkb-active .modal { max-height: calc(100vh - 340px); overflow-y: auto; }
       <div id="sidebar-lists"></div>
     </div>
     <div class="sidebar-section">
+      <button class="nav-btn" id="nav-glance" onclick="showGlance()">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2.5"/><path d="M8 21h8M12 17v4"/></svg>
+        Home
+      </button>
       <button class="nav-btn" id="nav-overview" onclick="navTo('overview')">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
         Family
@@ -1262,10 +1277,6 @@ body.vkb-active .modal { max-height: calc(100vh - 340px); overflow-y: auto; }
       <button class="nav-btn" id="nav-groceries" onclick="navTo('groceries')">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2.5 3.5h2.6l2.3 11.2a1.6 1.6 0 001.6 1.3h8.6a1.6 1.6 0 001.6-1.2l1.6-7.3H6"/></svg>
         Groceries
-      </button>
-      <button class="nav-btn" id="nav-glance" onclick="showGlance()">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2.5"/><path d="M8 21h8M12 17v4"/></svg>
-        Glance Screen
       </button>
       <button class="nav-btn" id="nav-office" onclick="navTo('office')">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
@@ -1406,6 +1417,7 @@ body.vkb-active .modal { max-height: calc(100vh - 340px); overflow-y: auto; }
   </div>
 </div>
 <div class="glance" id="glance" aria-hidden="true"></div>
+<input type="file" id="gl-fridge-file" accept="image/*" capture="environment" hidden>
 <div class="toast-container" id="toasts"></div>
 <div class="vkb" id="vkb" aria-hidden="true"></div>
 <script>
@@ -1525,7 +1537,7 @@ function setupDoLaunch(){
   state.gcalKey=document.getElementById('setup-gcal-key').value.trim();
   state.gcalId=document.getElementById('setup-gcal-id').value.trim();
   saveConfigToFirebase();
-  localStorage.setItem('familyhub_v2',JSON.stringify({theme:state.theme,members:state.members,lists:state.lists,gcalKey:state.gcalKey,gcalId:state.gcalId,familyLinks:state.familyLinks||[]}));
+  persistLocalConfig();
   document.getElementById('setup-screen').style.display='none';
   document.getElementById('app').style.display='block';
   startApp();
@@ -1549,7 +1561,7 @@ function assignablePeople(){return assignees().concat([GROCERIES]);}
 function durationLabel(v){const d=DURATIONS.find(x=>x.v===v);return d?d.label:'';}
 function startOnLabel(v){const s=STARTONS.find(x=>x.v===v);return s?s.label:'';}
 let state={
-  members:[],tasks:[],lists:[],gcalKey:'',gcalId:'',theme:'light',meals:{plan:{},library:{},freezer:{}},groc:{items:{}},weatherLoc:null,weather:null,mealWeekOffset:0,gcalEvents:[],familyLinks:[],weights:[],sessions:[],workoutMeta:{},
+  members:[],tasks:[],lists:[],gcalKey:'',gcalId:'',geminiKey:'',theme:'light',meals:{plan:{},library:{},freezer:{}},groc:{items:{}},weatherLoc:null,weather:null,mealWeekOffset:0,gcalEvents:[],familyLinks:[],weights:[],sessions:[],workoutMeta:{},
   currentMember:'family',currentView:'myday',mainView:'tasks',currentListId:null,
   listView:'kanban',kanbanFilters:{members:[],priorities:[],durations:[],startOns:[]},
   kanbanGroupBy:'status',filterOpen:false,dragTaskId:null,kanbanDragging:false,
@@ -1582,6 +1594,7 @@ function pad(n){return String(n).padStart(2,'0');}
 function localDateStr(d){return`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;}
 function genId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function persistLocalConfig(){try{localStorage.setItem('familyhub_v2',JSON.stringify({theme:state.theme,members:state.members,lists:state.lists,gcalKey:state.gcalKey,gcalId:state.gcalId,geminiKey:state.geminiKey||'',familyLinks:state.familyLinks||[]}));}catch(_){}}
 function formatDate(d){if(!d)return'';const[y,m,day]=d.split('-');return new Date(y,m-1,day).toLocaleDateString('en-US',{month:'short',day:'numeric'});}
 function formatTime(t){if(!t)return'';try{const[h,m]=t.split(':');const hr=parseInt(h);return`${hr%12||12}:${m} ${hr<12?'AM':'PM'}`;}catch(e){return t;}}
 function recurLabel(r){return{daily:'Daily',weekdays:'Weekdays',weekly:'Weekly',biweekly:'Every 2 wks',monthly:'Monthly',yearly:'Yearly'}[r]||r;}
@@ -1615,7 +1628,7 @@ function startApp(){
   document.getElementById('app').style.display='block';
   updateFsIcon();
   renderSidebar();renderSidebarLists();setView('overview');startFirebaseListener();
-  if(typeof glanceCfg!=='undefined'&&glanceCfg.onOpen!==false)setTimeout(showGlance,0);
+  setTimeout(showGlance,0);
   weatherTick();
   newsInit();
   updateInit();
@@ -2860,7 +2873,7 @@ function renderSettings(){
   document.getElementById('view-tabs').style.display='none';
   document.getElementById('main-content').innerHTML=`
   <div class="settings-section"><h4>🎨 Appearance</h4>
-    <div class="settings-row"><div><div class="settings-row-label">Open to Glance Screen</div><div class="settings-row-sub">Show the Glance screen whenever the Hub is opened (this device only)</div></div><button class="toggle ${glanceCfg.onOpen!==false?'on':''}" onclick="glanceCfg.onOpen=glanceCfg.onOpen===false;saveGlanceCfg();renderSettings()"></button></div>
+    <div class="settings-row"><div><div class="settings-row-label">Glance is Home</div><div class="settings-row-sub">The hub opens on Glance. Tell it a task or groceries, snap the fridge, or tap empty space for the rest of the hub. Home in the sidebar brings Glance back.</div></div></div>
     <div class="settings-row"><div><div class="settings-row-label">Glance Screen When Idle</div><div class="settings-row-sub">Shows a big today/tomorrow view after the screen sits idle (this device only)</div></div><button class="toggle ${glanceCfg.enabled?'on':''}" onclick="setGlanceEnabled()"></button></div>
     <div class="settings-row"><div><div class="settings-row-label">Glance Screen Delay</div><div class="settings-row-sub">Minutes of no touches before it appears</div></div><div style="display:flex;gap:8px;align-items:center"><select onchange="setGlanceMinutes(this.value)" style="padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-family:inherit">${[1,3,5,10,15,30].map(n=>`<option value="${n}"${+glanceCfg.minutes===n?' selected':''}>${n} min</option>`).join('')}</select><button class="btn btn-ghost btn-sm" onclick="showGlance()">Show now</button></div></div>
     <div class="settings-row"><div><div class="settings-row-label">Fullscreen Mode</div><div class="settings-row-sub">Expand the app to fill the entire screen (also the ⤢ button up top)</div></div><button class="toggle ${isFullscreen()?'on':''}" onclick="toggleFullscreen()"></button></div>
@@ -2877,6 +2890,11 @@ function renderSettings(){
   <div class="settings-section"><h4>📰 News</h4>
     <div class="settings-row"><div><div class="settings-row-label">Daily Wire headlines on the Glance screen</div><div class="settings-row-sub">Rotates through the latest headlines; tap one to open the story (this device only). Headlines refresh about every 2 hours.</div></div><button class="toggle ${glanceCfg.news!==false?'on':''}" onclick="setNewsEnabled()"></button></div>
     <div class="settings-row"><div><div class="settings-row-label">Hub version</div><div class="settings-row-sub">${HUB_BUILD} · screens update themselves within ~10 minutes of a new version</div></div></div>
+  </div>
+  <div class="settings-section"><h4>📷 Fridge photo</h4>
+    <div class="settings-row"><div><div class="settings-row-label">Gemini API key</div><div class="settings-row-sub">Used on this family account to read a fridge photo and suggest groceries. Get a free key at Google AI Studio. If the key is blank, you can still snap a photo and type what you need.</div></div></div>
+    <div class="form-group"><label>API Key</label><input type="password" id="s-gemini-key" value="${escHtml(state.geminiKey||'')}" placeholder="AIza..." autocomplete="off"></div>
+    <button class="btn btn-primary btn-sm" onclick="saveGeminiKey()">Save key</button>
   </div>
   <div class="settings-section"><h4>📅 Google Calendar</h4>
     <div class="settings-row"><div><div class="settings-row-label">Pull events into the hub</div><div class="settings-row-sub">The hub can show events from a public Google Calendar. It does not add or change events in Google.</div></div></div>
@@ -2898,6 +2916,7 @@ function renderSettings(){
   </div>`;
 }
 function saveGcal(){state.gcalKey=document.getElementById('s-gcal-key').value.trim();state.gcalId=document.getElementById('s-gcal-id').value.trim();saveConfigToFirebase();toast('Saved','success');if(state.gcalKey&&state.gcalId)fetchGoogleCalendarEvents();}
+function saveGeminiKey(){state.geminiKey=(document.getElementById('s-gemini-key')||{}).value||'';state.geminiKey=String(state.geminiKey).trim();saveConfigToFirebase();toast(state.geminiKey?'Fridge photo key saved':'Fridge photo key cleared','success');}
 function addMemberSetting(){const name=document.getElementById('settings-new-member').value.trim();if(!name||state.members.length>=9)return;state.members.push({name,color:COLORS[state.members.length%COLORS.length],id:genId(),avatar:null});saveConfigToFirebase();renderSidebar();renderSettings();toast(`${name} added!`,'success');}
 function removeMemberSetting(i){if(!confirm(`Remove ${state.members[i].name}?`))return;state.members.splice(i,1);saveConfigToFirebase();renderSidebar();renderSettings();}
 function resetAll(){if(!confirm('Reset local data and reload? (Your tasks and family stay safe in the cloud and will re-download.)'))return;localStorage.removeItem('familyhub_v2');window.location.reload();}
@@ -2913,7 +2932,8 @@ async function pushTask(task,action){
 function saveConfigToFirebase(){
   if(!currentUser())return;
   const db=getDb();if(!db)return;
-  db.ref('config').set({members:state.members.map(m=>({id:m.id,name:m.name,color:m.color,avatar:m.avatar||null,links:m.links||[]})),lists:state.lists,gcalKey:state.gcalKey,gcalId:state.gcalId,theme:state.theme,familyLinks:state.familyLinks||[],weatherLoc:state.weatherLoc||null}).catch(e=>console.error('Config sync:',e));
+  persistLocalConfig();
+  db.ref('config').set({members:state.members.map(m=>({id:m.id,name:m.name,color:m.color,avatar:m.avatar||null,links:m.links||[]})),lists:state.lists,gcalKey:state.gcalKey,gcalId:state.gcalId,geminiKey:state.geminiKey||'',theme:state.theme,familyLinks:state.familyLinks||[],weatherLoc:state.weatherLoc||null}).catch(e=>console.error('Config sync:',e));
 }
 function startFirebaseListener(){
   if(_fbListening)return;if(!currentUser())return;const db=getDb();if(!db)return;_fbListening=true;setSyncStatus('syncing');
@@ -2929,10 +2949,10 @@ function startFirebaseListener(){
       if(data.members&&JSON.stringify(data.members)!==JSON.stringify(state.members)){state.members=data.members;changed=true;}
       if(data.lists&&JSON.stringify(data.lists)!==JSON.stringify(state.lists)){state.lists=data.lists;changed=true;}
       if(JSON.stringify(data.familyLinks||[])!==JSON.stringify(state.familyLinks||[])){state.familyLinks=data.familyLinks||[];changed=true;}
-      if(data.gcalKey!==undefined)state.gcalKey=data.gcalKey;if(data.gcalId!==undefined)state.gcalId=data.gcalId;
+      if(data.gcalKey!==undefined)state.gcalKey=data.gcalKey;if(data.gcalId!==undefined)state.gcalId=data.gcalId;if(data.geminiKey!==undefined)state.geminiKey=data.geminiKey;
       {const wl=data.weatherLoc||null;if(JSON.stringify(wl)!==JSON.stringify(state.weatherLoc||null)){state.weatherLoc=wl;weatherTick();}}
       if(data.theme&&data.theme!==state.theme){state.theme=data.theme;applyTheme(state.theme);}
-      localStorage.setItem('familyhub_v2',JSON.stringify({theme:state.theme,members:state.members,lists:state.lists,gcalKey:state.gcalKey,gcalId:state.gcalId,familyLinks:state.familyLinks||[]}));
+      persistLocalConfig();
       if(changed){renderSidebar();renderSidebarLists();renderView();}
     }else saveConfigToFirebase();
   });
@@ -3653,8 +3673,16 @@ function glItemHtml(it){
   const who=it.gcal?'Google':(m?m.name:'Family');
   return`<div class="gl-it"><span class="bar" style="background:${c}"></span><div class="tx"><div class="ttl">${it.recur?'↻ ':''}${escHtml(it.title)}</div><div class="sub">${it.label?it.label+' · ':(it.time?formatTime(it.time)+' · ':'')}<span style="color:${c}">${escHtml(who)}</span></div></div></div>`;
 }
+function glanceTellDraft(){const inp=document.getElementById('gl-tell');if(inp)window._glTellDraft=inp.value;return window._glTellDraft||'';}
+function glanceTellFocused(){const a=document.activeElement;return!!(a&&(a.id==='gl-tell'||a.id==='fridge-extra'));}
 function renderGlance(){
   const el=document.getElementById('glance');if(!el)return;
+  if(glanceTellFocused()||document.getElementById('fridge-modal')){
+    const t=document.getElementById('gl-time');
+    if(t){const now=new Date();const hh=now.getHours(),mm=now.getMinutes();t.innerHTML=`${hh%12||12}:${pad(mm)}<span class="gl-ampm">${hh<12?'AM':'PM'}</span>`;}
+    return;
+  }
+  window._glTellDraft=glanceTellDraft();
   // Kiosk nicety: reload once in the 3 AM hour so the wall screen picks up site updates
   if(new Date().getHours()===3&&Date.now()-GL_BOOT_TS>6*3600000){location.reload();return;}
   const now=new Date();const today=todayStr();const hh=now.getHours(),mm=now.getMinutes();const nowHM=`${pad(hh)}:${pad(mm)}`;
@@ -3683,14 +3711,23 @@ function renderGlance(){
   // Family overview (people only; Groceries has its own list now)
   let fam=state.members.map(m=>{const s=ovMemberStats(m.id);return`<div class="gl-fcard" role="button" tabindex="0" onclick="event.stopPropagation();hideGlance();selectMemberFromCard('${m.id}')"><div class="gl-fav">${ovRingSvg(s.pct,m.color,44)}<span class="gl-av" style="background:${hexA(m.color,'22')};color:${m.color}">${memberAvatarHtml(m,32)}</span></div><div class="gl-fwho"><div class="gl-fname">${escHtml(m.name)}</div><div class="gl-fsub">${s.leftToday} left today${s.late?` · <b style="color:var(--accent2)">${s.late} late</b>`:''}</div></div></div>`;}).join('');
   fam+=`<div class="gl-fcard" role="button" tabindex="0" onclick="event.stopPropagation();hideGlance();navTo('groceries')"><div class="gl-fav"><span class="gl-av" style="inset:0;background:rgba(184,110,0,.14);color:var(--accent4)">🛒</span></div><div class="gl-fwho"><div class="gl-fname">Groceries</div><div class="gl-fsub">${need.length} needed · ${low.length} low</div></div></div>`;
-  el.innerHTML=`<div class="gl-top"><div class="gl-clock"><div class="gl-time">${hh%12||12}:${pad(mm)}<span class="gl-ampm">${hh<12?'AM':'PM'}</span></div><div class="gl-date">${now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</div></div>${wxNow}</div>
+  el.innerHTML=`<div class="gl-top"><div class="gl-clock"><div class="gl-time" id="gl-time">${hh%12||12}:${pad(mm)}<span class="gl-ampm">${hh<12?'AM':'PM'}</span></div><div class="gl-date">${now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</div></div>${wxNow}</div>
+  <div class="gl-tell-bar gl-stay" onclick="event.stopPropagation()">
+    <div class="gl-tell">
+      <input type="text" id="gl-tell" placeholder="Tell the hub… milk, eggs · Dentist Tue 3pm @Mom" autocomplete="off" oninput="renderTellPreview()" onkeydown="if(event.key==='Enter')tellTheHub()">
+      <button type="button" class="btn btn-primary btn-sm" onclick="tellTheHub()">Add</button>
+      <button type="button" class="btn btn-ghost btn-sm" title="Photo of the fridge" onclick="openFridgePhoto()">📷 Fridge</button>
+    </div>
+    <div class="gl-tell-preview" id="gl-tell-preview"></div>
+  </div>
   ${chips?`<div class="gl-chips">${chips}</div>`:''}
   ${briefHtml('glance')}
   <div class="gl-days">${days}</div>
   <section class="gl-meals" onclick="event.stopPropagation();hideGlance();navTo('meals')" title="Open the meal plan"><div class="gl-meals-h">🍽 Dinners</div><div class="gl-meals-row">${meals}</div></section>
   ${glNewsHtml()}
-  <section class="gl-fam"><div class="gl-fam-h"><span class="gl-label">Family overview</span><button type="button" class="gl-kid-btn" onclick="event.stopPropagation();openKidMode()">⭐ Kid check-off</button><button type="button" class="gl-fs-btn" onclick="event.stopPropagation();toggleFullscreen()" aria-label="${isFullscreen()?'Exit full screen':'Full screen'}">${isFullscreen()?'⤡ Exit full screen':'⤢ Full screen'}</button><span class="gl-hint">Tap a person to open their tasks · tap anywhere else for the Hub</span></div><div class="gl-fgrid">${fam}</div></section>`;
+  <section class="gl-fam"><div class="gl-fam-h"><span class="gl-label">Family overview</span><button type="button" class="gl-kid-btn" onclick="event.stopPropagation();openKidMode()">⭐ Kid check-off</button><button type="button" class="gl-fs-btn" onclick="event.stopPropagation();toggleFullscreen()" aria-label="${isFullscreen()?'Exit full screen':'Full screen'}">${isFullscreen()?'⤡ Exit full screen':'⤢ Full screen'}</button><span class="gl-hint">Tell the hub · tap a person for their tasks · tap empty space for the rest of the Hub</span></div><div class="gl-fgrid">${fam}</div></section>`;
   el.classList.toggle('gl-night',(hh*60+mm>=21*60+30)||hh<6);
+  const tell=document.getElementById('gl-tell');if(tell&&window._glTellDraft){tell.value=window._glTellDraft;renderTellPreview();}
   glanceFit();
   if(document.fonts&&document.fonts.status!=='loaded'&&!window._glFontWait){window._glFontWait=true;document.fonts.ready.then(()=>{if(glanceOpen())renderGlance();});}
 }
@@ -3707,20 +3744,70 @@ function glanceFit(){
 }
 var _glFitT=null;
 window.addEventListener('resize',()=>{clearTimeout(_glFitT);_glFitT=setTimeout(()=>{if(glanceOpen())renderGlance();},200);});
-function showGlance(){const el=document.getElementById('glance');if(!el)return;newsRotateStart();clearTimeout(_glanceIdleT);renderGlance();el.classList.add('open');el.setAttribute('aria-hidden','false');clearInterval(_glanceClockT);_glanceClockT=setInterval(renderGlance,20000);if(typeof vkbHide==='function')vkbHide();if(window.innerWidth<=768)closeSidebarMobile();document.body.classList.remove('rail-open');}
-function hideGlance(){const el=document.getElementById('glance');if(!el)return;clearInterval(_newsRotT);el.classList.remove('open');el.setAttribute('aria-hidden','true');clearInterval(_glanceClockT);glanceResetIdle();}
+function showGlance(){const el=document.getElementById('glance');if(!el)return;newsRotateStart();clearTimeout(_glanceIdleT);renderGlance();el.classList.add('open');el.setAttribute('aria-hidden','false');clearInterval(_glanceClockT);_glanceClockT=setInterval(renderGlance,20000);if(typeof vkbHide==='function')vkbHide();if(window.innerWidth<=768)closeSidebarMobile();document.body.classList.remove('rail-open');document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));const nb=document.getElementById('nav-glance');if(nb)nb.classList.add('active');}
+function hideGlance(){const el=document.getElementById('glance');if(!el)return;clearInterval(_newsRotT);el.classList.remove('open');el.setAttribute('aria-hidden','true');clearInterval(_glanceClockT);glanceResetIdle();document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));const nb=document.getElementById('nav-'+(state.mainView||'overview'));if(nb)nb.classList.add('active');}
 function glanceBusy(){
   if(document.querySelector('.modal-overlay.open'))return true;
-  if(document.getElementById('meal-modal')||document.getElementById('mass-update-modal'))return true;
+  if(document.getElementById('meal-modal')||document.getElementById('mass-update-modal')||document.getElementById('fridge-modal'))return true;
   if(typeof amrap!=='undefined'&&amrap)return true;
+  if(glanceTellFocused())return true;
   return document.getElementById('app').style.display==='none';
 }
 function glanceIdleFire(){if(!glanceCfg.enabled||glanceOpen())return;if(glanceBusy()){glanceResetIdle();return;}try{const a=document.activeElement;if(a&&a.blur)a.blur();}catch(_){}if(window.innerWidth<=768)closeSidebarMobile();showGlance();}
 function glanceResetIdle(){clearTimeout(_glanceIdleT);if(!glanceCfg.enabled||glanceOpen())return;_glanceIdleT=setTimeout(glanceIdleFire,Math.max(1,+glanceCfg.minutes||5)*60000);}
 function glanceInit(){
-  const el=document.getElementById('glance');if(el)el.addEventListener('click',hideGlance);
+  const el=document.getElementById('glance');
+  if(el)el.addEventListener('click',e=>{if(e.target.closest('.gl-stay,.gl-tell-bar,.gl-fcard,.gl-kid-btn,.gl-fs-btn,.gl-school,.gl-meals,.gl-news'))return;hideGlance();});
+  const fi=document.getElementById('gl-fridge-file');if(fi)fi.addEventListener('change',fridgePhotoPicked);
   ['pointerdown','keydown','touchstart','wheel','mousemove'].forEach(ev=>document.addEventListener(ev,()=>{if(!glanceOpen())glanceResetIdle();},{passive:true}));
   glanceResetIdle();
+}
+function tellLooksGrocery(raw){
+  const s=String(raw||'').trim();if(!s)return false;
+  if(/\b(grocery|groceries|shopping list)\b/i.test(s))return true;
+  if(/^(please\s+)?(need|buy|get|grab|pick\s*up|we('re| are)?\s+out|out of|low on)\b/i.test(s))return true;
+  if(/,|;/.test(s)||/\band\b/i.test(s)){
+    const p=parseQuickTask(s);
+    if(!(p.dueDate||p.dueTime||p.recurrence||p.member||p.priority||p.kind))return true;
+  }
+  return false;
+}
+function tellGroceryNames(raw){
+  let s=String(raw||'').trim();
+  s=s.replace(/^(please\s+)?(add|put|need|buy|get|grab|pick\s*up)(\s+to\s+(the\s+)?(list|groceries?))?\s+/i,'');
+  s=s.replace(/^(we('re| are)?\s+)?(out of|low on|need)\s+/i,'');
+  s=s.replace(/^(grocery|groceries|shopping)\s*:?\s+/i,'');
+  s=s.replace(/\s+(to|on)\s+(the\s+)?(grocery\s+)?list$/i,'');
+  return s.split(/,|;|\band\b/i).map(x=>x.replace(/\s+/g,' ').trim()).filter(x=>x.length>1);
+}
+function renderTellPreview(){
+  const el=document.getElementById('gl-tell-preview');const inp=document.getElementById('gl-tell');if(!el||!inp)return;
+  const v=inp.value.trim();window._glTellDraft=inp.value;if(!v){el.innerHTML='';return;}
+  if(tellLooksGrocery(v)){
+    const names=tellGroceryNames(v);const low=/\blow on\b/i.test(v);
+    el.innerHTML=`<span>🛒 ${low?'Running low':'Need now'}</span>`+(names.length?names.map(n=>`<span class="qa-chip">${escHtml(n)}</span>`).join(''):'');
+    return;
+  }
+  const p=parseQuickTask(v);const chips=quickSummaryChips(p);
+  el.innerHTML=`<span>Will add <b>${escHtml(p.title||'…')}</b></span>`+chips.map(x=>`<span class="qa-chip">${escHtml(x)}</span>`).join('');
+}
+function tellTheHub(){
+  const inp=document.getElementById('gl-tell');if(!inp)return;const raw=inp.value.trim();if(!raw)return;
+  if(tellLooksGrocery(raw)){
+    const names=tellGroceryNames(raw);if(!names.length){toast('Name what to buy','error');return;}
+    const st=/\blow on\b/i.test(raw)?'low':'need';
+    names.forEach(n=>grocUpsert(n,st));
+    inp.value='';window._glTellDraft='';renderTellPreview();
+    toast(`Added ${names.length} to ${st==='low'?'Running low':'Need now'}`,'success');
+    grocRefresh();return;
+  }
+  const p=parseQuickTask(raw);if(!p.title){toast('Add a task name too','error');return;}
+  const fields={member:p.member||'family'};
+  ['dueDate','dueTime','priority','recurrence','duration','kind'].forEach(k=>{if(p[k])fields[k]=p[k];});
+  pushTask(makeTask(p.title,fields),'add');
+  const chips=quickSummaryChips(Object.assign({},p,{member:fields.member==='family'?'':fields.member}));
+  toast('Added '+(p.title)+(chips.length?' · '+chips.join(' · '):''),'success');
+  inp.value='';window._glTellDraft='';renderTellPreview();
 }
 function setGlanceEnabled(){glanceCfg.enabled=!glanceCfg.enabled;saveGlanceCfg();glanceResetIdle();renderSettings();toast(glanceCfg.enabled?'Glance screen on':'Glance screen off','info');}
 function setGlanceMinutes(v){glanceCfg.minutes=parseInt(v,10)||5;saveGlanceCfg();glanceResetIdle();toast(`Glance screen after ${glanceCfg.minutes} min idle`,'info');}
@@ -3737,7 +3824,7 @@ function deleteSavedMeal(k){if(!confirm('Remove this saved meal?'))return;const 
 // ══════════════════════════════════════
 // AUTO-UPDATE: a wall screen picks up new versions on its own
 // ══════════════════════════════════════
-const HUB_BUILD='2026-10-27-p1fixes';
+const HUB_BUILD='2026-10-27-glancehome';
 var _updT=null;
 async function checkForUpdate(){
   try{
@@ -3810,6 +3897,85 @@ function grocSetCat(id,cat){const it=(state.groc.items||{})[id];if(!it)return;gr
 function grocDelete(id){const it=(state.groc.items||{})[id];if(!it)return;if(!confirm(`Remove "${it.name}" from your grocery list completely?`))return;const items=Object.assign({},state.groc.items);delete items[id];state.groc.items=items;const db=getDb();if(db)db.ref('groceries/items/'+id).remove();grocRefresh();}
 function grocRefresh(){if(state.mainView==='groceries')renderGroceries();if(document.getElementById('groc-modal'))renderGrocPicker();if(glanceOpen())renderGlance();}
 function grocQuickAdd(where){const inp=document.getElementById('groc-add');if(!inp)return;const v=inp.value.trim();if(!v)return;v.split(',').map(s=>s.trim()).filter(Boolean).forEach(n=>grocUpsert(n,where||'need'));inp.value='';toast(`Added to ${where==='low'?'Running low':'Need now'}`,'success');grocRefresh();}
+function openFridgePhoto(){const f=document.getElementById('gl-fridge-file');if(!f){toast('Camera not available','error');return;}f.value='';f.click();}
+function fridgePhotoPicked(e){
+  const file=(e&&e.target&&e.target.files&&e.target.files[0])||null;if(!file)return;
+  fridgeCompress(file).then(async dataUrl=>{
+    fridgeShowReview(dataUrl,[],state.geminiKey?'Looking at the fridge…':'Type what’s missing. Add a Gemini key in Settings to auto-read the photo.');
+    const items=await fridgeDetect(dataUrl);
+    fridgeShowReview(dataUrl,items,items.length?'Uncheck anything you already have. Add missing items below.':'Couldn’t read the photo automatically. Type what’s missing.');
+  }).catch(err=>{console.error(err);toast('Couldn’t use that photo','error');});
+}
+function fridgeCompress(file){
+  return new Promise((resolve,reject)=>{
+    const img=new Image();const url=URL.createObjectURL(file);
+    img.onload=()=>{
+      const max=1024;let w=img.width,h=img.height;
+      if(w>max||h>max){const s=Math.min(max/w,max/h);w=Math.round(w*s);h=Math.round(h*s);}
+      const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);
+      URL.revokeObjectURL(url);resolve(c.toDataURL('image/jpeg',0.72));
+    };
+    img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('image'));};
+    img.src=url;
+  });
+}
+async function fridgeDetect(dataUrl){
+  const key=(state.geminiKey||'').trim();if(!key)return[];
+  const b64=(dataUrl.split(',')[1]||'');if(!b64)return[];
+  const body={contents:[{parts:[{text:'You are helping a family grocery list. Look at this fridge or pantry photo. List grocery item names that appear present OR look empty/missing that a US family might buy. Prefer short common names (milk, eggs, butter). Return JSON only: {"items":["milk"]}. Max 30 items.'},{inline_data:{mime_type:'image/jpeg',data:b64}}]}],generationConfig:{temperature:0.2,maxOutputTokens:512}};
+  const models=['gemini-2.0-flash','gemini-flash-latest','gemini-2.5-flash'];
+  for(const model of models){
+    try{
+      const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent?key='+encodeURIComponent(key),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+      const d=await r.json();
+      if(!r.ok){console.warn('gemini',model,d);continue;}
+      const txt=((d.candidates||[])[0]&&d.candidates[0].content&&d.candidates[0].content.parts||[]).map(p=>p.text||'').join('');
+      const m=txt.match(/\{[\s\S]*\}/);if(!m)continue;
+      const j=JSON.parse(m[0]);const items=(j.items||[]).map(x=>String(x).trim()).filter(Boolean);
+      if(items.length)return items.slice(0,30);
+    }catch(err){console.error('gemini',model,err);}
+  }
+  return[];
+}
+function fridgePickHtml(picks){return picks.map(p=>`<label class="fridge-pick${p.on?' on':''}" id="${p.id}"><input type="checkbox"${p.on?' checked':''} onchange="fridgeTogglePick('${p.id}',this.checked)"> ${escHtml(p.name)}</label>`).join('');}
+function fridgeShowReview(dataUrl,items,msg){
+  const picks=(items||[]).map(n=>({id:'fp-'+genId(),name:n,on:true}));
+  window._fridgePicks=picks;window._fridgeShot=dataUrl;
+  const ex=document.getElementById('fridge-modal');
+  if(ex){
+    const img=ex.querySelector('.fridge-shot');if(img)img.src=dataUrl;
+    const m=ex.querySelector('.fridge-msg');if(m)m.textContent=msg||'';
+    const box=document.getElementById('fridge-picks');if(box)box.innerHTML=fridgePickHtml(picks);
+    return;
+  }
+  document.body.insertAdjacentHTML('beforeend',`<div class="modal-overlay open gl-stay" id="fridge-modal" style="z-index:5100"><div class="modal" style="width:520px;max-width:96vw" onclick="event.stopPropagation()">
+    <h3>🛒 Fridge photo</h3>
+    <img class="fridge-shot" alt="Fridge" src="${dataUrl}">
+    <div class="fridge-msg">${escHtml(msg||'')}</div>
+    <div class="fridge-picks" id="fridge-picks">${fridgePickHtml(picks)}</div>
+    <div class="form-group"><label>Add items</label><input type="text" id="fridge-extra" placeholder="milk, eggs, butter" onkeydown="if(event.key==='Enter'){event.preventDefault();fridgeAddTyped();}"></div>
+    <div class="modal-actions"><button class="btn btn-ghost" onclick="closeFridgeModal()">Cancel</button><button class="btn btn-primary" onclick="fridgeCommit()">Add to Need now</button></div>
+  </div></div>`);
+  document.getElementById('fridge-modal').addEventListener('click',e=>{if(e.target.id==='fridge-modal')closeFridgeModal();});
+}
+function fridgeTogglePick(id,on){
+  const p=(window._fridgePicks||[]).find(x=>x.id===id);if(!p)return;p.on=!!on;
+  const lab=document.getElementById(id);if(lab)lab.classList.toggle('on',!!on);
+}
+function fridgeAddTyped(){
+  const inp=document.getElementById('fridge-extra');if(!inp)return;
+  const names=inp.value.split(/,|;|\band\b/i).map(s=>s.trim()).filter(Boolean);if(!names.length)return;
+  names.forEach(n=>{window._fridgePicks=(window._fridgePicks||[]).concat([{id:'fp-'+genId(),name:n,on:true}]);});
+  inp.value='';
+  const box=document.getElementById('fridge-picks');if(box)box.innerHTML=fridgePickHtml(window._fridgePicks);
+}
+function fridgeCommit(){
+  const picks=(window._fridgePicks||[]).filter(p=>p.on&&p.name);
+  if(!picks.length){toast('Pick or type at least one item','error');return;}
+  picks.forEach(p=>grocUpsert(p.name,'need'));
+  closeFridgeModal();toast(`Added ${picks.length} to Need now`,'success');grocRefresh();
+}
+function closeFridgeModal(){const m=document.getElementById('fridge-modal');if(m)m.remove();window._fridgePicks=null;window._fridgeShot=null;if(typeof vkbHide==='function')vkbHide();}
 // Old grocery tasks (assigned to "Groceries" or in the "Grocery List" list)
 function legacyGroceryTasks(){const gl=state.lists.filter(l=>/grocer/i.test(l.name)).map(l=>l.id);return state.tasks.filter(t=>String(t.member)==='groceries'||(t.listId&&gl.includes(t.listId)));}
 async function migrateGroceries(){
@@ -4142,7 +4308,7 @@ function startHubAfterAuth(){
   document.getElementById('setup-screen').style.display='none';
   document.getElementById('app').style.display='none';
   const saved=localStorage.getItem('familyhub_v2');
-  if(saved){try{const c=JSON.parse(saved);if(c.theme)state.theme=c.theme;if(c.members)state.members=c.members;if(c.lists)state.lists=c.lists;if(c.gcalKey)state.gcalKey=c.gcalKey;if(c.gcalId)state.gcalId=c.gcalId;if(c.familyLinks)state.familyLinks=c.familyLinks;}catch(e){}}
+  if(saved){try{const c=JSON.parse(saved);if(c.theme)state.theme=c.theme;if(c.members)state.members=c.members;if(c.lists)state.lists=c.lists;if(c.gcalKey)state.gcalKey=c.gcalKey;if(c.gcalId)state.gcalId=c.gcalId;if(c.geminiKey)state.geminiKey=c.geminiKey;if(c.familyLinks)state.familyLinks=c.familyLinks;}catch(e){}}
   applyTheme(state.theme);
   const haveLocal=!!(saved&&state.members&&state.members.length);
   const db=getDb();
@@ -4155,9 +4321,10 @@ function startHubAfterAuth(){
       if(data.familyLinks)state.familyLinks=data.familyLinks;
       if(data.gcalKey!==undefined)state.gcalKey=data.gcalKey;
       if(data.gcalId!==undefined)state.gcalId=data.gcalId;
+      if(data.geminiKey!==undefined)state.geminiKey=data.geminiKey;
       if(data.weatherLoc)state.weatherLoc=data.weatherLoc;
       if(data.theme)state.theme=data.theme;
-      localStorage.setItem('familyhub_v2',JSON.stringify({theme:state.theme,members:state.members,lists:state.lists,gcalKey:state.gcalKey,gcalId:state.gcalId,familyLinks:state.familyLinks||[]}));
+      persistLocalConfig();
       startApp();
     } else if(haveLocal){
       startApp();
