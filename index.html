@@ -1347,15 +1347,8 @@ body.vkb-active .modal { max-height: calc(100vh - 340px); overflow-y: auto; }
         <select id="t-status"><option value="notstarted">Not Started</option><option value="inprogress">In Progress</option><option value="complete">Complete</option></select>
       </div>
     </div>
-    <div class="row-2">
-      <div class="form-group"><label>Repeats</label>
-        <select id="t-recur" onchange="updateRotateVisibility()"><option value="">Does not repeat</option><option value="daily">Every day</option><option value="weekdays">Weekdays</option><option value="weekly">Every week</option><option value="biweekly">Every 2 weeks</option><option value="monthly">Every month</option><option value="yearly">Every year</option></select>
-      </div>
-      <div class="form-group">
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;text-transform:none;font-size:.88rem;font-weight:500;margin-top:22px">
-          <input type="checkbox" id="t-add-to-cal" style="width:auto"> Add to Google Calendar
-        </label>
-      </div>
+    <div class="form-group"><label>Repeats</label>
+      <select id="t-recur" onchange="updateRotateVisibility()"><option value="">Does not repeat</option><option value="daily">Every day</option><option value="weekdays">Weekdays</option><option value="weekly">Every week</option><option value="biweekly">Every 2 weeks</option><option value="monthly">Every month</option><option value="yearly">Every year</option></select>
     </div>
     <div class="form-group"><label for="t-kind">Type</label><select id="t-kind" onchange="taskKindHint()"><option value="">Auto — decide from the title</option><option value="event">📅 Event (no checkbox)</option><option value="school">📚 School to-do</option><option value="chore">🧹 Chore to-do</option><option value="todo">✅ Other to-do</option></select><div class="kind-hint" id="t-kind-hint"></div></div>
     <div class="form-group" id="t-rotate-wrap" style="display:none"><label>Chore rotation (optional)</label><div class="rot-chips" id="t-rotate"></div><div class="rot-hint">Tap people in order. Each time it's checked off, the next one is assigned to the next person.</div></div>
@@ -1521,7 +1514,7 @@ async function onAuthChanged(user){
 var setupMembersList=[];
 var SETUP_COLORS=['#1a7fe8','#e84a6f','#18c97a','#f0960a','#38b2ac','#8b5cf6','#5ab4ff','#f6ad55','#fc8181'];
 function setupShowMsg(t,e){var el=document.getElementById('setup-msg');if(el){el.textContent=t;el.style.color=e?'#e84a6f':'#18c97a';}}
-function setupRenderMembers(){var el=document.getElementById('member-list-setup');if(!el)return;if(!setupMembersList.length){el.innerHTML='<span style="font-size:.78rem;color:var(--text3)">No members added yet</span>';return;}el.innerHTML=setupMembersList.map((m,i)=>`<div style="display:inline-flex;align-items:center;gap:6px;background:${m.color}22;border:1px solid ${m.color}55;border-radius:20px;padding:5px 10px 5px 8px;font-size:.85rem;margin:3px"><span style="width:20px;height:20px;border-radius:50%;background:${m.color};display:inline-flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:#fff">${m.name[0].toUpperCase()}</span><span style="color:var(--text)">${m.name}</span><span onclick="setupRemoveMember(${i})" style="cursor:pointer;color:var(--text3);font-size:1.1rem;line-height:1">&times;</span></div>`).join('');}
+function setupRenderMembers(){var el=document.getElementById('member-list-setup');if(!el)return;if(!setupMembersList.length){el.innerHTML='<span style="font-size:.78rem;color:var(--text3)">No members added yet</span>';return;}el.innerHTML=setupMembersList.map((m,i)=>`<div style="display:inline-flex;align-items:center;gap:6px;background:${m.color}22;border:1px solid ${m.color}55;border-radius:20px;padding:5px 10px 5px 8px;font-size:.85rem;margin:3px"><span style="width:20px;height:20px;border-radius:50%;background:${m.color};display:inline-flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:#fff">${escHtml((m.name[0]||'?').toUpperCase())}</span><span style="color:var(--text)">${escHtml(m.name)}</span><span onclick="setupRemoveMember(${i})" style="cursor:pointer;color:var(--text3);font-size:1.1rem;line-height:1">&times;</span></div>`).join('');}
 function setupRemoveMember(i){setupMembersList.splice(i,1);setupRenderMembers();}
 function setupDoAdd(){var inp=document.getElementById('new-member-name');if(!inp)return;var n=inp.value.trim();if(!n){setupShowMsg('Type a name first',true);return;}if(setupMembersList.length>=9){setupShowMsg('Max 9 members',true);return;}setupMembersList.push({name:n,color:SETUP_COLORS[setupMembersList.length%SETUP_COLORS.length],id:String(Date.now()+Math.random()),avatar:null});inp.value='';inp.focus();setupShowMsg('');setupRenderMembers();}
 function setupDoLaunch(){
@@ -1552,6 +1545,7 @@ const STARTONS=[{v:'today',label:'Today'},{v:'week',label:'This Week'},{v:'month
 const GROCERIES={id:'groceries',name:'Groceries',color:'#18c97a',avatar:'🛒'};
 function findMember(id){if(String(id)==='groceries')return GROCERIES;return state.members.find(m=>String(m.id)===String(id));}
 function assignees(){return state.members.slice();}
+function assignablePeople(){return assignees().concat([GROCERIES]);}
 function durationLabel(v){const d=DURATIONS.find(x=>x.v===v);return d?d.label:'';}
 function startOnLabel(v){const s=STARTONS.find(x=>x.v===v);return s?s.label:'';}
 let state={
@@ -1582,17 +1576,18 @@ function toggleFullscreen(){
   }catch(e){toast('Fullscreen not available','error');}
 }
 function updateFsIcon(){if(typeof glanceOpen==='function'&&glanceOpen()){const gb=document.querySelector('.gl-fs-btn');if(gb){gb.textContent=isFullscreen()?'⤡ Exit full screen':'⤢ Full screen';gb.setAttribute('aria-label',isFullscreen()?'Exit full screen':'Full screen');}}const b=document.getElementById('fs-btn');if(b){b.textContent=isFullscreen()?'⤡':'⤢';b.title=isFullscreen()?'Exit fullscreen':'Enter fullscreen';}}
-function closeModal(id){document.getElementById(id).classList.remove('open');}
-function todayStr(){const d=new Date();return`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;}
+function closeModal(id){const el=document.getElementById(id);if(el)el.classList.remove('open');}
+function todayStr(){return localDateStr(new Date());}
 function pad(n){return String(n).padStart(2,'0');}
+function localDateStr(d){return`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;}
 function genId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function formatDate(d){if(!d)return'';const[y,m,day]=d.split('-');return new Date(y,m-1,day).toLocaleDateString('en-US',{month:'short',day:'numeric'});}
 function formatTime(t){if(!t)return'';try{const[h,m]=t.split(':');const hr=parseInt(h);return`${hr%12||12}:${m} ${hr<12?'AM':'PM'}`;}catch(e){return t;}}
 function recurLabel(r){return{daily:'Daily',weekdays:'Weekdays',weekly:'Weekly',biweekly:'Every 2 wks',monthly:'Monthly',yearly:'Yearly'}[r]||r;}
 function timeAgo(d){const diff=Math.round((new Date()-d)/1000);if(diff<60)return'just now';if(diff<3600)return Math.round(diff/60)+'m ago';return Math.round(diff/3600)+'h ago';}
-function toast(msg,type='info'){const c=document.getElementById('toasts'),el=document.createElement('div');el.className=`toast ${type}`;el.innerHTML=`<span class="toast-icon">${{success:'✅',error:'❌',info:'ℹ️'}[type]||'ℹ️'}</span><span>${msg}</span>`;c.appendChild(el);setTimeout(()=>{el.classList.add('out');setTimeout(()=>el.remove(),250);},3500);}
-function memberOptionsHtml(sel,includeFamily){let h=includeFamily?`<option value="family"${String(sel)==='family'?' selected':''}>All Family</option>`:'';return h+assignees().map(m=>`<option value="${m.id}"${String(sel)===String(m.id)?' selected':''}>${escHtml(m.name)}</option>`).join('');}
+function toast(msg,type='info'){const c=document.getElementById('toasts');if(!c)return;const el=document.createElement('div');el.className=`toast ${type}`;const icon=document.createElement('span');icon.className='toast-icon';icon.textContent={success:'✅',error:'❌',info:'ℹ️'}[type]||'ℹ️';const text=document.createElement('span');text.textContent=msg;el.append(icon,text);c.appendChild(el);setTimeout(()=>{el.classList.add('out');setTimeout(()=>el.remove(),250);},3500);}
+function memberOptionsHtml(sel,includeFamily){let h=includeFamily?`<option value="family"${String(sel)==='family'?' selected':''}>All Family</option>`:'';return h+assignablePeople().map(m=>`<option value="${m.id}"${String(sel)===String(m.id)?' selected':''}>${escHtml(m.name)}</option>`).join('');}
 function durationOptionsHtml(sel){return'<option value="">—</option>'+DURATIONS.map(d=>`<option value="${d.v}"${sel===d.v?' selected':''}>${d.label}</option>`).join('');}
 function startOnOptionsHtml(sel){return'<option value="">—</option>'+STARTONS.map(s=>`<option value="${s.v}"${sel===s.v?' selected':''}>${s.label}</option>`).join('');}
 function priorityOptionsHtml(sel){return[['none','None'],['low','🟢 Low'],['medium','🟡 Medium'],['high','🔴 High']].map(([v,l])=>`<option value="${v}"${(sel||'none')===v?' selected':''}>${l}</option>`).join('');}
@@ -1634,7 +1629,7 @@ function renderSidebar(){
   document.getElementById('sidebar-members').innerHTML=state.members.map(m=>`<button class="member-btn" data-member="${m.id}" onclick="selectMember('${m.id}',this)"><span class="m-avatar" style="background:${m.color}22;color:${m.color}">${memberAvatarHtml(m,30)}</span><span>${escHtml(m.name)}</span><span class="m-count" id="count-${m.id}">0</span></button>`).join('')+groceriesSidebarBtnHtml();
   updateCounts();
   const sel=document.getElementById('t-member');
-  if(sel)sel.innerHTML='<option value="family">All Family</option>'+assignees().map(m=>`<option value="${m.id}">${escHtml(m.name)}</option>`).join('');
+  if(sel)sel.innerHTML='<option value="family">All Family</option>'+assignablePeople().map(m=>`<option value="${m.id}">${escHtml(m.name)}</option>`).join('');
   renderTaskListSelect();
 }
 function memberAvatarHtml(m,size){
@@ -1722,7 +1717,6 @@ async function fetchGoogleCalendarEvents(){
     toast('Could not load Google Calendar events','error');
   }
 }
-function addToGoogleCalendar(task){if(!state.gcalKey||!state.gcalId)return;console.log('GCal push stub:',task.title,task.dueDate);}
 // ══════════════════════════════════════
 // TASKS VIEW
 // ══════════════════════════════════════
@@ -2087,11 +2081,34 @@ async function lvFillEnd(){
 // ══════════════════════════════════════
 function quickAddToList(listId){const inp=document.getElementById('quick-add-input');const title=inp.value.trim();if(!title)return;pushTask(makeTask(title,{member:'family',listId}),'add');toast('Added!','success');inp.value='';}
 function makeTask(title,overrides={}){return{id:genId(),title,notes:'',member:'family',priority:'none',dueDate:'',dueTime:'',recurrence:'',listId:'',duration:'',startOn:'',completed:false,completedAt:'',createdAt:new Date().toISOString(),addedToCal:false,status:'notstarted',...overrides};}
-function nextRecurDate(task){if(!task.dueDate||!task.recurrence)return null;const d=new Date(task.dueDate+'T12:00:00');switch(task.recurrence){case'daily':d.setDate(d.getDate()+1);break;case'weekdays':d.setDate(d.getDate()+1);while(d.getDay()===0||d.getDay()===6)d.setDate(d.getDate()+1);break;case'weekly':d.setDate(d.getDate()+7);break;case'biweekly':d.setDate(d.getDate()+14);break;case'monthly':d.setMonth(d.getMonth()+1);break;case'yearly':d.setFullYear(d.getFullYear()+1);break;default:return null;}return d.toISOString().split('T')[0];}
+function nextRecurDate(task){
+  if(!task.dueDate||!task.recurrence)return null;
+  const d=new Date(task.dueDate+'T12:00:00');
+  if(isNaN(d))return null;
+  const origDay=d.getDate(),origMonth=d.getMonth();
+  switch(task.recurrence){
+    case'daily':d.setDate(d.getDate()+1);break;
+    case'weekdays':d.setDate(d.getDate()+1);while(d.getDay()===0||d.getDay()===6)d.setDate(d.getDate()+1);break;
+    case'weekly':d.setDate(d.getDate()+7);break;
+    case'biweekly':d.setDate(d.getDate()+14);break;
+    case'monthly':{
+      const y=d.getFullYear(),m=d.getMonth()+1,ny=y+Math.floor(m/12),nm=m%12;
+      const last=new Date(ny,nm+1,0).getDate();
+      d.setFullYear(ny,nm,Math.min(origDay,last));
+      break;
+    }
+    case'yearly':
+      d.setFullYear(d.getFullYear()+1);
+      if(d.getMonth()!==origMonth)d.setDate(0);
+      break;
+    default:return null;
+  }
+  return localDateStr(d);
+}
 function openAddTask(){
   state.editingTaskId=null;document.getElementById('task-modal-title').textContent='Add Task';
   ['t-title','t-notes','t-due','t-time','t-recur','t-duration','t-starton','t-end-date','t-end-time'].forEach(id=>document.getElementById(id).value='');document.getElementById('t-allday').checked=false;
-  document.getElementById('t-priority').value='none';document.getElementById('t-add-to-cal').checked=false;rotateSel=[];buildRotateChips();updateRotateVisibility();document.getElementById('t-kind').value='';taskKindHint();document.getElementById('t-list-sel').value='';document.getElementById('t-status').value='notstarted';
+  document.getElementById('t-priority').value='none';rotateSel=[];buildRotateChips();updateRotateVisibility();document.getElementById('t-kind').value='';taskKindHint();document.getElementById('t-list-sel').value='';document.getElementById('t-status').value='notstarted';
   const sel=document.getElementById('t-member');if(sel)sel.value=state.currentMember!=='family'?state.currentMember:(state.members[0]?.id||'family');
   document.getElementById('task-modal').classList.add('open');
 }
@@ -2101,7 +2118,6 @@ function editTask(id,e){
   state.editingTaskId=id;document.getElementById('task-modal-title').textContent='Edit Task';
   document.getElementById('t-title').value=t.title;document.getElementById('t-notes').value=t.notes||'';
   document.getElementById('t-due').value=t.dueDate||'';document.getElementById('t-priority').value=t.priority||'none';
-  document.getElementById('t-add-to-cal').checked=t.addedToCal===true||t.addedToCal==='true';
   document.getElementById('t-member').value=t.member;document.getElementById('t-list-sel').value=t.listId||'';
   document.getElementById('t-time').value=t.dueTime||'';document.getElementById('t-recur').value=t.recurrence||'';
   document.getElementById('t-status').value=t.status||'notstarted';
@@ -2112,14 +2128,14 @@ function editTask(id,e){
 }
 function saveTask(){
   const title=document.getElementById('t-title').value.trim();if(!title){toast('Please enter a task title','error');return;}
-  const addToCal=document.getElementById('t-add-to-cal').checked;const dueDate=document.getElementById('t-due').value;
+  const dueDate=document.getElementById('t-due').value;
   const evK=taskKind({kind:document.getElementById('t-kind').value,title,dueTime:document.getElementById('t-time').value})==='event';
   const ev={endDate:'',endTime:'',allDay:false};
   if(evK){ev.allDay=document.getElementById('t-allday').checked;ev.endDate=document.getElementById('t-end-date').value||dueDate;if(dueDate&&ev.endDate<dueDate)ev.endDate=dueDate;if(ev.endDate===dueDate)ev.endDate='';ev.endTime=ev.allDay?'':document.getElementById('t-end-time').value;
     const st=document.getElementById('t-time').value;if(!ev.endDate&&ev.endTime&&st&&ev.endTime<=st){toast('End time is before the start time','error');return;}}
-  const fields={...ev,kind:document.getElementById('t-kind').value||'',notes:document.getElementById('t-notes').value,member:document.getElementById('t-member').value,priority:document.getElementById('t-priority').value,dueDate,dueTime:(evK&&ev.allDay)?'':document.getElementById('t-time').value,recurrence:document.getElementById('t-recur').value,listId:document.getElementById('t-list-sel').value,duration:document.getElementById('t-duration').value,startOn:document.getElementById('t-starton').value,addedToCal:addToCal,status:document.getElementById('t-status').value,rotation:(document.getElementById('t-recur').value&&rotateSel.length>1)?rotateSel.filter(id=>state.members.some(m=>String(m.id)===id)):''};
+  const fields={...ev,kind:document.getElementById('t-kind').value||'',notes:document.getElementById('t-notes').value,member:document.getElementById('t-member').value,priority:document.getElementById('t-priority').value,dueDate,dueTime:(evK&&ev.allDay)?'':document.getElementById('t-time').value,recurrence:document.getElementById('t-recur').value,listId:document.getElementById('t-list-sel').value,duration:document.getElementById('t-duration').value,startOn:document.getElementById('t-starton').value,status:document.getElementById('t-status').value,rotation:(document.getElementById('t-recur').value&&rotateSel.length>1)?rotateSel.filter(id=>state.members.some(m=>String(m.id)===id)):''};
   if(state.editingTaskId){const idx=state.tasks.findIndex(x=>String(x.id)===String(state.editingTaskId));if(idx>-1){pushTask(Object.assign({},state.tasks[idx],fields),'update');toast('Updated!','success');}}
-  else{const task=makeTask(title,fields);pushTask(task,'add');toast('Task added!','success');if(addToCal&&dueDate)addToGoogleCalendar(task);}
+  else{const task=makeTask(title,fields);pushTask(task,'add');toast('Task added!','success');}
   closeModal('task-modal');
 }
 function toggleTask(id,e){
@@ -2234,8 +2250,8 @@ function occursOnDate(task,ds){
     case'weekdays':{const w=d.getDay();return w>=1&&w<=5;}
     case'weekly':return d.getDay()===a.getDay();
     case'biweekly':{const diff=Math.round((d-a)/86400000);return diff%14===0;}
-    case'monthly':return d.getDate()===a.getDate();
-    case'yearly':return d.getDate()===a.getDate()&&d.getMonth()===a.getMonth();
+    case'monthly':{const orig=a.getDate(),last=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();return d.getDate()===Math.min(orig,last);}
+    case'yearly':{if(d.getMonth()!==a.getMonth())return false;const orig=a.getDate(),last=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();return d.getDate()===Math.min(orig,last);}
   }
   return false;
 }
@@ -2741,7 +2757,7 @@ function renderImport(){
   document.getElementById('view-tabs').style.display='none';
   document.getElementById('topbar-title').textContent='Import Tasks';
   document.getElementById('topbar-color').style.background='var(--accent)';
-  const memberOpts='<option value="family">All Family</option>'+assignees().map(m=>`<option value="${m.id}">${escHtml(m.name)}</option>`).join('');
+  const memberOpts='<option value="family">All Family</option>'+assignablePeople().map(m=>`<option value="${m.id}">${escHtml(m.name)}</option>`).join('');
   const listOpts='<option value="">No list</option>'+state.lists.map(l=>`<option value="${l.id}">${l.emoji} ${escHtml(l.name)}</option>`).join('');
   document.getElementById('main-content').innerHTML=`<div style="max-width:720px">
   <div style="font-family:'Outfit',serif;font-size:1.45rem;margin-bottom:4px">Import Tasks</div>
@@ -2863,6 +2879,7 @@ function renderSettings(){
     <div class="settings-row"><div><div class="settings-row-label">Hub version</div><div class="settings-row-sub">${HUB_BUILD} · screens update themselves within ~10 minutes of a new version</div></div></div>
   </div>
   <div class="settings-section"><h4>📅 Google Calendar</h4>
+    <div class="settings-row"><div><div class="settings-row-label">Pull events into the hub</div><div class="settings-row-sub">The hub can show events from a public Google Calendar. It does not add or change events in Google.</div></div></div>
     <div class="form-group"><label>API Key</label><input type="text" id="s-gcal-key" value="${escHtml(state.gcalKey)}" placeholder="AIza..."></div>
     <div class="form-group"><label>Calendar ID</label><input type="text" id="s-gcal-id" value="${escHtml(state.gcalId)}" placeholder="family@group.calendar.google.com"></div>
     <div style="display:flex;gap:8px">
@@ -2931,7 +2948,7 @@ function setSyncStatus(s){const dot=document.getElementById('sync-dot'),txt=docu
 // ══════════════════════════════════════
 function openMassUpdate(){
   const ex=document.getElementById('mass-update-modal');if(ex)ex.remove();
-  const mo='<option value="">— Any member —</option>'+assignees().map(m=>`<option value="${m.id}">${escHtml(m.name)}</option>`).join('');
+  const mo='<option value="">— Any member —</option>'+assignablePeople().map(m=>`<option value="${m.id}">${escHtml(m.name)}</option>`).join('');
   const lo='<option value="">— Any list —</option>'+state.lists.map(l=>`<option value="${l.id}">${l.emoji} ${escHtml(l.name)}</option>`).join('');
   document.body.insertAdjacentHTML('beforeend',`<div class="modal-overlay open" id="mass-update-modal" style="z-index:2000"><div class="modal" style="width:600px;max-width:96vw">
   <h3>⚡ Mass Update Tasks</h3>
@@ -2987,7 +3004,7 @@ function massSelectAll(){document.querySelectorAll('.mu-task-cb').forEach(cb=>cb
 function massSelectNone(){document.querySelectorAll('.mu-task-cb').forEach(cb=>cb.checked=false);massUpdateSelectedCount();}
 function massUpdateToggleActionFields(){
   const type=document.getElementById('mu-action-type')?.value;const wrap=document.getElementById('mu-action-value-wrap');if(!wrap)return;
-  const mo=assignees().map(m=>`<option value="${m.id}">${escHtml(m.name)}</option>`).join('');
+  const mo=assignablePeople().map(m=>`<option value="${m.id}">${escHtml(m.name)}</option>`).join('');
   const lo='<option value="">No list</option>'+state.lists.map(l=>`<option value="${l.id}">${l.emoji} ${escHtml(l.name)}</option>`).join('');
   const dro=DURATIONS.map(d=>`<option value="${d.v}">${d.label}</option>`).join('');
   const sto=STARTONS.map(s=>`<option value="${s.v}">${s.label}</option>`).join('');
@@ -3471,9 +3488,14 @@ function rotationText(t){const r=rotationOf(t);if(r.length<2)return'';return' ·
 function spawnRecurringTask(ct){
   if(!ct.recurrence)return;const next=nextRecurDate(ct);if(!next)return;
   const nextMember=nextRotationMember(ct);const rot=rotationOf(ct);
-  pushTask(makeTask(ct.title,{notes:ct.notes,member:nextMember,priority:ct.priority,dueDate:next,dueTime:ct.dueTime,recurrence:ct.recurrence,listId:ct.listId,duration:ct.duration,startOn:ct.startOn,addedToCal:ct.addedToCal,rotation:rot.length>1?rot:''}),'add');
+  let nextEnd=ct.endDate||'';
+  if(ct.dueDate&&ct.endDate){
+    const a=new Date(ct.dueDate+'T12:00:00'),b=new Date(ct.endDate+'T12:00:00'),n=new Date(next+'T12:00:00');
+    if(!isNaN(a)&&!isNaN(b)&&!isNaN(n)){n.setDate(n.getDate()+Math.round((b-a)/86400000));nextEnd=localDateStr(n);}
+  }
+  pushTask(makeTask(ct.title,{notes:ct.notes,member:nextMember,priority:ct.priority,dueDate:next,dueTime:ct.dueTime,recurrence:ct.recurrence,listId:ct.listId,duration:ct.duration,startOn:ct.startOn,kind:ct.kind||'',endDate:nextEnd,endTime:ct.endTime||'',allDay:!!ct.allDay,rotation:rot.length>1?rot:''}),'add');
   const nm=rot.length>1?findMember(nextMember):null;
-  toast(nm?`Next up: ${escHtml(nm.name)} · ${formatDate(next)}`:'Recurring task for '+formatDate(next),'info');
+  toast(nm?`Next up: ${nm.name} · ${formatDate(next)}`:'Recurring task for '+formatDate(next),'info');
 }
 
 // ══════════════════════════════════════
@@ -3715,7 +3737,7 @@ function deleteSavedMeal(k){if(!confirm('Remove this saved meal?'))return;const 
 // ══════════════════════════════════════
 // AUTO-UPDATE: a wall screen picks up new versions on its own
 // ══════════════════════════════════════
-const HUB_BUILD='2026-10-27-auth1';
+const HUB_BUILD='2026-10-27-p1fixes';
 var _updT=null;
 async function checkForUpdate(){
   try{
