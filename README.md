@@ -4,6 +4,12 @@ Family to-dos, calendar, meals, and groceries. Live at [justinboyle26-rgb.github
 
 The page does not read or write the family database until someone signs in with the **family email and password**.
 
+## Remodel
+
+`remodel/index.html` is the multi-year plan for 25 Basildon Dr. It uses the same family email as the hub and stores the plan at `remodel` in the same Realtime Database. The existing rules already allow a signed-in family account to read and write that path.
+
+Open it from **Remodel** in the hub menu, or at [justinboyle26-rgb.github.io/Boyle-Family-Hub/remodel/](https://justinboyle26-rgb.github.io/Boyle-Family-Hub/remodel/). The first sign-in creates a starter house from the public listing: 4,300 sq ft, 3 bedrooms, 5 baths, built in 1991. Room sizes are a starter, not a measured plan. The kitchen and the 1991 systems already have allowance lines. Other rooms get a scope when you choose **Add typical scope**. Ideas holds Pinterest pins, Plan holds the phases and dated steps, and Calendar shows them by month.
+
 ## One-time Firebase console steps
 
 Do these in [Firebase console](https://console.firebase.google.com/) → project **boyle-family-hub-2533b**. The app cannot finish this for you.

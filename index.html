@@ -90,6 +90,7 @@ body { font-family: 'Inter', 'Noto Color Emoji', sans-serif; background: var(--b
 .list-btn .list-del:hover { color: var(--accent2); }
 .sidebar-section { padding: 8px; border-top: 1px solid var(--border); }
 .nav-btn { width: 100%; display: flex; align-items: center; gap: 11px; padding: 11px 10px; border-radius: 10px; border: none; background: transparent; color: var(--text2); font-family: inherit; font-size: 1.05rem; cursor: pointer; transition: all .15s; text-align: left; }
+a.nav-btn { text-decoration: none; }
 .nav-btn svg { width: 19px; height: 19px; }
 .nav-btn:hover { background: var(--surface2); color: var(--text); }
 .nav-btn.active { background: rgba(46,125,91,.12); color: var(--text); border-left: 3px solid var(--accent); padding-left: 6px; }
@@ -1290,6 +1291,10 @@ body.vkb-active .modal { max-height: calc(100vh - 340px); overflow-y: auto; }
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         Import Tasks
       </button>
+      <a class="nav-btn" id="nav-remodel" href="remodel/">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z"/></svg>
+        Remodel
+      </a>
       <button class="nav-btn" id="nav-settings" onclick="navTo('settings')">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
         Settings
