@@ -418,8 +418,18 @@ body.vkb-active { padding-bottom: 320px; }
 .wk-form { display: flex; flex-wrap: wrap; gap: 12px; align-items: start; }
 .wk-field { display: flex; flex-direction: column; gap: 5px; }
 .wk-field label { font-size: .72rem; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: .04em; }
-.wk-field input, .wk-field select { padding: 9px 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 9px; color: var(--text); font-family: inherit; font-size: .95rem; outline: none; min-width: 130px; }
-.wk-field input:focus, .wk-field select:focus { border-color: var(--accent); }
+.wk-field input, .wk-field select, .wk-field textarea { padding: 9px 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 9px; color: var(--text); font-family: inherit; font-size: .95rem; outline: none; min-width: 130px; }
+.wk-field textarea { width: 100%; min-width: 0; resize: vertical; min-height: 64px; }
+.wk-field input:focus, .wk-field select:focus, .wk-field textarea:focus { border-color: var(--accent); }
+.wk-span { flex: 1 1 100%; }
+.wk-dots { display: flex; gap: 8px; }
+.wk-dot { flex: 1; min-width: 0; text-align: center; padding: 8px 2px; border-radius: 12px; background: var(--surface2); border: 1px solid var(--border); }
+.wk-dot .mark { font-size: 1.05rem; }
+.wk-dot .lbl { font-size: .64rem; color: var(--text3); margin-top: 2px; }
+.wk-dot.on { background: rgba(46,125,91,.14); border-color: var(--accent); }
+.wk-dot.today { box-shadow: inset 0 0 0 2px var(--accent5); }
+.wk-partner { margin-top: 12px; font-size: .84rem; color: var(--text2); }
+.wk-pin { cursor: pointer; }
 .wk-field.amf-active input { border-color: var(--accent); background: rgba(46,125,91,.14); font-weight: 700; }
 .wk-mode-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 14px; }
 .wk-mode-lbl { font-size: .72rem; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .04em; }
@@ -1170,6 +1180,37 @@ body.vkb-active .modal { max-height: calc(100vh - 340px); overflow-y: auto; }
 .kid-row.done .kid-box { background: var(--c); }
 .kid-row.done .kid-n { text-decoration: line-through; }
 .kid-done-all { background: rgba(255,255,255,.95); color: #22332B; border-radius: 20px; padding: 28px; text-align: center; font: 700 1.5rem 'Inter', var(--emoji); }
+/* Store mode — big rows for a phone in the aisle */
+.store-overlay { position: fixed; inset: 0; z-index: 5300; background: #F3F7F4; display: none; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.store-overlay.open { display: block; }
+.store-wrap { max-width: 720px; margin: 0 auto; padding: 16px 16px 48px; }
+.store-top { display: flex; align-items: center; gap: 12px; position: sticky; top: 0; background: #F3F7F4; padding: 8px 0 12px; z-index: 1; }
+.store-title { font: 700 1.7rem 'Outfit', 'Inter', sans-serif; color: #22332B; line-height: 1.1; }
+.store-sub { font-size: .9rem; color: #4A6357; margin-top: 4px; }
+.store-cat { font: 700 .75rem 'Inter', sans-serif; letter-spacing: .08em; text-transform: uppercase; color: #4A6357; margin: 16px 2px 8px; }
+.store-split { font: 700 .95rem 'Outfit', sans-serif; color: #A86A00; margin: 22px 2px 4px; }
+.store-note { font-size: .82rem; color: #6B7F75; margin: 0 2px 8px; }
+.store-row { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; background: #fff; border: none; border-radius: 16px; padding: 14px 16px; margin-bottom: 8px; font: 600 1.15rem 'Inter', var(--emoji); color: #22332B; min-height: 64px; box-shadow: 0 1px 2px rgba(20,40,80,.06); cursor: pointer; }
+.store-row:active { background: #E6F1EA; }
+.store-box { width: 32px; height: 32px; border-radius: 50%; border: 3px solid #2E7D5B; flex-shrink: 0; }
+.store-empty { background: #fff; border-radius: 16px; padding: 22px; color: #4A6357; font-weight: 600; }
+button.gl-chip { font-family: inherit; cursor: pointer; }
+.gl-low, .gl-leave { flex-shrink: 0; }
+.gl-low { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.gl-low-h { font: 700 13px 'Inter', sans-serif; color: var(--text2); }
+.gl-low-chip { border: 1px solid rgba(184,110,0,.35); background: #FFF6E5; color: #6B4A00; font: 600 14px 'Inter', var(--emoji); border-radius: 999px; padding: 7px 12px; cursor: pointer; }
+.gl-low-chip b { color: #A86A00; margin-left: 6px; font-weight: 700; }
+.gl-leave { background: rgba(255,255,255,.94); border: 1px solid var(--border); border-radius: 18px; padding: 10px 14px; }
+.gl-leave-h { font: 700 12px 'Inter', sans-serif; letter-spacing: .07em; text-transform: uppercase; color: #4A6357; margin-bottom: 8px; display: flex; justify-content: space-between; gap: 8px; }
+.gl-leave-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.gl-leave-item { border: 1px solid var(--border); background: #fff; border-radius: 14px; padding: 8px 12px; font: 600 14px 'Inter', var(--emoji); cursor: pointer; color: #22332B; text-align: left; }
+.gl-leave-item small { display: block; font-weight: 500; color: #6B7F75; }
+.gl-leave-item.on { background: #E6F1EA; border-color: #2E7D5B; }
+.gl-leave-item.on span { text-decoration: line-through; }
+@media (orientation: portrait) and (min-width: 1000px) {
+  .gl-low-h, .gl-leave-h { font-size: 15px; }
+  .gl-low-chip, .gl-leave-item { font-size: 18px; padding: 10px 14px; }
+}
 /* Review + ideas + learned groceries */
 .stale-list { max-height: 52vh; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; margin-bottom: 6px; }
 .stale-row { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 10px; background: rgba(46,94,71,.06); cursor: pointer; text-transform: none; font-weight: 500; font-size: .9rem; }
@@ -1663,7 +1704,7 @@ function renderSidebarLists(){
   renderTaskListSelect();
 }
 function renderTaskListSelect(){const sel=document.getElementById('t-list-sel');if(!sel)return;sel.innerHTML='<option value="">No list</option>'+state.lists.map(l=>`<option value="${l.id}">${l.emoji} ${escHtml(l.name)}</option>`).join('');}
-function updateCounts(){const active=state.tasks.filter(t=>!t.completed&&!isEvent(t));const fe=document.getElementById('count-family');if(fe)fe.textContent=active.length;state.members.forEach(m=>{const el=document.getElementById('count-'+m.id);if(el)el.textContent=active.filter(t=>t.member===String(m.id)).length;});const ge=document.getElementById('count-groceries');if(ge)ge.textContent=active.filter(t=>String(t.member)==='groceries').length;}
+function updateCounts(){const active=state.tasks.filter(t=>!t.completed&&!isEvent(t));const fe=document.getElementById('count-family');if(fe)fe.textContent=active.length+wkOpenOn(todayStr()).length;state.members.forEach(m=>{const el=document.getElementById('count-'+m.id);if(el)el.textContent=active.filter(t=>t.member===String(m.id)).length+(wkPending(m.id)?1:0);});const ge=document.getElementById('count-groceries');if(ge)ge.textContent=active.filter(t=>String(t.member)==='groceries').length;}
 function navTo(v){setView(v);if(window.innerWidth<=768)closeSidebarMobile();}
 function selectMember(id,btn){
   state.currentMember=id;state.currentView='myday';state.mainView='tasks';state.currentListId=null;
@@ -1752,14 +1793,15 @@ function getFilteredTasks(){
   return tasks;
 }
 function renderTasksView(){
-  const tasks=getFilteredTasks();const incomplete=tasks.filter(t=>!t.completed);const complete=tasks.filter(t=>t.completed);const today=todayStr();let html='';
+  const tasks=getFilteredTasks();const incomplete=tasks.filter(t=>!t.completed);const complete=tasks.filter(t=>t.completed);const today=todayStr();const pin=wkPinHtml();let html='';
   if(state.currentView==='myday'&&state.currentMember!=='family')html+=`<div style="margin-bottom:18px"><div style="font-family:'Outfit',serif;font-size:1.45rem">My Day</div><div style="font-size:.8rem;color:var(--text3)">${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</div></div>`;
   if(state.currentView==='late'&&state.currentMember!=='family')html+=`<div style="margin-bottom:18px"><div style="font-family:'Outfit',serif;font-size:1.45rem;color:var(--accent2)">Late Tasks</div><div style="font-size:.8rem;color:var(--text3)">Tasks past their due date</div></div>`;
   if(state.currentMember!=='family'){const total=incomplete.length+complete.length;const pct=total?Math.round(complete.length/total*100):0;html+=`<div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>`;}
+  if(pin.html)html+=pin.html;
   if(state.currentView==='myday')html+=evTodayHtml(state.currentMember);
   html+=`<div class="add-task-bar"><svg width="15" height="15" fill="none" stroke="var(--text3)" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg><input type="text" placeholder="Add a task… try “Dentist Tue 3pm @Mom”" id="quick-add-input" oninput="renderQuickPreview()" onkeydown="if(event.key==='Enter')quickAddTask()"><button class="btn btn-primary btn-sm" onclick="openAddTask()">Details</button></div><div class="qa-preview" id="qa-preview"></div>
   <div class="filters"><button class="filter-chip active" onclick="filterTasks('all',this)">All</button><button class="filter-chip" onclick="filterTasks('high',this)">🔴 High</button><button class="filter-chip" onclick="filterTasks('medium',this)">🟡 Medium</button><button class="filter-chip" onclick="filterTasks('today',this)">📅 Today</button><button class="filter-chip" onclick="filterTasks('overdue',this)">⚠️ Overdue</button></div>`;
-  if(!incomplete.length&&!complete.length)html+=`<div class="tasks-empty"><span class="emoji">✅</span><div style="font-weight:600">Nothing here yet</div><div style="font-size:.8rem;margin-top:5px">Add a task above</div></div>`;
+  if(!incomplete.length&&!complete.length&&!pin.html)html+=`<div class="tasks-empty"><span class="emoji">✅</span><div style="font-weight:600">Nothing here yet</div><div style="font-size:.8rem;margin-top:5px">Add a task above</div></div>`;
   if(incomplete.length)html+=`<div class="section-title">Active (${incomplete.length})</div>`+incomplete.map(t=>renderTaskItem(t,today)).join('');
   if(complete.length)html+=`<div class="section-title" style="margin-top:22px">Completed (${complete.length})</div>`+complete.map(t=>renderTaskItem(t,today)).join('');
   document.getElementById('main-content').innerHTML=html;
@@ -2205,9 +2247,10 @@ function ovRingSvg(pct,color,size){
 function ovMemberStats(id){
   const today=todayStr();const mt=state.tasks.filter(t=>String(t.member)===String(id)&&!isEvent(t));
   const active=mt.filter(t=>!t.completed),done=mt.filter(t=>t.completed),late=active.filter(t=>t.dueDate&&t.dueDate<today);
-  const leftToday=active.filter(t=>t.dueDate&&t.dueDate<=today).length;
+  const leftToday=active.filter(t=>t.dueDate&&t.dueDate<=today).length+(wkPending(id)?1:0);
   const total=active.length+done.length;const pct=total?Math.round(done.length/total*100):0;
-  const next=active.slice().sort((a,b)=>((a.dueDate||'9999')+(a.dueTime||'99')).localeCompare((b.dueDate||'9999')+(b.dueTime||'99')))[0];
+  let next=active.slice().sort((a,b)=>((a.dueDate||'9999')+(a.dueTime||'99')).localeCompare((b.dueDate||'9999')+(b.dueTime||'99')))[0];
+  if(wkPending(id)&&!(next&&next.dueDate&&next.dueDate<=today))next={title:'Street Parking',dueDate:today};
   return{active:active.length,done:done.length,late:late.length,leftToday,total,pct,next};
 }
 function ovGreeting(){const h=new Date().getHours();return h<12?'Good morning':h<17?'Good afternoon':'Good evening';}
@@ -2217,7 +2260,7 @@ function renderOverview(){
   document.getElementById('topbar-color').style.background='var(--accent)';
   const today=todayStr();const weekAgo=Date.now()-7*86400000;
   const people=state.tasks.filter(t=>String(t.member)!=='groceries'&&!isEvent(t));
-  const dueToday=people.filter(t=>!t.completed&&t.dueDate===today).length;
+  const dueToday=people.filter(t=>!t.completed&&t.dueDate===today).length+wkOpenOn(today).length;
   const overdue=people.filter(t=>!t.completed&&t.dueDate&&t.dueDate<today).length;
   const groc=grocNeed().length;
   const doneWeek=people.filter(t=>t.completed&&t.completedAt&&new Date(t.completedAt).getTime()>=weekAgo).length;
@@ -2314,6 +2357,7 @@ function renderCalendar(_fromFit){
     const calItem=(t,c,rec)=>{const ev=isEvent(t);const sp=ev?evSpan(t):0;const st=ev?evStartFor(t,ds):null;const tm=ev&&!evAllDay(t)&&st===ds?`<span class="tm">${formatTime(t.dueTime).replace(/:00| /g,'').toLowerCase()}</span>`:(sp&&st!==ds?'<span class="tm">→</span>':'');return`<div class="cal-task-dot${rec?' recur-occ':''} ${ev?'is-event':'is-todo'}${sp?' multi':''}" style="background:${hexA(c,ev?'2a':(rec?'14':'1f'))};--evc:${c}" title="${rec?'Recurring: ':''}${escHtml(t.title)}${ev?' · '+evLabel(t,ds):''}" onclick="calTaskClick(event,'${t.id}')">${ev?'':`<span class="dot" style="background:${c}"></span>`}<span class="lbl"${ev?'':` data-ic="${kindIcon(t)}"`}>${tm}${rec?'↻ ':''}${escHtml(t.title)}</span></div>`;};
     ft.forEach(t=>{const tm=findMember(t.member);items.push(calItem(t,tm?tm.color:'#2E7D5B',false));});
     recurOccs.forEach(t=>{const tm=findMember(t.member);items.push(calItem(t,tm?tm.color:'#4C8C9E',true));});
+    if(ck!=='events')wkOpenOn(ds,m2?m2.id:null).forEach(m=>items.push(calItem({id:'wk-'+wkWhoOf(m),title:'Street Parking',member:String(m.id),kind:'todo'},m.color,false)));
     const show=Math.min(items.length,cap);const more=items.length-show;
     html+=`<div class="cal-cell ${isOther?'other-month':''} ${ds===todayStr2?'today':''} ${ds===selDate?'sel-day':''}" onclick="calDayClick('${ds}')"><div class="cal-day-row"><span class="cal-day-num">${day}</span>${(()=>{const w=state.weather&&state.weather.days&&state.weather.days[ds];return w?`<span class="cal-wx" title="${escHtml(wxInfo(w.code).label)} · ${w.hi}°/${w.lo}°${w.rain!=null?' · '+w.rain+'% rain':''}">${wxInfo(w.code).icon}<b>${w.hi}°</b></span>`:'';})()}${more>0?`<span class="cal-more" title="${more} more — tap the day to see all">+${more}</span>`:''}</div><div class="cal-items">${items.slice(0,show).join('')}</div></div>`;
   }
@@ -2362,6 +2406,7 @@ function renderDailyBreakout(ds){
   tasks=tasks.filter(t=>!isEvent(t));recur=recur.filter(t=>!isEvent(t));
   tasks.forEach(t=>{const tm=findMember(t.member);const c=tm&&tm.color?tm.color:'var(--accent)';rows.push({sort:(t.dueTime||'zy')+'_t',html:`<div class="brk-item" onclick="editTask('${t.id}')"><span class="brk-dot" style="background:${c}"></span><div class="brk-body"><div class="brk-title">${escHtml(t.title)}</div><div class="brk-meta"><span class="brk-tag task-tag kind-${taskKind(t)}">${KINDS[taskKind(t)]}</span>${tm?`<span class="brk-tag">${escHtml(tm.name)}</span>`:''}${t.dueTime?`<span class="brk-time">🕑 ${formatTime(t.dueTime)}</span>`:''}${t.priority&&t.priority!=='none'?`<span class="brk-tag brk-prio-${t.priority}">${prioMap[t.priority]||''}</span>`:''}${t.status&&t.status!=='notstarted'?`<span class="brk-tag brk-status">${statusMap[t.status]||''}</span>`:''}${t.duration?`<span class="brk-time">⏱ ${escHtml(t.duration)}</span>`:''}</div></div><button class="brk-check" title="Mark complete" onclick="event.stopPropagation();toggleTask('${t.id}',event)"></button></div>`});});
   recur.forEach(t=>{const tm=findMember(t.member);const c=tm&&tm.color?tm.color:'#3F7A8A';rows.push({sort:(t.dueTime||'zx')+'_r',html:`<div class="brk-item brk-recur" onclick="editTask('${t.id}')"><span class="brk-dot" style="background:${c}"></span><div class="brk-body"><div class="brk-title">↻ ${escHtml(t.title)}</div><div class="brk-meta"><span class="brk-tag task-tag kind-${taskKind(t)}">${KINDS[taskKind(t)]}</span><span class="brk-tag" style="background:rgba(76,140,158,.14);color:#3F7A8A">↻ Recurring</span>${tm?`<span class="brk-tag">${escHtml(tm.name)}</span>`:''}${t.dueTime?`<span class="brk-time">🕑 ${escHtml(t.dueTime)}</span>`:''}</div></div></div>`});});
+  if(normCalKind(state.calKind)!=='events'){const mFilter=state.currentMember!=='family'?state.currentMember:null;wkOpenOn(ds,mFilter).forEach(m=>{const c=m.color||'var(--accent)';rows.push({sort:'zw',html:`<div class="brk-item" onclick="openWorkout('${wkWhoOf(m)}')"><span class="brk-dot" style="background:${c}"></span><div class="brk-body"><div class="brk-title">Street Parking</div><div class="brk-meta"><span class="brk-tag task-tag kind-todo">${KINDS.todo}</span><span class="brk-tag">${escHtml(m.name)}</span></div></div></div>`});});}
   rows.sort((a,b)=>String(a.sort).localeCompare(String(b.sort)));
   const total=rows.length;
   const body=total?rows.map(r=>r.html).join(''):'<div class="brk-empty">Nothing scheduled for this day. Tap “+ Add task” to plan something.</div>';
@@ -2372,7 +2417,7 @@ function calPrev(){state.calMonth--;if(state.calMonth<0){state.calMonth=11;state
 function calNext(){state.calMonth++;if(state.calMonth>11){state.calMonth=0;state.calYear++;}renderCalendar();}
 function calToday(){state.calMonth=new Date().getMonth();state.calYear=new Date().getFullYear();renderCalendar();}
 function calDayClick(ds){state.calSelectedDate=ds;renderCalendar();}
-function calTaskClick(e,id){if(e)e.stopPropagation();editTask(id,e);}
+function calTaskClick(e,id){if(e)e.stopPropagation();if(String(id).indexOf('wk-')===0){openWorkout(String(id).slice(3));return;}editTask(id,e);}
 // ══════════════════════════════════════
 // DAILY OFFICE (2019 BCP)
 // ══════════════════════════════════════
@@ -2962,9 +3007,9 @@ function startFirebaseListener(){
     }else saveConfigToFirebase();
   });
   db.ref('workout/weights').on('value',snap=>{const d=snap.val();state.weights=d?Object.values(d):[];if(state.mainView==='workout'&&!amrap)renderWorkout();},e=>console.error('weights',e));
-  db.ref('workout/sessions').on('value',snap=>{const d=snap.val();state.sessions=d?Object.values(d):[];if(state.mainView==='workout'&&!amrap)renderWorkout();},e=>console.error('sessions',e));
-  db.ref('meals').on('value',snap=>{const d=snap.val()||{};state.meals={plan:d.plan||{},library:d.library||{},freezer:d.freezer||{}};if(glanceOpen())renderGlance();if(state.mainView==='meals'&&!document.getElementById('meal-modal'))renderMeals();},e=>console.error('meals',e));
-  db.ref('groceries').on('value',snap=>{const d=snap.val()||{};state.groc={items:d.items||{}};if(state.mainView==='groceries'&&!document.getElementById('groc-modal'))renderGroceries();if(document.getElementById('groc-modal'))renderGrocPicker();if(glanceOpen())renderGlance();if(state.mainView==='overview')renderOverview();},e=>console.error('groceries',e));
+  db.ref('workout/sessions').on('value',snap=>{const d=snap.val();state.sessions=d?Object.values(d):[];updateCounts();if(state.mainView==='workout'&&!amrap)renderWorkout();else if(state.mainView==='overview'||state.mainView==='calendar'||(state.mainView==='tasks'&&state.currentView==='myday'))renderView();if(typeof glanceOpen==='function'&&glanceOpen())renderGlance();const kid=document.getElementById('kid-overlay');if(kid&&kid.classList.contains('open')&&typeof renderKidMode==='function')renderKidMode();},e=>console.error('sessions',e));
+  db.ref('meals').on('value',snap=>{const d=snap.val()||{};state.meals={plan:d.plan||{},library:d.library||{},freezer:d.freezer||{}};state.mealsReady=true;if(glanceOpen())renderGlance();if(state.mainView==='meals'&&!document.getElementById('meal-modal'))renderMeals();dinnerShopTick();},e=>console.error('meals',e));
+  db.ref('groceries').on('value',snap=>{const d=snap.val()||{};state.groc={items:d.items||{}};state.grocReady=true;if(state.mainView==='groceries'&&!document.getElementById('groc-modal'))renderGroceries();if(document.getElementById('groc-modal'))renderGrocPicker();if(glanceOpen())renderGlance();if(state.mainView==='overview')renderOverview();if(storeOpen())renderStoreMode();dinnerShopTick();},e=>console.error('groceries',e));
   db.ref('workout/meta').on('value',snap=>{state.workoutMeta=snap.val()||{};if(state.mainView==='workout'&&!amrap)renderWorkout();},e=>console.error('wmeta',e));
 }
 function setSyncStatus(s){const dot=document.getElementById('sync-dot'),txt=document.getElementById('sync-text');if(!dot)return;dot.className='sync-dot'+(s==='syncing'?' syncing':s==='error'?' error':'');txt.textContent=s==='syncing'?'Syncing…':s==='error'?'Sync error':state.lastSync?'Synced '+timeAgo(state.lastSync):'Connected';}
@@ -3099,8 +3144,8 @@ function renderLinks(scope){
   if(!isFamily&&!m){selectMember('family',document.querySelector('[data-member="family"]'));return;}
   const links=getLinks(scope);
   const color=isFamily?'var(--accent)':m.color;
-  const isDad=!isFamily&&(m.name||'').trim().toLowerCase()==='dad';
-  const prefix=isDad?workoutTileHtml():'';
+  const who=!isFamily?wkWhoOf(m):'';
+  const prefix=who?workoutTileHtml(who):'';
   const heading=isFamily?'Household Links':escHtml(m.name)+"’s Links";
   document.getElementById('topbar-title').textContent=isFamily?'All Family':escHtml(m.name);
   document.getElementById('topbar-color').style.background=color;
@@ -3127,8 +3172,8 @@ function renderFamilyLinksHub(){
   html+=linkSectionHtml('family','🏠 Household (shared)','var(--accent)');
   state.members.forEach(m=>{
     const av=`<span class="m-avatar" style="width:26px;height:26px;border-radius:50%;background:${m.color}22;color:${m.color};display:inline-flex;align-items:center;justify-content:center;overflow:hidden;font-size:.72rem;font-weight:700">${memberAvatarHtml(m,26)}</span>`;
-    const isDad=(m.name||'').trim().toLowerCase()==='dad';
-    html+=linkSectionHtml(String(m.id), av+escHtml(m.name), m.color, isDad?workoutTileHtml():'');
+    const who=wkWhoOf(m);
+    html+=linkSectionHtml(String(m.id), av+escHtml(m.name), m.color, who?workoutTileHtml(who):'');
   });
   document.getElementById('main-content').innerHTML=html;
 }
@@ -3149,12 +3194,27 @@ function saveLink(){
 }
 function deleteLink(scope,id){if(!confirm('Remove this link?'))return;const arr=linksArrayRef(scope);if(!arr)return;const i=arr.findIndex(x=>String(x.id)===String(id));if(i>-1)arr.splice(i,1);saveConfigToFirebase();renderLinks(scope);toast('Link removed','info');}
 // ══════════════════════════════════════
-// DAD'S WORKOUT
+// STREET PARKING — Dad and Taiki, Monday–Saturday
 // ══════════════════════════════════════
-function dadMember(){return state.members.find(m=>(m.name||'').trim().toLowerCase()==='dad');}
-function workoutTileHtml(){return `<div class="link-tile workout-tile" style="--lc:var(--accent)" onclick="openWorkout()"><div class="link-ico"><span class="link-emoji">🏋️</span></div><div class="link-name">Dad's Workout Routine</div><div class="link-host">Tap to open</div></div>`;}
-function openWorkout(){state.mainView='workout';state.currentListId=null;if(window.innerWidth<=768)closeSidebarMobile();renderWorkout();}
-function openWorkoutBack(){const d=dadMember();if(!d){setView('links');return;}const btn=document.querySelector(`[data-member="${d.id}"]`);selectMember(String(d.id),btn);state.currentView='links';document.querySelectorAll('.view-tab').forEach(t=>t.classList.toggle('active',(t.textContent||'').indexOf('Links')>=0));renderLinks(String(d.id));}
+var wkWho='dad', wkReturn='links';
+function wkWhoOf(m){const n=(m&&m.name||'').trim().toLowerCase();if(n==='dad'||n==='daddy')return'dad';if(n==='taiki')return'taiki';return'';}
+function wkMember(who){return state.members.find(m=>wkWhoOf(m)===who)||null;}
+function dadMember(){return wkMember('dad');}
+function wkName(who){const m=wkMember(who||wkWho);return m?m.name:(who==='taiki'?'Taiki':'Dad');}
+function wkIsTraining(ds){const d=new Date(String(ds)+'T12:00:00');const day=d.getDay();return day>=1&&day<=6;}
+function wkOwner(o){if(o&&(o.who==='dad'||o.who==='taiki'))return o.who;return'dad';}
+function wkSpOn(who,ds){const rows=state.sessions.filter(s=>s&&s.type==='sp'&&wkOwner(s)===who&&s.date===ds);rows.sort((a,b)=>String(b.ts||'').localeCompare(String(a.ts||'')));return rows[0]||null;}
+function wkTrained(who,ds){return state.sessions.some(s=>s&&wkOwner(s)===who&&s.date===ds);}
+function wkMine(){return state.sessions.filter(s=>s&&wkOwner(s)===(wkWho||'dad'));}
+function wkWeights(){return state.weights.filter(w=>w&&wkOwner(w)===(wkWho||'dad'));}
+function wkOpenOn(ds,memberId){if(!ds||ds!==todayStr()||!wkIsTraining(ds))return[];return state.members.filter(m=>{const w=wkWhoOf(m);if(!w)return false;if(memberId&&String(memberId)!=='family'&&String(m.id)!==String(memberId))return false;return !wkSpOn(w,ds);});}
+function wkPending(id){return wkOpenOn(todayStr(),id).length>0;}
+function wkGoal(who){const m=state.workoutMeta||{};const g=m.goals&&m.goals[who];if(g)return g;if((who||wkWho)==='dad'&&m.goalLbs)return m.goalLbs;return'';}
+function wkScoreLine(s){if(!s)return'';if(s.type==='sp'){const bits=[];if(s.result)bits.push(s.result);if(s.scale)bits.push(s.scale==='rx'?'Rx':'Scaled');if(s.note)bits.push(s.note);return bits.join(' · ')||'Logged';}if(s.type==='amrap')return 'AMRAP · '+(s.jacks||0)+' jacks · '+(s.burpees||0)+' burpees · '+(s.squats||0)+' squats';return (s.miles||0)+' mi · '+(s.mph||0)+' mph';}
+function workoutTileHtml(who){const name=wkName(who);return `<div class="link-tile workout-tile" style="--lc:var(--accent)" onclick="openWorkout('${who}')"><div class="link-ico"><span class="link-emoji">🏋️</span></div><div class="link-name">${escHtml(name)}’s Workout</div><div class="link-host">Street Parking</div></div>`;}
+function openWorkout(who){const k=who||wkWhoOf(findMember(state.currentMember));if(k)wkWho=k;wkReturn=(state.currentView==='links'||state.mainView==='links')?'links':'myday';if(typeof glanceOpen==='function'&&glanceOpen())hideGlance();if(document.getElementById('kid-overlay')&&document.getElementById('kid-overlay').classList.contains('open'))closeKidMode();state.mainView='workout';state.currentListId=null;if(window.innerWidth<=768)closeSidebarMobile();renderWorkout();}
+function openWorkoutBack(){const m=wkMember(wkWho);if(wkReturn==='myday'&&m){const btn=document.querySelector(`[data-member="${m.id}"]`);selectMember(String(m.id),btn);return;}if(!m){setView('links');return;}const btn=document.querySelector(`[data-member="${m.id}"]`);selectMember(String(m.id),btn);state.currentView='links';document.querySelectorAll('.view-tab').forEach(t=>t.classList.toggle('active',(t.textContent||'').indexOf('Links')>=0));renderLinks(String(m.id));}
+function wkPinHtml(){if(state.currentView!=='myday'||state.currentMember==='family')return{html:''};const m=findMember(state.currentMember);const who=m?wkWhoOf(m):'';if(!who||!wkIsTraining(todayStr()))return{html:''};const s=wkSpOn(who,todayStr());const done=!!s;const sub=done?wkScoreLine(s):'Tap to log today’s session';const html=`<div class="task-item wk-pin${done?' completed':''}" onclick="openWorkout('${who}')"><button class="task-check${done?' done':''}" style="${done?'':'border-color:'+m.color}" onclick="event.stopPropagation();openWorkout('${who}')"></button><div class="task-body"><div class="task-title">Street Parking</div><div class="task-meta"><span class="task-due today">📅 Today</span><span class="task-tag">🏋️ Mon–Sat</span></div><div style="font-size:.76rem;color:var(--text3);margin-top:4px">${escHtml(sub)}</div></div></div>`;return{html,done};}
 const WK_SCHED={0:'rest',1:'bikeCommute',2:'amrap',3:'bikeCommute',4:'amrap',5:'amrap',6:'bikeHome'};
 const WK_DAYNAMES=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const AMRAP_PHASES=[{key:'jacks',label:'Jumping Jacks',sec:240,work:true},{key:'rest',label:'Rest',sec:60,work:false},{key:'burpees',label:'Burpees',sec:240,work:true},{key:'rest',label:'Rest',sec:60,work:false},{key:'squats',label:'Air Squats',sec:240,work:true},{key:'rest',label:'Rest',sec:60,work:false}];
@@ -3163,9 +3223,9 @@ function mphCalc(mi,min){mi=parseFloat(mi);min=parseFloat(min);if(!mi||!min)retu
 function pushWeight(o,action){const db=getDb();if(!db)return;try{if(action==='delete')db.ref('workout/weights/'+o.id).remove();else db.ref('workout/weights/'+o.id).set(o);}catch(e){console.error(e);toast('Save failed','error');}}
 function pushSession(o,action){const db=getDb();if(!db)return;try{if(action==='delete')db.ref('workout/sessions/'+o.id).remove();else db.ref('workout/sessions/'+o.id).set(o);}catch(e){console.error(e);toast('Save failed','error');}}
 function saveWorkoutMeta(){const db=getDb();if(!db)return;db.ref('workout/meta').set(state.workoutMeta||{}).catch(e=>console.error('meta',e));}
-function logWeight(){const v=parseFloat(document.getElementById('wk-weight').value);const d=document.getElementById('wk-weight-date').value||todayStr();if(!v||v<=0){toast('Enter a weight','error');return;}pushWeight({id:genId(),date:d,lbs:Math.round(v*10)/10,ts:new Date().toISOString()},'add');toast('Weight logged!','success');}
+function logWeight(){const v=parseFloat(document.getElementById('wk-weight').value);const d=document.getElementById('wk-weight-date').value||todayStr();if(!v||v<=0){toast('Enter a weight','error');return;}pushWeight({id:genId(),who:wkWho||'dad',date:d,lbs:Math.round(v*10)/10,ts:new Date().toISOString()},'add');toast('Weight logged!','success');}
 function delWeight(id){if(!confirm('Delete this weigh-in?'))return;pushWeight({id},'delete');}
-function setGoal(){const v=parseFloat(document.getElementById('wk-goal').value);state.workoutMeta=Object.assign({},state.workoutMeta,{goalLbs:(v>0?Math.round(v*10)/10:'')});saveWorkoutMeta();toast('Goal saved','success');}
+function setGoal(){const v=parseFloat(document.getElementById('wk-goal').value);const who=wkWho||'dad';const goals=Object.assign({},(state.workoutMeta&&state.workoutMeta.goals)||{});goals[who]=(v>0?Math.round(v*10)/10:'');const next=Object.assign({},state.workoutMeta,{goals});if(who==='dad')next.goalLbs=goals.dad;state.workoutMeta=next;saveWorkoutMeta();toast('Goal saved','success');}
 function delSession(id){if(!confirm('Delete this session?'))return;pushSession({id},'delete');}
 var wkModeOverride=null;
 function wkSetMode(m){wkModeOverride=m;renderWorkout();}
@@ -3173,40 +3233,58 @@ function renderWorkout(){
   state.mainView='workout';
   document.getElementById('view-tabs').style.display='none';
   document.querySelectorAll('.member-btn,.nav-btn,.list-btn').forEach(b=>b.classList.remove('active'));
-  const dad=dadMember();
-  document.getElementById('topbar-title').textContent="Dad's Workout Routine";
-  document.getElementById('topbar-color').style.background=dad?dad.color:'var(--accent)';
-  let html=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap"><button class="btn btn-ghost btn-sm" onclick="openWorkoutBack()">← Back</button><div style="font-family:'Outfit',serif;font-size:1.5rem">🏋️ Dad's Workout Routine</div></div>`;
+  const person=wkMember(wkWho);
+  const name=wkName(wkWho);
+  document.getElementById('topbar-title').textContent=name+'’s Workout';
+  document.getElementById('topbar-color').style.background=person?person.color:'var(--accent)';
+  let html=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap"><button class="btn btn-ghost btn-sm" onclick="openWorkoutBack()">← Back</button><div style="font-family:'Outfit',serif;font-size:1.5rem">🏋️ ${escHtml(name)}’s Workout</div></div>`;
   html+=wkTodayHtml()+wkWeightHtml()+wkWeekHtml()+wkHistoryHtml();
   document.getElementById('main-content').innerHTML=html;
   drawWeightChart();
 }
+function openStreetParking(){window.open('https://www.streetparking.com/','_blank','noopener');}
+function saveStreet(){
+  const note=(document.getElementById('sp-note').value||'').trim();
+  const result=(document.getElementById('sp-result').value||'').trim();
+  const scale=document.getElementById('sp-scale').value==='rx'?'rx':'scaled';
+  const date=document.getElementById('sp-date').value||todayStr();
+  if(!note&&!result){toast('Add what you did or a result','error');return;}
+  const prev=wkSpOn(wkWho,date);
+  pushSession({id:prev?prev.id:genId(),type:'sp',who:wkWho||'dad',date,note,result,scale,ts:new Date().toISOString()},'add');
+  if(!prev)confettiTask();
+  toast(prev?'Workout updated':'Workout logged!','success');
+}
+function spDelete(){const date=(document.getElementById('sp-date')||{}).value||todayStr();const s=wkSpOn(wkWho,date);if(s)delSession(s.id);}
+function spShiftDate(){
+  const date=(document.getElementById('sp-date').value)||todayStr();
+  const s=wkSpOn(wkWho,date)||{};
+  const n=document.getElementById('sp-note');if(n)n.value=s.note||'';
+  const r=document.getElementById('sp-result');if(r)r.value=s.result||'';
+  const sc=document.getElementById('sp-scale');if(sc)sc.value=s.scale==='rx'?'rx':'scaled';
+  const b=document.getElementById('sp-save');if(b)b.textContent=s.id?'Update log':'Save workout';
+  const d=document.getElementById('sp-del-wrap');if(d)d.style.display=s.id?'':'none';
+}
 function wkTodayHtml(){
-  const dow=new Date().getDay();const scheduled=WK_SCHED[dow];
-  const eff=wkModeOverride||scheduled;
-  const isAmrap=eff==='amrap';
-  const isBike=eff==='bike'||eff==='bikeCommute'||eff==='bikeHome';
-  const bikeActive=wkModeOverride==='bike'||(wkModeOverride===null&&isBike);
-  const toggle=`<div class="wk-mode-row"><span class="wk-mode-lbl">Choose today:</span>
-    <button class="wk-mode-btn${wkModeOverride===null?' active':''}" onclick="wkSetMode(null)">📅 Scheduled</button>
-    <button class="wk-mode-btn${wkModeOverride==='amrap'?' active':''}" onclick="wkSetMode('amrap')">💪 AMRAP</button>
-    <button class="wk-mode-btn${wkModeOverride==='bike'?' active':''}" onclick="wkSetMode('bike')">🚴 Bike</button>
-    ${wkModeOverride!==null?`<span style="font-size:.72rem;color:var(--text3)">(overriding ${scheduled==='amrap'?'AMRAP':scheduled==='rest'?'rest':'bike'} day)</span>`:''}
-  </div>`;
-  let inner,badge;
-  if(isAmrap){
-    badge='AMRAP';
-    inner=`<div style="font-size:.9rem;color:var(--text2);margin-bottom:12px">15-minute AMRAP — 4 min each move, 1 min rest between. Record your reps as you go.</div><div id="amrap-panel"></div><div style="margin-top:4px"><button class="btn btn-primary" onclick="amrapStart()">▶ Start 15-min AMRAP</button><button class="btn btn-ghost" style="margin-left:8px" onclick="amrapManual()">Log manually</button></div>`;
-  }else if(isBike){
-    badge='Bike';
-    const route=eff==='bikeCommute'?'commute':'home';
-    const label=eff==='bikeCommute'?'Bike to work &amp; back (30 mi round trip)':'Bike ride';
-    inner=`<div style="font-size:.9rem;color:var(--text2);margin-bottom:12px">${label} — log your ride below.</div>`+bikeFormHtml(route,eff==='bikeCommute'?30:'');
-  }else{
-    badge='Rest';
-    inner=`<div style="font-size:.95rem;color:var(--text2)">😌 Rest day — nothing scheduled. Use the buttons above to do a Bike ride or AMRAP instead, or log one below.</div><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-ghost btn-sm" onclick="amrapManual()">+ Log AMRAP</button><button class="btn btn-ghost btn-sm" onclick="wkShowBike()">+ Log Bike Ride</button></div><div id="amrap-panel"></div><div id="wk-extra"></div>`;
-  }
-  return `<div class="wk-card"><div class="wk-card-h"><span>Today · ${WK_DAYNAMES[dow]}</span><span class="wk-badge">${badge}</span></div>${toggle}${inner}</div>`;
+  const dow=new Date().getDay();
+  const training=wkIsTraining(todayStr());
+  const s=wkSpOn(wkWho,todayStr())||{};
+  const other=wkWho==='dad'?'taiki':'dad';
+  const om=wkMember(other);
+  const os=om?wkSpOn(other,todayStr()):null;
+  const partner=om?`<div class="wk-partner">${escHtml(om.name)} today: ${escHtml(os?wkScoreLine(os):'not logged yet')}</div>`:'';
+  const badge=training?(s.id?'Logged':'Street Parking'):'Rest';
+  const intro=training?'Write today’s session in your own words. Saving it checks Street Parking off your My Day.':'Sunday is a rest day. You can still log a session if you trained.';
+  return `<div class="wk-card"><div class="wk-card-h"><span>Today · ${WK_DAYNAMES[dow]}</span><span class="wk-badge">${badge}</span></div>
+    <div style="font-size:.9rem;color:var(--text2);margin-bottom:12px">${intro}</div>
+    <button class="btn btn-primary" onclick="openStreetParking()">Open Street Parking</button>
+    <div class="wk-form" style="margin-top:14px">
+      <div class="wk-field wk-span"><label>What you did</label><textarea id="sp-note" rows="2" placeholder="Today’s session, in your words">${escHtml(s.note||'')}</textarea></div>
+      <div class="wk-field"><label>Result</label><input type="text" id="sp-result" value="${escHtml(s.result||'')}" placeholder="Time, rounds, or load"></div>
+      <div class="wk-field"><label>How you did it</label><select id="sp-scale"><option value="scaled"${s.scale==='rx'?'':' selected'}>Scaled</option><option value="rx"${s.scale==='rx'?' selected':''}>Rx</option></select></div>
+      <div class="wk-field"><label>Date</label><input type="date" id="sp-date" value="${s.date||todayStr()}" onchange="spShiftDate()"></div>
+      <div class="wk-field" style="align-self:end"><button class="btn btn-primary" id="sp-save" onclick="saveStreet()">${s.id?'Update log':'Save workout'}</button></div>
+      <div class="wk-field" id="sp-del-wrap" style="align-self:end;${s.id?'':'display:none'}"><button class="btn btn-ghost" id="sp-del" onclick="spDelete()">Delete</button></div>
+    </div>${partner}</div>`;
 }
 function bikeFormHtml(route,defMiles){
   return `<div class="wk-form"><div class="wk-field"><label>Route</label><select id="bk-route"><option value="commute"${route==='commute'?' selected':''}>Commute (to work &amp; back)</option><option value="home"${route==='home'?' selected':''}>Around home</option></select></div><div class="wk-field"><label>Miles</label><input type="number" id="bk-miles" step="0.1" value="${defMiles||''}" placeholder="30" oninput="bkUpdateMph()"></div><div class="wk-field"><label>Total time (min)</label><input type="number" id="bk-min" step="0.1" placeholder="95" oninput="bkUpdateMph()"></div><div class="wk-field"><label>Avg MPH</label><input type="text" id="bk-mph" readonly placeholder="auto"></div><div class="wk-field"><label>Date</label><input type="date" id="bk-date" value="${todayStr()}"></div><div class="wk-field" style="align-self:end"><button class="btn btn-primary" onclick="saveBike()">Save Ride</button></div></div>`;
@@ -3241,10 +3319,10 @@ function amrapUpdate(){
 }
 function amrapFinish(){clearInterval(amrap.timer);const r=amrap.reps;amrap=null;pushSession({id:genId(),type:'amrap',date:todayStr(),jacks:r.jacks||0,burpees:r.burpees||0,squats:r.squats||0,ts:new Date().toISOString()},'add');confettiTask();toast('AMRAP complete! Logged 🎉','success');const el=document.getElementById('amrap-panel');if(el)el.innerHTML=`<div class="amrap-box"><div style="font-size:1.3rem;font-family:'Outfit',serif">Workout complete! 🎉</div><div style="color:var(--text3);font-size:.85rem;margin-top:4px">Saved to your history below (Jacks ${r.jacks||0} · Burpees ${r.burpees||0} · Squats ${r.squats||0}).</div></div>`;}
 function wkWeightHtml(){
-  const ws=[...state.weights].sort((a,b)=>a.date<b.date?-1:1);
+  const ws=[...wkWeights()].sort((a,b)=>a.date<b.date?-1:1);
   const cur=ws.length?ws[ws.length-1].lbs:null;
   const start=ws.length?ws[0].lbs:null;
-  const goal=(state.workoutMeta&&state.workoutMeta.goalLbs)?state.workoutMeta.goalLbs:'';
+  const goal=wkGoal(wkWho);
   const lost=(cur!=null&&start!=null)?Math.round((start-cur)*10)/10:null;
   const stat=(lbl,val,col)=>`<div class="wk-stat"><div class="wk-stat-n" style="${col?'color:'+col:''}">${val}</div><div class="wk-stat-l">${lbl}</div></div>`;
   let stats='';
@@ -3255,11 +3333,11 @@ function wkWeightHtml(){
 }
 function drawWeightChart(){
   const el=document.getElementById('weight-chart');if(!el)return;
-  const ws=[...state.weights].sort((a,b)=>a.date<b.date?-1:1);
+  const ws=[...wkWeights()].sort((a,b)=>a.date<b.date?-1:1);
   if(ws.length<2){el.innerHTML='<div style="color:var(--text3);font-size:.85rem;padding:24px;text-align:center">Log at least two weigh-ins to see your trend graph.</div>';return;}
   const W=680,H=240,pad=40;
   const vals=ws.map(w=>w.lbs);
-  const goal=(state.workoutMeta&&state.workoutMeta.goalLbs)?state.workoutMeta.goalLbs:null;
+  const goal=wkGoal(wkWho)||null;
   let lo=Math.min.apply(null,vals.concat(goal!=null?[goal]:[]));
   let hi=Math.max.apply(null,vals.concat(goal!=null?[goal]:[]));
   lo=Math.floor(lo-1);hi=Math.ceil(hi+1);const span=(hi-lo)||1;
@@ -3274,26 +3352,32 @@ function drawWeightChart(){
   el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto" preserveAspectRatio="xMidYMid meet"><defs><linearGradient id="wkg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent)" stop-opacity=".28"></stop><stop offset="1" stop-color="var(--accent)" stop-opacity="0"></stop></linearGradient></defs>${grid}<polygon points="${area}" fill="url(#wkg)"></polygon><polyline points="${pts}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"></polyline>${goalLine}${dots}<text x="${pad}" y="${H-12}" fill="var(--text3)" font-size="11">${first}</text><text x="${W-pad}" y="${H-12}" fill="var(--text3)" font-size="11" text-anchor="end">${last}</text></svg>`;
 }
 function wkWeekHtml(){
-  const since=new Date();since.setDate(since.getDate()-6);const sStr=since.getFullYear()+'-'+pad(since.getMonth()+1)+'-'+pad(since.getDate());
-  const wk=state.sessions.filter(s=>s.date>=sStr);
-  const bikes=wk.filter(s=>s.type==='bike');const amraps=wk.filter(s=>s.type==='amrap');
-  const miles=Math.round(bikes.reduce((a,b)=>a+(+b.miles||0),0)*10)/10;
-  const mins=bikes.reduce((a,b)=>a+(+b.minutes||0),0);
-  const bestMph=bikes.length?Math.max.apply(null,bikes.map(b=>+b.mph||0)):0;
-  const totReps=amraps.reduce((a,b)=>a+(+b.jacks||0)+(+b.burpees||0)+(+b.squats||0),0);
-  const stat=(lbl,val)=>`<div class="wk-stat"><div class="wk-stat-n">${val}</div><div class="wk-stat-l">${lbl}</div></div>`;
-  return `<div class="wk-card"><div class="wk-card-h"><span>📊 This Week</span><span class="wk-badge">${wk.length} session${wk.length!==1?'s':''}</span></div><div class="wk-stats">${stat('Miles biked',miles)}${stat('Bike time',Math.round(mins)+'m')}${stat('Best MPH',bestMph?bestMph.toFixed(1):'—')}${stat('AMRAP reps',totReps)}</div></div>`;
+  const who=wkWho||'dad';
+  let dots='',logged=0,train=0;
+  for(let i=6;i>=0;i--){
+    const d=new Date();d.setDate(d.getDate()-i);d.setHours(12,0,0,0);
+    const ds=localDateStr(d);
+    const rest=!wkIsTraining(ds);
+    const did=wkTrained(who,ds);
+    if(!rest){train++;if(did)logged++;}
+    const cls='wk-dot'+(did?' on':'')+(ds===todayStr()?' today':'');
+    const mark=rest?'😴':did?'✓':'·';
+    dots+=`<div class="${cls}"><div class="mark">${mark}</div><div class="lbl">${d.toLocaleDateString('en-US',{weekday:'short'})}</div></div>`;
+  }
+  return `<div class="wk-card"><div class="wk-card-h"><span>Last 7 days</span><span class="wk-badge">${logged} of ${train}</span></div><div class="wk-dots">${dots}</div></div>`;
 }
 function wkHistoryHtml(){
-  const ss=[...state.sessions].sort((a,b)=>((b.date||'')+(b.ts||'')).localeCompare((a.date||'')+(a.ts||''))).slice(0,30);
+  const mine=wkMine();
+  const ss=mine.slice().sort((a,b)=>((b.date||'')+(b.ts||'')).localeCompare((a.date||'')+(a.ts||''))).slice(0,30);
   if(!ss.length)return `<div class="wk-card"><div class="wk-card-h"><span>📒 History</span></div><div style="color:var(--text3);font-size:.85rem">No sessions logged yet.</div></div>`;
   const rows=ss.map(s=>{
     let detail;
-    if(s.type==='amrap')detail=`AMRAP · 🤸 ${s.jacks||0} jacks · 🔥 ${s.burpees||0} burpees · 🦵 ${s.squats||0} squats`;
+    if(s.type==='sp')detail=`🏋️ ${escHtml(s.note||'Street Parking')}${s.result?' · '+escHtml(s.result):''}${s.scale?' · '+(s.scale==='rx'?'Rx':'Scaled'):''}`;
+    else if(s.type==='amrap')detail=`AMRAP · 🤸 ${s.jacks||0} jacks · 🔥 ${s.burpees||0} burpees · 🦵 ${s.squats||0} squats`;
     else detail=`🚴 ${s.route==='commute'?'Commute':'Home'} · ${s.miles} mi · ${s.mph} mph · ${Math.round(s.minutes)}m`;
     return `<div class="wk-row"><div><div style="font-weight:600;font-size:.9rem">${detail}</div><div style="font-size:.72rem;color:var(--text3)">${formatDate(s.date)}</div></div><button class="task-action-btn del" onclick="delSession('${s.id}')"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6"/></svg></button></div>`;
   }).join('');
-  return `<div class="wk-card"><div class="wk-card-h"><span>📒 History</span><span class="wk-badge">${state.sessions.length} total</span></div>${rows}</div>`;
+  return `<div class="wk-card"><div class="wk-card-h"><span>📒 History</span><span class="wk-badge">${mine.length} total</span></div>${rows}</div>`;
 }
 // ══════════════════════════════════════
 // ON-SCREEN KEYBOARD (slick, built-in)
@@ -3612,7 +3696,9 @@ function glanceItemsFor(ds,kind){
   const tasks=state.tasks.filter(t=>String(t.member)!=='groceries'&&ok(t)&&(isEvent(t)?evStartFor(t,ds)===t.dueDate:(t.dueDate===ds&&!t.completed))).map(t=>mk(t,false));
   const recur=state.tasks.filter(t=>t.recurrence&&t.dueDate&&!t.completed&&ok(t)&&(isEvent(t)?(()=>{const s=evStartFor(t,ds);return!!s&&s!==t.dueDate;})():occursOnDate(t,ds))).map(t=>mk(t,true));
   const gcal=(kind&&kind!=='event'&&kind!=='activity')?[]:(state.gcalEvents||[]).filter(e=>e.date===ds).map(e=>({time:e.time||'',title:e.title,gcal:true}));
-  return gcal.concat(tasks,recur).sort((a,b)=>(a.time||'99').localeCompare(b.time||'99'));
+  const items=gcal.concat(tasks,recur);
+  if((!kind||kind==='todo')&&ds===todayStr())wkOpenOn(ds).forEach(m=>items.push({id:'wk-'+wkWhoOf(m),time:'',title:'Street Parking',member:m.id,recur:false,workout:true}));
+  return items.sort((a,b)=>(a.time||'99').localeCompare(b.time||'99'));
 }
 function glanceRowHtml(it){
   const m=it.gcal?null:findMember(it.member);
@@ -3699,7 +3785,9 @@ function renderGlance(){
   const overdue=state.tasks.filter(t=>!t.completed&&!isEvent(t)&&t.dueDate&&t.dueDate<today&&String(t.member)!=='groceries').length;
   if(overdue)chips+=`<span class="gl-chip" style="color:var(--accent2)"><span class="d" style="background:var(--accent2)"></span>${overdue} overdue task${overdue!==1?'s':''}</span>`;
   const need=grocNeed(),low=grocLow();
-  if(need.length||low.length)chips+=`<span class="gl-chip" style="color:var(--accent4)"><span class="d" style="background:var(--accent4)"></span>🛒 ${need.length?need.slice(0,4).map(i=>escHtml(i.name)).join(', ')+(need.length>4?` +${need.length-4}`:''):'Nothing needed'}${low.length?` · ${low.length} low`:''}</span>`;
+  if(need.length||low.length)chips+=`<button type="button" class="gl-chip gl-stay" style="color:var(--accent4)" onclick="event.stopPropagation();openStoreMode()"><span class="d" style="background:var(--accent4)"></span>🛒 ${need.length?need.slice(0,4).map(i=>escHtml(i.name)).join(', ')+(need.length>4?` +${need.length-4}`:''):'Nothing needed'}${low.length?` · ${low.length} low`:''}</button>`;
+  const shop=dinnerShopNames();
+  if(shop.length){const label=shop.slice(0,3).map(escHtml).join(', ')+(shop.length>3?` +${shop.length-3}`:'');chips+=`<button type="button" class="gl-chip gl-stay gl-shop" onclick="event.stopPropagation();shopNextDinners(true)">🍽 ${label}</button>`;}
   let wxNow=(state.weatherLoc&&!(wx&&wx.now))?`<div class="gl-wx gl-wx-wait"><span class="gl-wx-ico">🌤️</span><div><div class="gl-wx-sub">${state.weatherErr?'Weather unavailable — retrying':'Loading weather…'}</div><div class="gl-wx-loc">${escHtml(state.weatherLoc.name||'')}</div></div></div>`:'';
   if(wx&&wx.now){const i=wxInfo(wx.now.code);const td=wx.days[today];wxNow=`<div class="gl-wx"><span class="gl-wx-ico">${i.icon}</span><div><div class="gl-wx-temp">${wx.now.temp}°</div><div class="gl-wx-sub">${i.label}${td?` · H ${td.hi}° L ${td.lo}°`:''}${td&&td.rain!=null&&td.rain>=20?` · ${td.rain}% rain`:''}</div><div class="gl-wx-loc">${escHtml(state.weatherLoc.name||'')}</div></div></div>`;}
   // Today (big) + next 4 days (compact, one row)
@@ -3726,6 +3814,8 @@ function renderGlance(){
     <div class="gl-tell-preview" id="gl-tell-preview"></div>
   </div>
   ${chips?`<div class="gl-chips">${chips}</div>`:''}
+  ${glLowHtml()}
+  ${glLeaveHtml()}
   ${briefHtml('glance')}
   <div class="gl-days">${days}</div>
   <section class="gl-meals" onclick="event.stopPropagation();hideGlance();navTo('meals')" title="Open the meal plan"><div class="gl-meals-h">🍽 Dinners</div><div class="gl-meals-row">${meals}</div></section>
@@ -3735,6 +3825,7 @@ function renderGlance(){
   const tell=document.getElementById('gl-tell');if(tell&&window._glTellDraft){tell.value=window._glTellDraft;renderTellPreview();}
   glanceFit();
   if(document.fonts&&document.fonts.status!=='loaded'&&!window._glFontWait){window._glFontWait=true;document.fonts.ready.then(()=>{if(glanceOpen())renderGlance();});}
+  kidAutoTick();
 }
 // Trim each day's list to what fits on screen and show "+N more"
 function glanceFit(){
@@ -3749,13 +3840,14 @@ function glanceFit(){
 }
 var _glFitT=null;
 window.addEventListener('resize',()=>{clearTimeout(_glFitT);_glFitT=setTimeout(()=>{if(glanceOpen())renderGlance();},200);});
-function showGlance(){const el=document.getElementById('glance');if(!el)return;newsRotateStart();clearTimeout(_glanceIdleT);renderGlance();el.classList.add('open');el.setAttribute('aria-hidden','false');clearInterval(_glanceClockT);_glanceClockT=setInterval(renderGlance,20000);if(typeof vkbHide==='function')vkbHide();if(window.innerWidth<=768)closeSidebarMobile();document.body.classList.remove('rail-open');document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));const nb=document.getElementById('nav-glance');if(nb)nb.classList.add('active');}
+function showGlance(){const el=document.getElementById('glance');if(!el)return;newsRotateStart();clearTimeout(_glanceIdleT);renderGlance();el.classList.add('open');el.setAttribute('aria-hidden','false');clearInterval(_glanceClockT);_glanceClockT=setInterval(renderGlance,20000);if(typeof vkbHide==='function')vkbHide();if(window.innerWidth<=768)closeSidebarMobile();document.body.classList.remove('rail-open');document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));const nb=document.getElementById('nav-glance');if(nb)nb.classList.add('active');kidAutoTick();}
 function hideGlance(){const el=document.getElementById('glance');if(!el)return;clearInterval(_newsRotT);el.classList.remove('open');el.setAttribute('aria-hidden','true');clearInterval(_glanceClockT);glanceResetIdle();document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));const nb=document.getElementById('nav-'+(state.mainView||'overview'));if(nb)nb.classList.add('active');}
 function glanceBusy(){
   if(document.querySelector('.modal-overlay.open'))return true;
   if(document.getElementById('meal-modal')||document.getElementById('mass-update-modal')||document.getElementById('fridge-modal'))return true;
   if(typeof amrap!=='undefined'&&amrap)return true;
   if(glanceTellFocused())return true;
+  if(storeOpen()||kidOpen())return true;
   return document.getElementById('app').style.display==='none';
 }
 function glanceIdleFire(){if(!glanceCfg.enabled||glanceOpen())return;if(glanceBusy()){glanceResetIdle();return;}try{const a=document.activeElement;if(a&&a.blur)a.blur();}catch(_){}if(window.innerWidth<=768)closeSidebarMobile();showGlance();}
@@ -3829,7 +3921,7 @@ function deleteSavedMeal(k){if(!confirm('Remove this saved meal?'))return;const 
 // ══════════════════════════════════════
 // AUTO-UPDATE: a wall screen picks up new versions on its own
 // ══════════════════════════════════════
-const HUB_BUILD='2026-10-27-glancehome';
+const HUB_BUILD='2026-11-03-hubauto';
 var _updT=null;
 async function checkForUpdate(){
   try{
@@ -3900,15 +3992,21 @@ function grocUpsert(name,status){
 function grocSetStatus(id,status,noGot){const it=(state.groc.items||{})[id];if(!it)return;const u=Object.assign({},it,{status,updatedAt:new Date().toISOString()});if(status===''&&!noGot&&(it.status==='need'||it.status==='low')){u.lastGot=u.updatedAt;u.got=grocGotList(it).concat([u.updatedAt]).slice(-8);}grocSave(u);grocRefresh();}
 function grocSetCat(id,cat){const it=(state.groc.items||{})[id];if(!it)return;grocSave(Object.assign({},it,{cat}));grocRefresh();}
 function grocDelete(id){const it=(state.groc.items||{})[id];if(!it)return;if(!confirm(`Remove "${it.name}" from your grocery list completely?`))return;const items=Object.assign({},state.groc.items);delete items[id];state.groc.items=items;const db=getDb();if(db)db.ref('groceries/items/'+id).remove();grocRefresh();}
-function grocRefresh(){if(state.mainView==='groceries')renderGroceries();if(document.getElementById('groc-modal'))renderGrocPicker();if(glanceOpen())renderGlance();}
+function grocRefresh(){if(state.mainView==='groceries')renderGroceries();if(document.getElementById('groc-modal'))renderGrocPicker();if(glanceOpen())renderGlance();if(storeOpen())renderStoreMode();}
 function grocQuickAdd(where){const inp=document.getElementById('groc-add');if(!inp)return;const v=inp.value.trim();if(!v)return;v.split(',').map(s=>s.trim()).filter(Boolean).forEach(n=>grocUpsert(n,where||'need'));inp.value='';toast(`Added to ${where==='low'?'Running low':'Need now'}`,'success');grocRefresh();}
 function openFridgePhoto(){const f=document.getElementById('gl-fridge-file');if(!f){toast('Camera not available','error');return;}f.value='';f.click();}
 function fridgePhotoPicked(e){
   const file=(e&&e.target&&e.target.files&&e.target.files[0])||null;if(!file)return;
   fridgeCompress(file).then(async dataUrl=>{
-    fridgeShowReview(dataUrl,[],state.geminiKey?'Looking at the fridge…':'Type what’s missing. Add a Gemini key in Settings to auto-read the photo.');
-    const items=await fridgeDetect(dataUrl);
-    fridgeShowReview(dataUrl,items,items.length?'Uncheck anything you already have. Add missing items below.':'Couldn’t read the photo automatically. Type what’s missing.');
+    const hasKey=!!(state.geminiKey||'').trim();
+    fridgeShowReview(dataUrl,[],hasKey?'Looking at the fridge…':'Type what’s missing. Add a Gemini key in Settings to auto-read the photo.');
+    const res=await fridgeDetect(dataUrl);
+    const items=res.items||[];
+    let msg='Type what’s missing. Add a Gemini key in Settings to auto-read the photo.';
+    if(hasKey&&res.error)msg=res.error;
+    else if(hasKey&&items.length)msg='These look low or missing. Uncheck anything you already have.';
+    else if(hasKey)msg='Nothing in this photo looks low. Type what you still need.';
+    fridgeShowReview(dataUrl,items,msg);
   }).catch(err=>{console.error(err);toast('Couldn’t use that photo','error');});
 }
 function fridgeCompress(file){
@@ -3924,23 +4022,53 @@ function fridgeCompress(file){
     img.src=url;
   });
 }
+function fridgeParseItems(txt){
+  if(!txt)return null;
+  let j;try{j=JSON.parse(txt);}catch(_){const m=String(txt).match(/\{[\s\S]*\}/);if(!m)return null;try{j=JSON.parse(m[0]);}catch(__){return null;}}
+  const raw=j&&(j.items||j.Items);if(!Array.isArray(raw))return null;
+  const seen=new Set(),items=[];
+  raw.forEach(x=>{let n=String(x||'').trim().replace(/^[-*•\d.)\s]+/,'').slice(0,48);const k=n.toLowerCase();if(!n||seen.has(k))return;seen.add(k);items.push(n.charAt(0).toUpperCase()+n.slice(1));});
+  return items;
+}
+function fridgeApiError(d){
+  const s=String((d&&d.error&&(d.error.message||d.error.status))||'').replace(/\s+/g,' ').trim();
+  if(/API key not valid|API_KEY_INVALID|PERMISSION_DENIED/i.test(s))return 'Gemini rejected the API key. Open Settings and save a current key from Google AI Studio.';
+  if(/quota|RESOURCE_EXHAUSTED|rate limit/i.test(s))return 'Gemini is busy right now. Wait a minute and take the photo again, or type the items.';
+  if(/not found|NOT_FOUND|is not supported|deprecated|shutdown/i.test(s))return 'The photo model is unavailable on this key. Try again in a moment, or type the items.';
+  return s?s.slice(0,180):'Gemini could not read that photo.';
+}
 async function fridgeDetect(dataUrl){
-  const key=(state.geminiKey||'').trim();if(!key)return[];
-  const b64=(dataUrl.split(',')[1]||'');if(!b64)return[];
-  const body={contents:[{parts:[{text:'You are helping a family grocery list. Look at this fridge or pantry photo. List grocery item names that appear present OR look empty/missing that a US family might buy. Prefer short common names (milk, eggs, butter). Return JSON only: {"items":["milk"]}. Max 30 items.'},{inline_data:{mime_type:'image/jpeg',data:b64}}]}],generationConfig:{temperature:0.2,maxOutputTokens:512}};
-  const models=['gemini-2.0-flash','gemini-flash-latest','gemini-2.5-flash'];
-  for(const model of models){
+  const key=(state.geminiKey||'').trim();if(!key)return {items:[],error:''};
+  const b64=(dataUrl.split(',')[1]||'');if(!b64)return {items:[],error:'That photo came through empty. Try again.'};
+  const known=grocItems().map(i=>i.name).filter(Boolean).slice(0,60);
+  const weekIng=[];
+  try{mealWeekDates().forEach(ds=>mealIngredients((state.meals&&state.meals.plan||{})[ds]).forEach(n=>{if(weekIng.indexOf(n)<0)weekIng.push(n);}));}catch(_){}
+  const prompt='Look at this fridge or pantry photo for a family grocery list. List ONLY items that look missing, empty, or nearly gone — things to buy. Skip anything that looks well stocked. Use short common names (milk, eggs, butter).'
+    +(known.length?' When an item matches this family’s list, use that name: '+known.join(', ')+'.':'')
+    +(weekIng.length?' This week’s dinners still call for: '+weekIng.slice(0,40).join(', ')+'. Include those only if the photo shows them missing or low.':'')
+    +' If nothing looks low, return an empty list.';
+  const schema={type:'OBJECT',properties:{items:{type:'ARRAY',items:{type:'STRING'}}},required:['items']};
+  const tries=[
+    {model:'gemini-3.5-flash-lite',generationConfig:{maxOutputTokens:1024,responseMimeType:'application/json',responseSchema:schema,thinkingConfig:{thinkingLevel:'MINIMAL'}}},
+    {model:'gemini-3.5-flash-lite',generationConfig:{maxOutputTokens:1024,responseMimeType:'application/json'}},
+    {model:'gemini-2.5-flash',generationConfig:{temperature:0.2,maxOutputTokens:1024,responseMimeType:'application/json',thinkingConfig:{thinkingBudget:0}}}
+  ];
+  let last='Couldn’t read the photo. Type what’s missing.';
+  for(const tryOf of tries){
+    const body={contents:[{parts:[{inlineData:{mimeType:'image/jpeg',data:b64}},{text:prompt}]}],generationConfig:tryOf.generationConfig};
     try{
-      const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent?key='+encodeURIComponent(key),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-      const d=await r.json();
-      if(!r.ok){console.warn('gemini',model,d);continue;}
-      const txt=((d.candidates||[])[0]&&d.candidates[0].content&&d.candidates[0].content.parts||[]).map(p=>p.text||'').join('');
-      const m=txt.match(/\{[\s\S]*\}/);if(!m)continue;
-      const j=JSON.parse(m[0]);const items=(j.items||[]).map(x=>String(x).trim()).filter(Boolean);
-      if(items.length)return items.slice(0,30);
-    }catch(err){console.error('gemini',model,err);}
+      const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+tryOf.model+':generateContent?key='+encodeURIComponent(key),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+      const d=await r.json().catch(()=>null);
+      if(!r.ok||!d){console.warn('gemini',tryOf.model,d);last=fridgeApiError(d);continue;}
+      if(d.promptFeedback&&d.promptFeedback.blockReason){last='Gemini blocked that photo. Type the items instead.';continue;}
+      const parts=(((d.candidates||[])[0]||{}).content||{}).parts||[];
+      const txt=parts.filter(p=>p&&p.text&&!p.thought).map(p=>p.text).join('');
+      const items=fridgeParseItems(txt);
+      if(items)return {items:items.slice(0,20),error:''};
+      last='The photo was read, but no grocery list came back. Type what’s missing.';
+    }catch(err){console.error('gemini',tryOf.model,err);last='Couldn’t reach Gemini. Check the connection, or type the items.';}
   }
-  return[];
+  return {items:[],error:last};
 }
 function fridgePickHtml(picks){return picks.map(p=>`<label class="fridge-pick${p.on?' on':''}" id="${p.id}"><input type="checkbox"${p.on?' checked':''} onchange="fridgeTogglePick('${p.id}',this.checked)"> ${escHtml(p.name)}</label>`).join('');}
 function fridgeShowReview(dataUrl,items,msg){
@@ -4012,7 +4140,7 @@ function renderGroceries(){
   document.getElementById('topbar-title').textContent='Groceries';
   document.getElementById('topbar-color').style.background='var(--accent)';
   const need=grocNeed(),low=grocLow(),all=grocItems();const legacy=legacyGroceryTasks();
-  let html=`<div class="groc-head"><div><div class="groc-title">Groceries</div><div class="groc-sub">${need.length} needed now · ${low.length} running low · ${all.length} items in the full list</div></div><button class="btn btn-ghost btn-sm" onclick="openGrocPicker('need')">📋 Full list</button></div>`;
+  let html=`<div class="groc-head"><div><div class="groc-title">Groceries</div><div class="groc-sub">${need.length} needed now · ${low.length} running low · ${all.length} items in the full list</div></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary btn-sm" onclick="openStoreMode()"${(need.length||low.length)?'':' disabled style="opacity:.5;cursor:default"'}>🛍 Store${need.length?` (${need.length})`:''}</button><button class="btn btn-ghost btn-sm" onclick="openGrocPicker('need')">📋 Full list</button></div></div>`;
   if(legacy.length)html+=`<div class="groc-migrate"><div><b>${legacy.length} grocery items are still saved as tasks</b> (some assigned to people). Move them into this list so they're just groceries.</div><button class="btn btn-primary btn-sm" onclick="migrateGroceries()">Move them now</button></div>`;
   html+=`<div class="add-task-bar groc-add-bar"><span aria-hidden="true">🛒</span><input type="text" id="groc-add" placeholder="Add an item — e.g. milk, eggs, bread" onkeydown="if(event.key==='Enter')grocQuickAdd('need')"><button class="btn btn-primary btn-sm" onclick="grocQuickAdd('need')">Need now</button><button class="btn btn-ghost btn-sm" onclick="grocQuickAdd('low')">Running low</button></div>`;
   html+=grocPredictHtml();
@@ -4161,7 +4289,7 @@ function renderMeals(){
   const range=first.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' – '+last.toLocaleDateString('en-US',{month:'short',day:'numeric'});
   let html=`<div class="meal-head"><div class="mh-title"><div style="font-family:'Outfit',sans-serif;font-size:1.6rem">Dinners this week</div><div style="font-size:.8rem;color:var(--text3)">${range} · tap a day to plan it</div></div>
     <button class="icon-btn" onclick="mealWeekShift(-1)" aria-label="Previous week">‹</button><button class="icon-btn" onclick="mealWeekShift(1)" aria-label="Next week">›</button><button class="btn btn-ghost btn-sm" onclick="mealWeekShift(0)">This week</button>
-    <button class="btn btn-ghost btn-sm" onclick="openDinnerIdeas()">✨ Dinner ideas</button><button class="btn btn-primary btn-sm" onclick="addMealsToGroceries(mealWeekDates())"${weekIng.size?'':' disabled style="opacity:.5;cursor:default"'}>🛒 Add week to Groceries${weekIng.size?` (${weekIng.size})`:''}</button></div><div class="meal-week">`;
+    <button class="btn btn-ghost btn-sm" onclick="openDinnerIdeas()">✨ Dinner ideas</button><button class="btn btn-ghost btn-sm" onclick="shopNextDinners(true)">🍽 Next 2 nights${dinnerShopNames().length?` (${dinnerShopNames().length})`:''}</button><button class="btn btn-primary btn-sm" onclick="addMealsToGroceries(mealWeekDates())"${weekIng.size?'':' disabled style="opacity:.5;cursor:default"'}>🛒 Add week to Groceries${weekIng.size?` (${weekIng.size})`:''}</button></div><div class="meal-week">`;
   days.forEach(ds=>{
     const d=new Date(ds+'T12:00:00');const m=plan[ds];const ing=mealIngredients(m);
     html+=`<div class="meal-day ${ds===today?'today':''}" onclick="openMealModal('${ds}')"><div class="meal-dow">${d.toLocaleDateString('en-US',{weekday:'short'})}</div><div class="meal-date">${d.getDate()}</div>${m&&m.name?`<div class="meal-name">${m.freezer?'🧊 ':''}${escHtml(m.name)}</div><div class="meal-ing">${ing.length} ingredient${ing.length!==1?'s':''}</div>${ing.length?`<button class="meal-add" onclick="event.stopPropagation();addMealsToGroceries(['${ds}'])">🛒 Add to list</button>`:''}`:'<div class="meal-empty">+ Plan dinner</div>'}</div>`;
@@ -4189,7 +4317,7 @@ function autoRollTick(){
     up['tasks/'+t.id+'/dueDate']=today;up['tasks/'+t.id+'/rolledFrom']=t.rolledFrom||t.dueDate;n++;});
   if(n)db.ref().update(up).then(()=>console.log('auto-rolled',n)).catch(e=>console.error('roll',e));
 }
-setInterval(()=>{if(_rolledDay&&_rolledDay!==todayStr())autoRollTick();},60000);
+setInterval(()=>{if(_rolledDay&&_rolledDay!==todayStr())autoRollTick();dinnerShopTick();kidAutoTick();},60000);
 function rolledTag(t){if(!t.rolledFrom||t.completed||t.dueDate!==todayStr())return'';return`<span class="task-tag kind-roll">↪ from ${escHtml(formatDate(t.rolledFrom))}</span>`;}
 function openStaleReview(){
   const ex=document.getElementById('stale-modal');if(ex)ex.remove();const list=staleTodos().sort((a,b)=>a.dueDate.localeCompare(b.dueDate));
@@ -4224,8 +4352,8 @@ function briefData(){
   // Early start tomorrow
   {const ev=evOnDay(tmr).filter(e=>e.start&&e.start<'08:30').sort((a,b)=>a.start.localeCompare(b.start))[0];if(ev)out.push({ic:'⏰',pri:3,txt:`Early start tomorrow: <b>${escHtml(ev.t.title)}</b> at ${formatTime(ev.start)}`});}
   // To-dos today
-  {const td=state.tasks.filter(t=>!t.completed&&!isEvent(t)&&String(t.member)!=='groceries'&&t.dueDate===today);const sc=td.filter(t=>taskKind(t)==='school').length,ch=td.filter(t=>taskKind(t)==='chore').length,ot=td.length-sc-ch;const ro=td.filter(t=>t.rolledFrom).length;
-   if(td.length)out.push({ic:'✅',pri:4,txt:[sc?`${sc} school`:'',ch?`${ch} chore${ch!==1?'s':''}`:'',ot?`${ot} other`:''].filter(Boolean).join(' · ')+' to do today'+(ro?` (${ro} carried over)`:''),act:`hideGlance();openCalendar('todos')`});}
+  {const td=state.tasks.filter(t=>!t.completed&&!isEvent(t)&&String(t.member)!=='groceries'&&t.dueDate===today);const sc=td.filter(t=>taskKind(t)==='school').length,ch=td.filter(t=>taskKind(t)==='chore').length,wkn=wkOpenOn(today).length,ot=td.length-sc-ch+wkn;const ro=td.filter(t=>t.rolledFrom).length;
+   if(td.length||wkn)out.push({ic:'✅',pri:4,txt:[sc?`${sc} school`:'',ch?`${ch} chore${ch!==1?'s':''}`:'',ot?`${ot} other`:''].filter(Boolean).join(' · ')+' to do today'+(ro?` (${ro} carried over)`:''),act:`hideGlance();openCalendar('todos')`});}
   // Late errands
   {const late=state.tasks.filter(t=>!t.completed&&taskKind(t)==='todo'&&String(t.member)!=='groceries'&&t.dueDate&&t.dueDate<today&&t.dueDate>=addDays(today,-ROLL_DAYS));if(late.length)out.push({ic:'📌',pri:4,txt:`${late.length} errand${late.length!==1?'s':''} past due: ${late.slice(0,2).map(t=>escHtml(t.title)).join(', ')}${late.length>2?'…':''}`});}
   // Old items to review
@@ -4255,13 +4383,14 @@ function closeKidMode(){const el=document.getElementById('kid-overlay');if(el)el
 function kidCheck(tid){const t=state.tasks.find(x=>String(x.id)===String(tid));if(!t||t.completed)return;toggleTask(tid);setTimeout(renderKidMode,60);}
 function renderKidMode(){
   const el=document.getElementById('kid-overlay');if(!el)return;const today=todayStr();
-  if(!_kidId){el.innerHTML=`<div class="kid-wrap"><div class="kid-top"><div class="kid-title">⭐ Who’s checking off?</div><button class="kid-close" onclick="closeKidMode()">✕ Close</button></div><div class="kid-people">${state.members.map(m=>{const left=personTodos(m.id).length,done=personDoneOn(m.id,today).length;return`<button class="kid-person" style="--c:${m.color}" onclick="openKidMode('${m.id}')"><span class="kid-av" style="background:${hexA(m.color,'22')};color:${m.color}">${memberAvatarHtml(m,56)}</span><b>${escHtml(m.name)}</b><span>${left?`${left} to do`:'All done 🎉'}${done?` · ⭐${done}`:''}</span></button>`;}).join('')}</div></div>`;return;}
+  if(!_kidId){el.innerHTML=`<div class="kid-wrap"><div class="kid-top"><div class="kid-title">⭐ Who’s checking off?</div><button class="kid-close" onclick="closeKidMode()">✕ Close</button></div><div class="kid-people">${state.members.map(m=>{const left=personTodos(m.id).length+(wkPending(m.id)?1:0),done=personDoneOn(m.id,today).length;return`<button class="kid-person" style="--c:${m.color}" onclick="openKidMode('${m.id}')"><span class="kid-av" style="background:${hexA(m.color,'22')};color:${m.color}">${memberAvatarHtml(m,56)}</span><b>${escHtml(m.name)}</b><span>${left?`${left} to do`:'All done 🎉'}${done?` · ⭐${done}`:''}</span></button>`;}).join('')}</div></div>`;return;}
   const m=findMember(_kidId);if(!m){_kidId=null;return renderKidMode();}
   const todo=personTodos(m.id).sort((a,b)=>(a.dueTime||'99').localeCompare(b.dueTime||'99'));const done=personDoneOn(m.id,today);const streak=personStreak(m.id);
+  const who=wkWhoOf(m);const wLeft=!!(who&&wkPending(m.id));const wDone=!!(who&&wkSpOn(who,today));
   el.innerHTML=`<div class="kid-wrap" style="--c:${m.color}"><div class="kid-top"><button class="kid-back" onclick="openKidMode()">‹ Everyone</button><div class="kid-title"><span class="kid-av sm" style="background:${hexA(m.color,'22')};color:${m.color}">${memberAvatarHtml(m,40)}</span>${escHtml(m.name)}’s day</div><button class="kid-close" onclick="closeKidMode()">✕ Close</button></div>
-   <div class="kid-stats"><div><b>${'⭐'.repeat(Math.min(done.length,10))||'☆'}</b><span>${done.length} done today</span></div><div><b>🔥 ${streak}</b><span>day streak</span></div><div><b>${todo.length}</b><span>left</span></div></div>
-   <div class="kid-list">${todo.length?todo.map(t=>`<button class="kid-row" onclick="kidCheck('${t.id}')"><span class="kid-box"></span><span class="kid-n">${kindIcon(t)} ${escHtml(t.title)}${t.dueTime?`<small>${formatTime(t.dueTime)}</small>`:''}${t.rolledFrom?'<small>↪ from '+escHtml(formatDate(t.rolledFrom))+'</small>':''}</span></button>`).join(''):`<div class="kid-done-all">🎉 All done for today!</div>`}
-   ${done.map(t=>`<div class="kid-row done"><span class="kid-box">✓</span><span class="kid-n">${escHtml(t.title)}</span></div>`).join('')}</div></div>`;
+   <div class="kid-stats"><div><b>${'⭐'.repeat(Math.min(done.length+(wDone?1:0),10))||'☆'}</b><span>${done.length+(wDone?1:0)} done today</span></div><div><b>🔥 ${streak}</b><span>day streak</span></div><div><b>${todo.length+(wLeft?1:0)}</b><span>left</span></div></div>
+   <div class="kid-list">${wLeft?`<button class="kid-row" onclick="openWorkout('${who}')"><span class="kid-box"></span><span class="kid-n">🏋️ Street Parking</span></button>`:''}${todo.length?todo.map(t=>`<button class="kid-row" onclick="kidCheck('${t.id}')"><span class="kid-box"></span><span class="kid-n">${kindIcon(t)} ${escHtml(t.title)}${t.dueTime?`<small>${formatTime(t.dueTime)}</small>`:''}${t.rolledFrom?'<small>↪ from '+escHtml(formatDate(t.rolledFrom))+'</small>':''}</span></button>`).join(''):(wLeft?'':`<div class="kid-done-all">🎉 All done for today!</div>`)}
+   ${wDone?`<div class="kid-row done"><span class="kid-box">✓</span><span class="kid-n">Street Parking</span></div>`:''}${done.map(t=>`<div class="kid-row done"><span class="kid-box">✓</span><span class="kid-n">${escHtml(t.title)}</span></div>`).join('')}</div></div>`;
 }
 
 // ── Fair rotation: next turn goes to whoever in the rotation has done this chore least lately ──
@@ -4304,6 +4433,111 @@ function grocGotList(it){const g=it&&it.got?(Array.isArray(it.got)?it.got:Object
 function grocCycleDays(it){const g=grocGotList(it).map(s=>new Date(s).getTime());if(g.length<2)return 0;const gaps=[];for(let i=1;i<g.length;i++){const d=(g[i]-g[i-1])/864e5;if(d>=1)gaps.push(d);}if(!gaps.length)return 0;gaps.sort((a,b)=>a-b);return gaps[Math.floor(gaps.length/2)];}
 function grocProbablyLow(){const now=Date.now();return grocItems().filter(it=>{if(it.status)return false;const cyc=grocCycleDays(it);if(!cyc||cyc<2||cyc>120)return false;const g=grocGotList(it);const lastT=new Date(g[g.length-1]).getTime();return(now-lastT)/864e5>=cyc*0.9;}).sort((a,b)=>a.name.localeCompare(b.name));}
 function grocPredictHtml(){const lw=grocProbablyLow();if(!lw.length)return'';return`<div class="groc-predict"><div class="gp-h">🔮 Probably running low <span>based on how often you buy them</span></div><div class="gp-chips">${lw.map(i=>`<span class="gp-chip">${escHtml(i.name)} <small>every ~${Math.round(grocCycleDays(i))}d</small><button onclick="grocSetStatus('${i.id}','need')">+ Need</button><button onclick="grocSetStatus('${i.id}','low')">+ Low</button></span>`).join('')}</div></div>`;}
+// Next two dinners → Need now, skipping items that still look stocked
+function grocLooksStocked(it){
+  if(!it||it.status==='need'||it.status==='low')return false;
+  const g=grocGotList(it);if(!g.length)return false;
+  const last=new Date(g[g.length-1]).getTime();if(isNaN(last))return false;
+  const age=(Date.now()-last)/864e5;const cyc=grocCycleDays(it);
+  if(cyc>=2&&cyc<=120)return age<cyc*0.85;
+  return age<5;
+}
+function dinnerShopNames(){
+  const plan=(state.meals&&state.meals.plan)||{};
+  const days=[addDays(todayStr(),1),addDays(todayStr(),2)];
+  const names=new Map();
+  days.forEach(ds=>mealIngredients(plan[ds]).forEach(n=>{const raw=String(n).trim();if(!raw)return;const k=raw.toLowerCase();if(!names.has(k))names.set(k,raw);}));
+  const out=[];
+  names.forEach(n=>{const ex=grocFind(n);if(ex&&(ex.status==='need'||ex.status==='low'))return;if(ex&&grocLooksStocked(ex))return;out.push(ex?ex.name:n);});
+  return out;
+}
+function shopNextDinners(manual){
+  const list=dinnerShopNames();
+  if(!list.length){if(manual)toast('Next two dinners are already covered','info');return;}
+  list.forEach(n=>grocUpsert(n,'need'));
+  toast(`🛒 ${list.length} added for the next two dinners`,'success');
+  grocRefresh();
+}
+function dinnerShopTick(){
+  if(new Date().getHours()<17)return;
+  if(!state.mealsReady||!state.grocReady)return;
+  const today=todayStr();
+  try{if(localStorage.getItem('familyhub_dinner_shop')===today)return;}catch(_){return;}
+  const plan=(state.meals&&state.meals.plan)||{};
+  const days=[addDays(today,1),addDays(today,2)];
+  if(!days.some(ds=>mealIngredients(plan[ds]).length))return;
+  try{localStorage.setItem('familyhub_dinner_shop',today);}catch(_){return;}
+  shopNextDinners(false);
+}
+// Morning Glance: top 3 items the buy-cycle says are due
+function glLowHtml(){
+  const hh=new Date().getHours();if(hh<5||hh>=14)return'';
+  const lw=grocProbablyLow().slice(0,3);if(!lw.length)return'';
+  return`<section class="gl-low gl-stay" onclick="event.stopPropagation()"><span class="gl-low-h">🔮 Probably low</span>${lw.map(i=>`<button type="button" class="gl-low-chip" onclick="event.stopPropagation();grocSetStatus('${i.id}','need')">${escHtml(i.name)} <b>+ Need</b></button>`).join('')}</section>`;
+}
+// After 7pm through 9am: a packing list for the next time you walk out
+function leavePlan(){
+  const hh=new Date().getHours();if(hh>=9&&hh<19)return null;
+  const ds=hh>=19?addDays(todayStr(),1):todayStr();
+  const ev=evOnDay(ds);if(!ev.length)return null;
+  const w=(state.weather&&state.weather.days&&state.weather.days[ds])||null;
+  const people=[];
+  ev.forEach(e=>{const m=findMember(e.t.member);const name=m?m.name:(String(e.t.member)==='family'?'Family':'');if(name&&people.indexOf(name)<0)people.push(name);});
+  const timed=ev.filter(e=>e.start).sort((a,b)=>String(a.start).localeCompare(String(b.start)));
+  let overlap=false;
+  for(let i=0;i<timed.length;i++)for(let j=i+1;j<timed.length;j++){const end=timed[i].end||evEnd(timed[i].start,'1h');if(end&&hm(timed[j].start)<hm(end))overlap=true;}
+  const outdoor=ev.some(e=>OUTDOOR_RE.test(e.t.title));
+  const rain=w&&w.rain!=null&&w.rain>=30;const cold=w&&w.lo!=null&&w.lo<=50;const hot=w&&w.hi!=null&&w.hi>=85;const storm=w&&w.code>=95;
+  const items=[];
+  if(overlap)items.push({id:'drive',label:'Who drives',sub:people.join(' & ')||'Two places at once'});
+  else items.push({id:'who',label:people.length?people.join(', '):"Who's going",sub:ev.length===1?ev[0].t.title:`${ev.length} things`});
+  if(outdoor||hot)items.push({id:'water',label:'Water',sub:hot&&w?w.hi+'°':''});
+  if(outdoor||rain||cold||storm)items.push({id:'jacket',label:storm?'Storm gear':rain?'Rain jackets':cold?'Jackets':'Layers',sub:rain&&w?w.rain+'% rain':''});
+  items.push({id:'snack',label:'Snacks',sub:''});
+  return{ds,when:ds===todayStr()?'This morning':'Tomorrow',items};
+}
+function leaveBag(){try{return JSON.parse(localStorage.getItem('familyhub_leave')||'null')||{};}catch(_){return {};}}
+function leaveToggle(id){
+  const plan=leavePlan();if(!plan)return;
+  const cur=leaveBag();const on=(cur.ds===plan.ds&&cur.on)?Object.assign({},cur.on):{};
+  on[id]=!on[id];
+  try{localStorage.setItem('familyhub_leave',JSON.stringify({ds:plan.ds,on}));}catch(_){}
+  const box=document.getElementById('gl-leave');if(box)box.outerHTML=glLeaveHtml();
+}
+function glLeaveHtml(){
+  const plan=leavePlan();if(!plan)return'';
+  const bag=leaveBag();const on=(bag.ds===plan.ds&&bag.on)?bag.on:{};
+  const done=plan.items.filter(it=>on[it.id]).length;
+  return`<section class="gl-leave gl-stay" id="gl-leave" onclick="event.stopPropagation()"><div class="gl-leave-h"><span>🚪 Before you leave</span><span>${escHtml(plan.when)}${done?` · ${done}/${plan.items.length}`:''}</span></div><div class="gl-leave-row">${plan.items.map(it=>`<button type="button" class="gl-leave-item${on[it.id]?' on':''}" onclick="event.stopPropagation();leaveToggle('${it.id}')"><span>${escHtml(it.label)}</span>${it.sub?`<small>${escHtml(it.sub)}</small>`:''}</button>`).join('')}</div></section>`;
+}
+function storeOpen(){const el=document.getElementById('store-overlay');return !!(el&&el.classList.contains('open'));}
+function storeRows(items){
+  const sorted=items.slice().sort((a,b)=>(GROC_CATS.indexOf(a.cat||'Other')-GROC_CATS.indexOf(b.cat||'Other'))||a.name.localeCompare(b.name));
+  let html='',cur='';
+  sorted.forEach(it=>{const c=it.cat||'Other';if(c!==cur){cur=c;html+=`<div class="store-cat">${escHtml(c)}</div>`;}html+=`<button type="button" class="store-row" onclick="storeGot('${it.id}')"><span class="store-box"></span><span>${escHtml(it.name)}</span></button>`;});
+  return html;
+}
+function renderStoreMode(){
+  const el=document.getElementById('store-overlay');if(!el||!el.classList.contains('open'))return;
+  const need=grocNeed(),low=grocLow();
+  el.innerHTML=`<div class="store-wrap"><div class="store-top"><div><div class="store-title">At the store</div><div class="store-sub">${need.length?need.length+' to grab':'Need now is clear'}${low.length?' · '+low.length+' running low':''}</div></div><button type="button" class="btn btn-ghost" onclick="closeStoreMode()">Done</button></div>${need.length?storeRows(need):'<div class="store-empty">Nothing in Need now.</div>'}${low.length?`<div class="store-split">Running low</div><div class="store-note">Tap one if you are grabbing it too.</div>${storeRows(low)}`:''}</div>`;
+}
+function openStoreMode(){let el=document.getElementById('store-overlay');if(!el){document.body.insertAdjacentHTML('beforeend','<div id="store-overlay" class="store-overlay"></div>');el=document.getElementById('store-overlay');}el.classList.add('open');renderStoreMode();}
+function closeStoreMode(){const el=document.getElementById('store-overlay');if(el)el.classList.remove('open');}
+function storeGot(id){grocSetStatus(id,'');}
+function kidOpen(){const el=document.getElementById('kid-overlay');return !!(el&&el.classList.contains('open'));}
+function kidAutoCandidates(){return state.members.filter(m=>personTodos(m.id).some(t=>taskKind(t)==='school'||taskKind(t)==='chore'));}
+function kidAutoTick(){
+  if(new Date().getHours()<16)return;
+  const today=todayStr();
+  try{if(localStorage.getItem('familyhub_kid_auto')===today)return;}catch(_){return;}
+  if(!glanceOpen()||glanceBusy())return;
+  if(!state.tasks)return;
+  const kids=kidAutoCandidates();
+  if(!kids.length){if(state.members&&state.members.length){try{localStorage.setItem('familyhub_kid_auto',today);}catch(_){}}return;}
+  try{localStorage.setItem('familyhub_kid_auto',today);}catch(_){}
+  openKidMode(kids.length===1?kids[0].id:null);
+}
 (function(){const mc=document.getElementById('main-content');const cs=()=>document.getElementById('cal-switch');if(mc&&window.MutationObserver)new MutationObserver(()=>{const c=cs();if(c)c.hidden=state.mainView!=='calendar';}).observe(mc,{childList:true});})();
 // ══════════════════════════════════════
 // BOOT
